@@ -1,0 +1,92 @@
+<mat-drawer-container [hasBackdrop]="drawerMode === 'over'">
+  <!-- Drawer lateral -->
+  <mat-drawer
+    [mode]="drawerMode"
+    [opened]="isOpen"
+
+    (closedStart)="onDrawerClosed()"
+    #drawer
+    position="start"
+    class="flex flex-col max-w-[120px] text-center"
+  >
+    <div
+      [ngClass]="{
+        'h-[calc(100vh-218px)]': isLogged,
+        'h-[calc(100vh-189px)]': !isLogged
+      }"
+      class="overflow-auto flex flex-col justify-start items-center "
+    >
+      <div
+        (click)="gotTo('/')"
+        class="menu-item flex flex-col justify-center items-center w-full p-5 cursor-pointer"
+      >
+        <i class="bi bi-dpad text-2xl"></i>
+        <span class="mt-2">Events</span>
+      </div>
+
+      <div
+        (click)="gotTo('/my-valorations')"
+        class="menu-item flex flex-col justify-center items-center w-full p-5 cursor-pointer"
+      >
+        <i class="bi bi-heart text-2xl"></i>
+        <span class="mt-2">Posts</span>
+      </div>
+
+      <div
+        (click)="gotTo('/contact')"
+        class="menu-item flex flex-col justify-center items-center w-full p-5 cursor-pointer"
+      >
+        <i class="bi bi-person-exclamation text-2xl"></i>
+        <span class="mt-2">Contact</span>
+      </div>
+    </div>
+
+    <div *ngIf="isLogged" (click)="gotTo('/profile')" class="menu-item flex flex-col justify-center items-center py-5 cursor-pointer">
+      <div class="w-12 h-12 overflow-hidden rounded-full border border-transparent">
+        <img
+          *ngIf="this.previewCoverImage"
+          [src]="'http://localhost:8080'+ previewCoverImage[0]?.url"
+          alt="No Image"
+          class="w-full h-full object-cover object-center"
+        />
+        <img
+
+          src="http://localhost:8080/uploads/No_Image_Available.jpg"
+          class="w-full h-full object-cover object-center"
+        />
+      </div>
+      <span class="mt-2">My Profile</span>
+    </div>
+
+    <div *ngIf="isLogged" (click)="closeSession()" class="menu-item flex flex-col justify-center items-center p-5 cursor-pointer">
+      <i class="bi bi-box-arrow-right text-2xl"></i>
+      <span class="mt-2">Logout</span>
+    </div>
+
+    <!-- NO ESTA INICIADA LA SESION -->
+    <div *ngIf="!isLogged" (click)="gotTo('/login')" class="menu-item flex flex-col justify-center items-center p-5 cursor-pointer">
+      <i class="bi bi-person text-2xl"></i>
+      <span class="mt-2">Login</span>
+    </div>
+
+    <div *ngIf="!isLogged" (click)="gotTo('/register')" class="menu-item flex flex-col justify-center items-center p-5 cursor-pointer">
+      <i class="bi bi-person-add text-2xl"></i>
+      <span class="mt-2">Register</span>
+    </div>
+  </mat-drawer>
+
+  <!-- Contenido principal -->
+  <mat-drawer-content>
+    <mat-toolbar color="primary" class="flex items-center px-4">
+      <button mat-button class="text-2xl" (click)="open()">
+        <i class="bi bi-list"></i>
+      </button>
+      <span class="ml-5">Games Vote</span>
+      <span class="flex-1"></span>
+    </mat-toolbar>
+
+    <div class="main-content">
+      <ng-content></ng-content>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

@@ -1,0 +1,107 @@
+########################################
+#       GLOBAL SETTINGS                #
+########################################
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Logs globales
+*.log
+logs/
+log.txt
+
+# Entornos y variables
+.env
+.env.*
+*.env
+
+# Archivos comprimidos
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# Temporales
+*.tmp
+*.temp
+*.swp
+
+
+########################################
+#       FRONTEND (ANGULAR)             #
+########################################
+
+# Dependencias
+frontend/node_modules/
+
+# Builds
+frontend/dist/
+frontend/dist-ssr/
+frontend/out-tsc/
+
+# Angular cache
+frontend/.angular/
+frontend/.angular/cache/
+
+# Herramientas
+frontend/.npm/
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+
+# IDE
+frontend/.vscode/
+frontend/*.sublime-project
+frontend/*.sublime-workspace
+
+
+########################################
+#       BACKEND (SPRING BOOT)          #
+########################################
+
+# Maven / Gradle
+backend/target/
+backend/build/
+
+# Archivos compilados
+backend/*.class
+backend/*.jar
+backend/*.war
+backend/*.ear
+
+# Configuración sensible
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application-dev.properties
+backend/*.env
+
+# IDE
+backend/.idea/
+backend/*.iml
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/bin/
+
+########################################
+#      JAVA / GLOBAL IDE FILES         #
+########################################
+
+# IntelliJ / Eclipse / STS
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+*.prefs
+
+# VSCode
+.vscode/
+
+########################################
+#        OPTIONAL (UPLOADED FILES)     #
+########################################
+
+# Si guardas imágenes/subidas en backend:
+# backend/uploads/
+backend/uploads

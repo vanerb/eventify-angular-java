@@ -1,0 +1,105 @@
+<app-container>
+
+  <div class="flex flex-col items-center justify-center w-full h-full">
+    <div class="w-[calc(60vh-100px)] overflow-auto bg-[#1a1d20] rounded-md p-5 shadow-lg">
+
+      <!-- Título -->
+      <div class="text-center px-5">
+        <h1 class="text-white text-xl font-bold m-0">Register</h1>
+      </div>
+
+      <!-- Formulario -->
+      <form [formGroup]="form" class="bg-[var(--background-four)] border-2 border-transparent rounded-md p-4 ">
+
+        <!-- Avatar -->
+        <div class="flex justify-center items-center mb-5">
+          <div class="w-fit flex justify-center items-end relative">
+            <div class="w-36 h-36 overflow-hidden rounded-full mx-auto border border-transparent">
+              <img *ngIf="previewCoverImage" [src]="previewCoverImage" alt="No Image"
+                   class="w-full h-full object-cover object-center">
+              <img *ngIf="!previewCoverImage" [src]="getLocalImage('No_Image_Available.jpg')"
+                   class="w-full h-full object-cover object-center">
+            </div>
+
+            <div class="absolute -right-2">
+              <input type="file" accept="image/*" #fileInput hidden (change)="onImageChange($event)" />
+              <button type="button" (click)="fileInput.click()" mat-raised-button color="primary"
+                      class=" w-12 h-12 flex justify-center items-center rounded-lg bg-primary text-white">
+                <i class="bi bi-pencil text-xl"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Nombre y Apellidos -->
+        <div class="flex gap-4">
+          <mat-form-field color="primary" class="flex w-full rounded-lg">
+            <mat-label>Name</mat-label>
+            <span matPrefix>
+              <i class="bi bi-person-circle text-white text-xl mx-2"></i>
+            </span>
+            <input formControlName="name" matInput placeholder="Input your name..." class="w-full">
+          </mat-form-field>
+        </div>
+
+        <div class="flex gap-4">
+          <mat-form-field color="primary" class="flex w-full rounded-lg">
+            <mat-label>Username</mat-label>
+            <span matPrefix>
+              <i class="bi bi-person-circle text-white text-xl mx-2"></i>
+            </span>
+            <input formControlName="username" matInput placeholder="Input your username..." class="w-full">
+          </mat-form-field>
+        </div>
+
+        <!-- Email -->
+        <mat-form-field color="primary" class="w-full rounded-lg">
+          <mat-label>Email</mat-label>
+          <span matPrefix>
+            <i class="bi bi-envelope text-white text-xl mx-2"></i>
+          </span>
+          <input type="email" formControlName="email" matInput placeholder="Input your email..." class="w-full">
+        </mat-form-field>
+
+
+        <!-- Contraseña -->
+        <mat-form-field color="primary" class="w-full rounded-lg">
+          <mat-label>Password</mat-label>
+          <span matPrefix>
+            <i class="bi bi-lock text-white text-xl mx-2"></i>
+          </span>
+          <input type="password" formControlName="password" matInput placeholder="Input your password..." class="w-full">
+        </mat-form-field>
+
+        <!-- Repetir Contraseña -->
+        <mat-form-field color="primary" class="w-full rounded-lg">
+          <mat-label>Repeat password</mat-label>
+          <span matPrefix>
+            <i class="bi bi-lock text-white text-xl mx-2"></i>
+          </span>
+          <input type="password" formControlName="repeatPassword" matInput placeholder="Input again your password..." class="w-full">
+        </mat-form-field>
+
+        <!-- Botón registrar -->
+        <div class="flex justify-end ">
+          <button (click)="register()" mat-raised-button color="primary"
+                  class="w-full flex justify-center items-center gap-2 px-4 py-2 rounded-lg">
+            <span>Create account</span>
+            <!--            <i class="bi bi-person-plus"></i>-->
+          </button>
+        </div>
+
+        <!-- Link login -->
+        <div class="mt-10 w-full text-center">
+          <span class="text-white text-sm">
+            If you have an account, you can log in by pressing
+            <a [routerLink]="['/login']" class="text-white underline"> here</a>
+          </span>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</app-container>
