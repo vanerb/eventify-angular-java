@@ -33,10 +33,12 @@ public class AuthService implements AuthInterface {
 
 
     @Override
-    public User register(String email, String password, MultipartFile file) {
+    public User register(String email, String password, String name, String username, MultipartFile file) {
         // 1️⃣ Crear usuario básico
         User user = new User();
         user.setEmail(email);
+        user.setName(name);
+        user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
 
         // 2️⃣ Guardar usuario primero para tener un ID
@@ -45,13 +47,10 @@ public class AuthService implements AuthInterface {
         // 3️⃣ Subir imagen de perfil si se proporciona
         if (file != null && !file.isEmpty()) {
             try {
-                // Guardar imagen usando ImageService
                 Image img = imageService.upload(file, "USER", savedUser.getId(), true);
 
-                // Guardar URL de la imagen como referencia rápida en el usuario
                 savedUser.setProfileImageName(img.getUrl());
 
-                // Actualizar usuario con la info de la imagen
                 repository.save(savedUser);
             } catch (IOException e) {
                 throw new RuntimeException("Error al guardar la imagen de perfil", e);

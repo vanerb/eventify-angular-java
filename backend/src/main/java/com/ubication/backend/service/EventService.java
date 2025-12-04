@@ -2,10 +2,13 @@ package com.ubication.backend.service;
 
 import com.ubication.backend.model.User;
 import com.ubication.backend.model.Event;
+import com.ubication.backend.dto.ImageDTO;
 import com.ubication.backend.model.Theme;
+import com.ubication.backend.model.Image;
 import com.ubication.backend.repository.UserRepository;
 import com.ubication.backend.repository.EventRepository;
 import com.ubication.backend.repository.ThemeRepository;
+import com.ubication.backend.repository.ImageRepository;
 
 import com.ubication.backend.service.ImageService;
 import com.ubication.backend.dto.EventDTO;
@@ -37,6 +40,11 @@ public class EventService implements EventInterface {
 
      @Autowired
         private ThemeRepository themeRepository;
+
+         @Autowired
+                private ImageRepository imageRepository;
+
+
 
      @Autowired
         private JwtUtil jwtUtil;
@@ -88,9 +96,6 @@ public class EventService implements EventInterface {
        if (file != null && !file.isEmpty()) {
            try {
                imageService.upload(file, "EVENT", savedEvent.getId(), true);
-
-               savedEvent.setHeaderImageName(file.getOriginalFilename());
-               repository.save(savedEvent);
            } catch (IOException e) {
                throw new RuntimeException("Error al guardar la imagen en Image table", e);
            }
@@ -106,10 +111,12 @@ public class EventService implements EventInterface {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        event.getParticipants().add(user);
-        user.getJoinedEvents().add(event);
+       if (!event.getParticipants().contains(user)) {
+              event.getParticipants().add(user);
+              user.getJoinedEvents().add(event);
+              userRepository.save(user);
+          }
 
-        userRepository.save(user);
         return event;
     }
 
@@ -125,6 +132,54 @@ public class EventService implements EventInterface {
         return repository.findByCreatorId(userId);
     }
 
+
+     public List<EventDTO> findMyEventParticipations(String header) {
+        String token = header.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(token);
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            if (!token.equals(user.getToken())) {
+                throw new RuntimeException("Invalid token");
+            }
+
+            return repository.findAllByParticipantsId(user.getId())
+                    .stream()
+                             .map(e -> {
+                                 List<ThemeDTO> themes = e.getThemes() != null
+                                     ? e.getThemes().stream()
+                                         .map(t -> new ThemeDTO(t.getId(), t.getName()))
+                                         .collect(Collectors.toList())
+                                     : Collections.emptyList();
+
+                                   List<Image> images = imageRepository.findByFromTypeAndFromId("EVENT", e.getId());
+                                    ImageDTO imageDTO = images.isEmpty()
+                                            ? null
+                                            : new ImageDTO(
+                                                images.get(0).getId(),
+                                                images.get(0).getUrl()
+                                            );
+
+                                 return new EventDTO(
+                                        e.getId(),                // Long id
+                                                     e.getInitDate(),          // LocalDateTime initDate
+                                                     e.getEndDate(),           // LocalDateTime endDate
+                                                     e.getPlaceId(),           // String placeId
+                                                     themes,                   // List<ThemeDTO> themes
+                                                     e.getParticipants(),      // List<User> participants
+                                                     e.getUbication(),         // String ubication
+
+                                                     e.getLatitude(),          // Double latitude
+                                                     e.getLongitude(),         // Double longitude
+                                                     e.getName(),              // String name
+                                                     e.getDescription(),       // String description
+                                                     e.getType(),
+                                                     e.getCreator(),    // User creator
+                                                     imageDTO
+                                 );
+                             })
+                             .collect(Collectors.toList());
+   }
+
   public List<EventDTO> findAll() {
       return repository.findAll()
           .stream()
@@ -135,6 +190,14 @@ public class EventService implements EventInterface {
                       .collect(Collectors.toList())
                   : Collections.emptyList();
 
+                List<Image> images = imageRepository.findByFromTypeAndFromId("EVENT", e.getId());
+                 ImageDTO imageDTO = images.isEmpty()
+                         ? null
+                         : new ImageDTO(
+                             images.get(0).getId(),
+                             images.get(0).getUrl()
+                         );
+
               return new EventDTO(
                      e.getId(),                // Long id
                                   e.getInitDate(),          // LocalDateTime initDate
@@ -143,13 +206,14 @@ public class EventService implements EventInterface {
                                   themes,                   // List<ThemeDTO> themes
                                   e.getParticipants(),      // List<User> participants
                                   e.getUbication(),         // String ubication
-                                  e.getHeaderImageName(),   // String headerImageName
+
                                   e.getLatitude(),          // Double latitude
                                   e.getLongitude(),         // Double longitude
                                   e.getName(),              // String name
                                   e.getDescription(),       // String description
                                   e.getType(),
-                                  e.getCreator()            // User creator
+                                  e.getCreator(),    // User creator
+                                  imageDTO
               );
           })
           .collect(Collectors.toList());

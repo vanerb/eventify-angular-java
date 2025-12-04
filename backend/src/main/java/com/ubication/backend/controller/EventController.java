@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
 
 
+
 @RestController
 @RequestMapping("/api/events")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -32,6 +33,11 @@ public class EventController {
     public List<Event> findByUserId(@PathVariable Long userId) {
         return service.findByUserId(userId);
     }
+
+    @GetMapping("/findMyEventParticipations")
+        public List<EventDTO> findMyEventParticipations(@RequestHeader("Authorization") String authHeader) {
+            return service.findMyEventParticipations(authHeader);
+        }
 
     @GetMapping("/getAll")
     public List<EventDTO> findAll() {

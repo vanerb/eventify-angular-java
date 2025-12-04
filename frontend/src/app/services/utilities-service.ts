@@ -18,6 +18,11 @@ export function transformDate(dateISO: string): string {
   });
 }
 
+export function transformDateHour(dateISO: string) {
+  const date = new Date(dateISO);
+  return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); // solo hora:minutos
+}
+
 export function combineDateAndTime(date: Date, time: string): Date {
   const [hours, minutes] = time.split(':').map(Number);
   const result = new Date(date);

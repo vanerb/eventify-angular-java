@@ -20,8 +20,16 @@
         (click)="gotTo('/')"
         class="menu-item flex flex-col justify-center items-center w-full p-5 cursor-pointer"
       >
-        <i class="bi bi-dpad text-2xl"></i>
+        <i class="bi bi-calendar text-2xl"></i>
         <span class="mt-2">Events</span>
+      </div>
+
+      <div
+        (click)="gotTo('/chats')"
+        class="menu-item flex flex-col justify-center items-center w-full p-5 cursor-pointer"
+      >
+        <i class="bi bi-chat text-2xl"></i>
+        <span class="mt-2">Chats</span>
       </div>
 
       <div
@@ -81,7 +89,7 @@
       <button mat-button class="text-2xl" (click)="open()">
         <i class="bi bi-list"></i>
       </button>
-      <span class="ml-5">Games Vote</span>
+      <span class="ml-5">Meet Friends</span>
       <span class="flex-1"></span>
     </mat-toolbar>
 

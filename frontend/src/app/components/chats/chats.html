@@ -1,0 +1,125 @@
+<app-container>
+
+  <mat-drawer-container class="h-full w-full rounded-lg">
+    <mat-drawer mode="side" opened>
+      <div class="w-[300px]">
+        <mat-list class="w-full">
+          <div class="w-full cursor-pointer mt-[-8px]" *ngFor="let event of events">
+            <mat-accordion>
+              <mat-expansion-panel (click)="changeEvent(event.id)">
+                <mat-expansion-panel-header>
+                  <mat-panel-title><span class="text-center">{{ event.name }}</span></mat-panel-title>
+                  <mat-panel-description>
+                    <div class="flex justify-center items-center space-x-2">
+                      <i class="bi bi-person "></i>
+                      <span>{{ event.participants.length }} participantes</span>
+                    </div>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="space-y-4">
+                  <div class="w-full h-32  relative">
+                    <div class="w-full h-32 overflow-hidden">
+                      <img src="{{'http://localhost:8080'+event.image.url}}"
+                           class="object-cover object-center h-32 w-full">
+                    </div>
+
+                    <div class="absolute w-full h-16 -bottom-4 left-0  ">
+                      <div class=" flex items-center space-x-2  rounded-lg w-fit">
+                        <img class="w-16 h-16 rounded-full object-cover object-center "
+                             src="http://localhost:8080{{event.creator.profileImageName}}">
+                        <span class="  rounded-full ">{{ '@' + event.creator.username }}</span>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="mt-4 text-center space-y-4">
+                    <h1>{{ event.name }}</h1>
+                    <p>{{ event.description }}</p>
+                  </div>
+
+                  <div class="space-x-2 flex-grow flex justify-center align-center">
+                    <mat-chip-row *ngFor="let theme of event.themes;">
+                      {{ theme.name }}
+                    </mat-chip-row>
+                  </div>
+
+                  <div class="flex flex-wrap justify-center align-center space-x-2 space-y-4">
+                    <mat-chip-row>
+                      <div class="flex justify-center items-center">
+                        <i class="bi bi-calendar mr-2"></i>{{ transformDate(event.initDate) }}
+                      </div>
+
+                    </mat-chip-row>
+                    <mat-chip-row>
+                      <div class="flex justify-center items-center">
+                        <i class="bi bi-calendar mr-2"></i> {{ transformDate(event.endDate) }}
+                      </div>
+                    </mat-chip-row>
+                  </div>
+
+                  <div class="text-center">
+                    <span><i class="bi bi-geo-alt"></i> {{ event.ubication }}</span>
+                  </div>
+                </div>
+
+              </mat-expansion-panel>
+            </mat-accordion>
+
+
+            <!--            <div  class="w-full flex items-center space-x-2">-->
+            <!--              <div class="w-20 h-16 overflow-hidden">-->
+            <!--                <img src="{{'http://localhost:8080'+event.image.url}}" class="object-cover object-center h-16 w-full">-->
+            <!--              </div>-->
+            <!--              <span class="text-center">{{ event.name }}</span>-->
+
+            <!--            </div>-->
+            <!--            <mat-divider class="w-full"></mat-divider>-->
+          </div>
+        </mat-list>
+      </div>
+    </mat-drawer>
+    <mat-drawer-content>
+      <div *ngIf="eventId" class="w-full h-full ">
+        <div class="w-full h-[calc(100vh_-_198px)] overflow-auto p-4">
+          <div *ngFor="let group of groupedMessages">
+            <div class="text-center my-2 font-semibold">{{ group.date }}</div>
+
+            <div *ngFor="let msg of group.messages" class="w-full mb-2 mt-2">
+              <div *ngIf="msg.userId !== this.user.id" class="flex justify-start items-end">
+                <div class="bg-[#c2185b] w-fit py-1 px-4 rounded-lg flex flex-col">
+                  <span>
+                    <strong>{{ msg.sender }}</strong>
+                  </span>
+                  <span>{{ msg.content }}</span>
+                  <span class="text-[10px] text-end">{{ transformDateHour(msg.timestamp ?? '') }}</span>
+                </div>
+              </div>
+
+              <div *ngIf="msg.userId === this.user.id" class="flex justify-end items-end">
+                <div class="bg-[#911245] w-fit py-1 px-4 rounded-lg">
+                  {{ msg.content }}
+                  <div class="text-[10px] text-right">{{ transformDateHour(msg.timestamp ?? '') }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex space-x-2 p-4">
+          <mat-form-field class="w-full mb-[-20px]" appearance="outline">
+            <input matInput placeholder="Escribe un mensaje..." [(ngModel)]="newMessage">
+          </mat-form-field>
+          <div class="flex justify-center items-center" >
+            <button (click)="sendMessage()" mat-raised-button color="primary">
+              <i class="bi bi-send"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </mat-drawer-content>
+  </mat-drawer-container>
+
+</app-container>
+

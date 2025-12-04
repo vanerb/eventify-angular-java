@@ -16,6 +16,7 @@ public class Event {
 
     private String name;
 
+    @Lob
     private String description;
 
     private String type;
@@ -43,17 +44,6 @@ public class Event {
     @ManyToMany(mappedBy = "joinedEvents")
     @JsonIgnore
     private List<User> participants;
-
-    @Lob
-    private byte[] headerImage;
-
-    private String headerImageName;
-
-    public byte[] getHeaderImage() { return headerImage; }
-    public void setHeaderImage(byte[] headerImage) { this.headerImage = headerImage; }
-
-    public String getHeaderImageName() { return headerImageName; }
-    public void setHeaderImageName(String headerImageName) { this.headerImageName = headerImageName; }
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Theme> themes;

@@ -1,4 +1,5 @@
-import 'zone.js'; // 👈 agregar esta línea al inicio
+import './polyfills'; // 👈 debe ir primero
+import 'zone.js';
 import { bootstrapApplication, provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter } from '@angular/router';

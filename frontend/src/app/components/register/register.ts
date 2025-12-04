@@ -72,6 +72,8 @@ export class Register {
           }
 
           formData.append('email', this.form.get('email')?.value);
+          formData.append('username', this.form.get('username')?.value);
+          formData.append('name', this.form.get('name')?.value);
           formData.append('password', this.form.get('password')?.value);
 
 

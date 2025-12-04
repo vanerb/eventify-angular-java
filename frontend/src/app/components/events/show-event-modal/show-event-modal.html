@@ -1,40 +1,88 @@
-<div class="space-y-4 w-full h-full">
+<div class="space-y-5 w-full h-full">
   <div class="w-full h-32  relative">
     <div class="w-full h-32 overflow-hidden">
-      <img src="http://localhost:8080{{ bannerImage[0]?.url }}" class="object-cover object-center h-32 w-full">
+      <img src="{{'http://localhost:8080'+ubication.image.url}}" class="object-cover object-center h-32 w-full">
     </div>
 
     <div class="absolute w-full h-16 -bottom-4 left-0  ">
-      <div class=" flex items-center space-x-2 p-2 rounded-lg w-fit">
+      <div class=" flex items-center space-x-2  rounded-lg w-fit">
         <img class="w-16 h-16 rounded-full object-cover object-center " src="http://localhost:8080{{ubication.creator.profileImageName}}">
         <span class="  rounded-full ">{{'@'+ ubication.creator.username }}</span>
       </div>
 
     </div>
   </div>
-  <div class="mt-4 text-center space-y-4">
-    <h1>{{ ubication.name }}</h1>
-    <p>{{ ubication.description }}</p>
-  </div>
 
-  <div class="space-x-2 flex justify-center align-center">
-    <mat-chip-row *ngFor="let theme of ubication.themes;">
-      {{ theme.name }}
-    </mat-chip-row>
-  </div>
 
-  <div class=" flex justify-center align-center space-x-4">
-    <span><i class="bi bi-calendar"></i> {{ ubication.initDate }}</span>
-    <span><i class="bi bi-calendar"></i> {{ ubication.endDate }}</span>
-  </div>
+  <mat-tab-group>
+    <mat-tab label="Descripción">
+      <div class="h-[calc(90vh_-_0px)]">
+        <div class="h-[calc(100%_-_260px)] overflow-auto space-y-4 ">
+          <div class="mt-4 text-center space-y-4">
+            <h1>{{ ubication.name }}</h1>
+            <p>{{ ubication.description }}</p>
+          </div>
 
-  <div class="text-center">
-    <span><i class="bi bi-geo-alt"></i> {{ ubication.ubication }}</span>
-  </div>
+          <div class="space-x-2 flex justify-center align-center">
+            <mat-chip-row *ngFor="let theme of ubication.themes;">
+              {{ theme.name }}
+            </mat-chip-row>
+          </div>
 
-  <div class="w-full flex justify-end align-center space-x-2">
-    <button mat-stroked-button color="primary" (click)="close()" class="">Cerrar</button>
-    <button mat-raised-button color="primary" (click)="join()" class="">Unirse</button>
-  </div>
+          <div class="flex flex-wrap justify-center align-center space-x-2 space-y-2">
+            <mat-chip-row>
+              <div class="flex justify-center items-center">
+                <i class="bi bi-calendar mr-2"></i>{{ transformDate(ubication.initDate) }}
+              </div>
 
+            </mat-chip-row>
+            <mat-chip-row>
+              <div class="flex justify-center items-center">
+                <i class="bi bi-calendar mr-2"></i> {{ transformDate(ubication.endDate) }}
+              </div>
+            </mat-chip-row>
+          </div>
+
+          <div class="text-center">
+            <span><i class="bi bi-geo-alt"></i> {{ ubication.ubication }}</span>
+          </div>
+        </div>
+
+        <div class="w-full flex justify-end align-center space-x-2 ">
+          <button mat-stroked-button color="primary" (click)="close()" class="">Cerrar</button>
+          <button mat-raised-button color="primary" (click)="join()" class="">Unirse</button>
+        </div>
+      </div>
+
+
+    </mat-tab>
+    <mat-tab label="Participantes">
+
+      <div class="h-[calc(90vh_-_0px)]">
+        <div class="h-[calc(100%_-_260px)] overflow-auto space-y-4 ">
+          <mat-list>
+            <div *ngFor="let participant of ubication.participants">
+              <mat-list-item>
+                <div class=" flex items-center space-x-2  rounded-lg w-fit">
+                  <img class="w-10 h-10 rounded-full object-cover object-center " src="http://localhost:8080{{participant.profileImageName}}">
+                  <span class="  rounded-full ">{{'@'+ participant.username }}</span>
+                </div>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            </div>
+
+          </mat-list>
+        </div>
+        <div  class="w-full flex justify-end align-center space-x-2 ">
+          <button mat-stroked-button color="primary" (click)="close()" class="">Cerrar</button>
+        </div>
+      </div>
+
+
+
+
+
+    </mat-tab>
+
+  </mat-tab-group>
 </div>

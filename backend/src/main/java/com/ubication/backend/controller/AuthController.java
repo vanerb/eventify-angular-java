@@ -24,8 +24,10 @@ public class AuthController {
        public User register(
                @RequestParam("email") String email,
                @RequestParam("password") String password,
+                @RequestParam("name") String name,
+                @RequestParam("username") String username,
                @RequestPart(value = "file", required = false) MultipartFile file) {
-           return authService.register(email, password, file);
+           return authService.register(email, password, name, username, file);
        }
 
     @PostMapping("/login")
