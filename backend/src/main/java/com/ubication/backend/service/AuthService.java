@@ -13,7 +13,6 @@ import com.ubication.backend.model.Image;
 import com.ubication.backend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 @Service
 public class AuthService implements AuthInterface {
 
@@ -21,7 +20,7 @@ public class AuthService implements AuthInterface {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-  @Autowired
+    @Autowired
     private ImageService imageService;
 
     public AuthService(UserRepository repository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
@@ -29,8 +28,6 @@ public class AuthService implements AuthInterface {
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
-
-
 
     @Override
     public User register(String email, String password, String name, String username, MultipartFile file) {
@@ -65,34 +62,31 @@ public class AuthService implements AuthInterface {
         User user = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-
-
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Incorrect password");
         }
 
-
         String token = jwtUtil.generateToken(email);
 
-           user.setToken(token);
-           repository.save(user);
+        user.setToken(token);
+        repository.save(user);
 
         return token;
     }
 
     @Override
     public User findUserByToken(String header) {
-           String token = header.replace("Bearer ", "");
+        String token = header.replace("Bearer ", "");
 
-           String email = jwtUtil.extractEmail(token);
+        String email = jwtUtil.extractEmail(token);
 
-           User user = repository.findByEmail(email)
-                   .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-           if (!token.equals(user.getToken())) {
-               throw new RuntimeException("Invalid token");
-           }
+        if (!token.equals(user.getToken())) {
+            throw new RuntimeException("Invalid token");
+        }
 
-           return user;
+        return user;
     }
 }

@@ -9,4 +9,5 @@ public interface ThemeRepository extends JpaRepository<Theme, Long> {
     // Si quieres, puedes agregar consultas personalizadas aquí
     // Ejemplo: buscar por nombre
     // Optional<Theme> findByName(String name);
+    void deleteByEventId(Long eventId);
 }

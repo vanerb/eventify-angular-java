@@ -63,5 +63,12 @@ public class ImageService implements ImageInterface {
     public void delete(Long id) {
         repository.deleteById(id);
     }
-}
 
+
+    public void deleteByFromId(String fromType, Long fromId) {
+        List<Image> images = repository.findByFromTypeAndFromId(fromType, fromId);
+        for (Image img : images) {
+            repository.delete(img);
+        }
+    }
+}

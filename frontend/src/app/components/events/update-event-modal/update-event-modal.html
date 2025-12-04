@@ -1,1 +1,138 @@
-<p>update-event-modal works!</p>
+<div class="relative overflow-auto h-full">
+
+  <div class="text-center mb-4">
+    <h1>Editar evento</h1>
+  </div>
+  <form [formGroup]="form" >
+
+
+    <!-- Header -->
+    <div class="flex justify-center items-center mb-5">
+      <div class="w-full flex justify-center items-end relative">
+        <div class="w-full h-36 bg-[rgb(66,66,66)] overflow-hidden rounded-lg mx-auto border border-transparent">
+          <img *ngIf="previewCoverImage" [src]="previewCoverImage" alt="No Image"
+               class="w-full h-full object-cover object-center">
+          <img *ngIf="!previewCoverImage" src="http://localhost:8080/uploads/No_Image_Available.jpg"
+               class="w-full h-36 object-cover object-center">
+        </div>
+
+        <div class="absolute -right-0">
+          <!-- Botón para cambiar imagen -->
+          <input type="file" accept="image/*" #fileInput hidden (change)="onImageChange($event)"/>
+          <button type="button" mat-raised-button color="primary"
+                  (click)="fileInput.click()"
+                  class="w-12 h-12 rounded-full flex justify-center items-center">
+            <i class="bi bi-pencil text-xl"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <mat-form-field color="primary" class="flex-1 w-full rounded-lg">
+      <mat-label>Nombre</mat-label>
+      <!--      <span matPrefix>-->
+      <!--              <i class="bi bi-alphabet-uppercase text-white text-xl mx-2"></i>-->
+      <!--            </span>-->
+      <input formControlName="name" matInput placeholder="Nombre del evento..." class="w-full">
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Descripción</mat-label>
+      <textarea class="w-full" formControlName="description" placeholder="Descripción del evento..."
+                matInput></textarea>
+    </mat-form-field>
+
+
+    <mat-checkbox [(ngModel)]="isOnline" class="w-full mb-4" color="primary" formControlName="type">¿Es online?</mat-checkbox>
+
+    <mat-form-field class="w-full">
+      <mat-label>Tema</mat-label>
+      <input
+        type="text"
+        matInput
+        [formControl]="themesControl"
+        [matAutocomplete]="autoGenres"
+      >
+      <mat-autocomplete #autoGenres="matAutocomplete" (optionSelected)="addTheme($event.option.value)">
+        <mat-option *ngFor="let option of filteredThemes | async" [value]="option">
+          <i [ngClass]="'bi ' + getThemesIcon(option.id)" class="text-lg mr-2.5"></i>
+          {{ option.name }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+
+    <div *ngIf="themesFormArray.controls.length > 0"
+         class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5">
+      <mat-chip-row class="h-full flex justify-center items-center"
+                    *ngFor="let genre of themesFormArray.controls; let i = index">
+        <div class="flex justify-center items-center space-x-2">
+          <span class="h-full">
+                 {{ genre.value.name }}
+              </span>
+          <i (click)="removeTheme(i)" class="bi bi-x-circle"></i>
+        </div>
+      </mat-chip-row>
+    </div>
+
+    <div class="w-full flex justify-center align-center space-x-2">
+      <mat-form-field class="w-[80%]">
+        <mat-label>Fecha de inicio</mat-label>
+        <input matInput [matDatepicker]="pickerInicio" formControlName="initDate">
+        <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerInicio></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="w-[20%]">
+        <mat-label>Hora de inicio</mat-label>
+        <input matInput type="time" formControlName="initHour">
+      </mat-form-field>
+    </div>
+
+
+    <div class="w-full flex justify-center align-center space-x-2">
+      <mat-form-field class="w-[80%]">
+        <mat-label>Fecha de fin</mat-label>
+        <input matInput [matDatepicker]="pickerFin" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFin></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="w-[20%]">
+        <mat-label>Hora de fin</mat-label>
+        <input matInput type="time" formControlName="endHour">
+      </mat-form-field>
+    </div>
+
+
+    <mat-form-field *ngIf="!isOnline" color="primary" class="flex-1 w-full rounded-lg">
+      <mat-label>Ubicación</mat-label>
+      <span matPrefix>
+              <i class="bi bi-geo-alt text-white text-xl mx-2"></i>
+            </span>
+      <input formControlName="ubication" (input)="onSearch($event)" matInput placeholder="Buscar el lugar del evento..."
+             class="w-full">
+    </mat-form-field>
+
+    <ul *ngIf="searchResults.length > 0"
+        class="bg-[rgb(62,62,62)]  p-2 rounded mb-4 mt-[-20px]">
+      <li *ngFor="let item of searchResults"
+          (click)="onSelectPlace(item)"
+          class="p-2 hover:bg-gray-200 cursor-pointer">
+        {{ item.display_name }}
+      </li>
+    </ul>
+
+
+    <div class="flex justify-end aling-end space-x-2">
+      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
+      <button (click)="createEvent()" mat-raised-button color="primary">Aceptar</button>
+    </div>
+  </form>
+
+
+</div>
+
+

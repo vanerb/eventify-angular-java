@@ -15,6 +15,8 @@ import {MatButton} from '@angular/material/button';
 import {firstValueFrom} from 'rxjs';
 import {AuthService} from '../../services/auth-service';
 import {FormsModule} from '@angular/forms';
+import {WarningModal} from '../general/warning-modal/warning-modal';
+import {UpdateEventModal} from '../events/update-event-modal/update-event-modal';
 
 @Component({
   selector: 'app-index',
@@ -38,13 +40,18 @@ export class Index implements OnInit, AfterViewInit {
 
 
   async ngOnInit() {
+
+
+    this.getAllEvents()
+    this.user = await firstValueFrom(this.authService.getUserByToken())
+    this.initMap();
+  }
+
+  getAllEvents(){
     this.eventService.getAll()
       .subscribe(async events => {
         this.events = events;
       });
-
-    this.user = await firstValueFrom(this.authService.getUserByToken())
-    this.initMap();
   }
 
   show(event: any) {
@@ -57,11 +64,54 @@ export class Index implements OnInit, AfterViewInit {
       }).then(async (item: FormData) => {
 
 
-        this.eventService.joinEvent(event.id, this.user.id).subscribe(async result => {
-          console.log(result)
-        });
+      this.eventService.joinEvent(event.id, this.user.id).subscribe(async result => {
+        console.log(result)
+      });
 
 
+    })
+      .catch(() => {
+        this.modalService.close()
+      });
+  }
+
+  delete(event: any) {
+    this.modalService.open(WarningModal, {
+        width: '60vh',
+      },
+      {
+        props: {
+          title: 'Eliminar',
+          message: '¿Está seguro de que quiere eliminar ' + event.name + '?',
+          type: 'delete'
+        }
+
+      }).then(async (item: FormData) => {
+
+
+      this.eventService.delete(event.id).subscribe(async (result: any) => {
+        console.log(result)
+        this.getAllEvents()
+      })
+
+
+    })
+      .catch(() => {
+        this.modalService.close()
+      });
+  }
+
+  edit(event: any) {
+    this.modalService.open(UpdateEventModal, {
+        width: '90vh',
+        height: '90vh',
+      },
+      {
+        event: event
+      }).then(async (item: FormData) => {
+      this.eventService.update(event.id, item).subscribe(async (result: any) => {
+        this.getAllEvents()
+      })
     })
       .catch(() => {
         this.modalService.close()
@@ -92,7 +142,7 @@ export class Index implements OnInit, AfterViewInit {
   }
 
 
-  updateMap(){
+  updateMap() {
     this.initMap();
   }
 
@@ -116,7 +166,6 @@ export class Index implements OnInit, AfterViewInit {
 
       // Crear marcador
       this.currentMarker = this.L.marker([lat, lng]).addTo(this.map);
-
 
 
       // Obtener info de la ubicación
@@ -157,7 +206,7 @@ export class Index implements OnInit, AfterViewInit {
               }).then(async (item: FormData) => {
 
 
-              })
+            })
               .catch(() => {
                 this.modalService.close()
               });
@@ -168,11 +217,12 @@ export class Index implements OnInit, AfterViewInit {
 
   createEvent() {
     this.modalService.open(CreateEventModal, {
-      width: '600px',
+      width: '90vh',
+      height: '90vh',
     }).then(async (item: FormData) => {
       this.eventService.create(item).subscribe({
         next: async () => {
-          window.location.reload()
+          this.getAllEvents()
         },
         error: error => {
           console.log(error)

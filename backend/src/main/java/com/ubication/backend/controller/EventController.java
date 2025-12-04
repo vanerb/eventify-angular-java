@@ -21,13 +21,22 @@ public class EventController {
     @Autowired
     private EventService service;
 
- @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Event create(
             @RequestPart("event") EventDTO eventDTO,
             @RequestPart(value = "file", required = false) MultipartFile file) {
 
         return service.create(eventDTO, file);
     }
+
+    @PostMapping(value = "/update/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public Event update(
+                @PathVariable Long eventId,
+                @RequestPart("event") EventDTO eventDTO,
+                @RequestPart(value = "file", required = false) MultipartFile file) {
+
+            return service.update(eventId, eventDTO, file);
+        }
 
     @GetMapping("/findByUserId/{userId}")
     public List<Event> findByUserId(@PathVariable Long userId) {

@@ -44,8 +44,9 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
   eventId: number | null = null;
   events: any[] = [];
   user!: any;
-  private messagesSub!: Subscription;
-  private messageDdbbSub!: Subscription;
+
+  private messagesSub?: Subscription;
+  private messageDdbbSub?: Subscription;
 
   groupedMessages: { date: string, messages: any[] }[] = [];
 
@@ -54,46 +55,34 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
     private http: HttpClient,
     private eventService: EventSevice,
     private readonly authService: AuthService,
-  ) {
-  }
+  ) {}
 
-  async ngAfterViewInit() {
-
+  async ngOnInit() {
     this.user = await firstValueFrom(this.authService.getUserByToken());
   }
 
-
-   ngOnInit() {
-
+  ngAfterViewInit() {
     this.eventService.getMyEventParticipations().subscribe((events) => {
       this.events = events;
     });
-
-    this.initConnection();
-
   }
 
+  /** AGRUPAR */
   groupMessagesByDate() {
     const groups: { [key: string]: any[] } = {};
 
     this.messages.forEach(msg => {
-      const date = new Date(msg.timestamp ?? '');
-      const dateString = date.toLocaleDateString(); // "4/12/2025"
-
-      if (!groups[dateString]) {
-        groups[dateString] = [];
-      }
-      groups[dateString].push(msg);
+      const dateStr = new Date(msg.timestamp ?? '').toLocaleDateString();
+      (groups[dateStr] ??= []).push(msg);
     });
 
-    this.groupedMessages = Object.keys(groups).map(date => ({
+    this.groupedMessages = Object.entries(groups).map(([date, messages]) => ({
       date,
-      messages: groups[date]
+      messages
     }));
   }
 
-
-
+  /** CONEXIÓN WEBSOCKET */
   initConnection() {
     if (!this.eventId) return;
 
@@ -101,33 +90,38 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
 
     this.chatService.connect(this.eventId);
 
+    if (this.messagesSub) this.messagesSub.unsubscribe();
+
     this.messagesSub = this.chatService.messages$.subscribe(msg => {
-      // Evitar duplicados
-      const exists = this.messages.some(
-        m => m.userId === msg.userId && m.timestamp === msg.timestamp
+      const exists = this.messages.some(m =>
+        m.userId === msg.userId &&
+        m.timestamp === msg.timestamp
       );
+
       if (!exists) {
         this.messages.push(msg);
+        this.groupMessagesByDate();
       }
     });
 
-
-    this.refreshMessages()
+    this.refreshMessages();
   }
 
+  /** CARGA INICIAL DE MENSAJES */
   refreshMessages() {
+    if (!this.eventId) return;
+
     if (this.messageDdbbSub) this.messageDdbbSub.unsubscribe();
 
-    this.messageDdbbSub = this.http.get<ChatMessage[]>(`http://localhost:8080/api/chat/${this.eventId}`)
+    this.messageDdbbSub = this.http
+      .get<ChatMessage[]>(`http://localhost:8080/api/chat/${this.eventId}`)
       .subscribe(msgs => {
         this.messages = msgs;
-        this.groupMessagesByDate()
+        this.groupMessagesByDate();
       });
-
-
-    console.log("AAA", this.groupedMessages)
   }
 
+  /** ENVIAR MENSAJE */
   sendMessage() {
     if (!this.newMessage.trim() || !this.eventId) return;
 
@@ -140,24 +134,17 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
     };
 
     this.chatService.sendMessage(message);
-
-    //this.messages.push(message);
-
     this.newMessage = '';
 
-
     setTimeout(() => this.refreshMessages(), 200);
-
   }
 
+  /** CAMBIAR EVENTO */
   changeEvent(id: number | null) {
-    this.messages = []
+    if (id === this.eventId) return;
 
     this.eventId = id;
-
-    this.refreshMessages()
-
-    if (id === this.eventId) return;
+    this.messages = [];
 
     if (this.messagesSub) this.messagesSub.unsubscribe();
 
@@ -166,6 +153,8 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     if (this.messagesSub) this.messagesSub.unsubscribe();
+    if (this.messageDdbbSub) this.messageDdbbSub.unsubscribe();
+
     this.chatService.disconnect();
   }
 

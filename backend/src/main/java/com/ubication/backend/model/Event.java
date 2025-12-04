@@ -41,7 +41,7 @@ public class Event {
     @JsonIgnoreProperties({"createdEvents", "joinedEvents"})
     private User creator;
 
-    @ManyToMany(mappedBy = "joinedEvents")
+    @ManyToMany(mappedBy = "joinedEvents", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<User> participants;
 

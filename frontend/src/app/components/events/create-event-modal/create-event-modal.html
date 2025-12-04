@@ -1,4 +1,4 @@
-<div class="relative">
+<div class="relative overflow-auto h-full">
 
   <div class="text-center mb-4">
     <h1>Crear evento</h1>
@@ -45,7 +45,8 @@
     </mat-form-field>
 
 
-    <mat-checkbox [(ngModel)]="isOnline" class="w-full mb-4" color="primary" formControlName="type">¿Es online?</mat-checkbox>
+    <mat-checkbox [(ngModel)]="isOnline" class="w-full mb-4" color="primary" formControlName="type">¿Es online?
+    </mat-checkbox>
 
     <mat-form-field class="w-full">
       <mat-label>Tema</mat-label>
@@ -66,9 +67,16 @@
 
     <div *ngIf="themesFormArray.controls.length > 0"
          class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5">
-      <mat-chip-row *ngFor="let genre of themesFormArray.controls; let i = index" (removed)="removeTheme(i)">
-        {{ genre.value.name }}
+      <mat-chip-row class="h-full flex justify-center items-center"
+                    *ngFor="let genre of themesFormArray.controls; let i = index">
+        <div class="flex justify-center items-center space-x-2">
+          <span class="h-full">
+                 {{ genre.value.name }}
+              </span>
+          <i (click)="removeTheme(i)" class="bi bi-x-circle"></i>
+        </div>
       </mat-chip-row>
+
     </div>
 
     <div class="w-full flex justify-center align-center space-x-2">

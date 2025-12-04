@@ -14,4 +14,6 @@ public interface ImageInterface {
     Image getCoverImage(String fromType, Long fromId);
 
     void delete(Long id);
+
+    void deleteByFromId(String fromType, Long fromId);
 }

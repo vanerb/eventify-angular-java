@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 public interface EventInterface {
     Event create(EventDTO dto, MultipartFile file);
 
+    Event update(Long eventId, EventDTO dto, MultipartFile file);
+
     List<Event> findByUserId(Long userId);
 
     List<EventDTO> findAll();

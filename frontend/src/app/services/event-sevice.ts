@@ -37,4 +37,18 @@ export class EventSevice {
     });
     return this.http.post<any[]>('http://localhost:8080/api/events/'+eventId+'/join/'+userId,{headers})
   }
+
+  delete(eventId: string){
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+    return this.http.delete<any[]>('http://localhost:8080/api/events/delete/'+eventId,{headers})
+  }
+
+  update(id: string, data: FormData){
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+    return this.http.post<any>(`${this.url}/update/${id}`, data, {headers});
+  }
 }
