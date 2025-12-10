@@ -52,8 +52,8 @@
     <div *ngIf="isLogged" (click)="gotTo('/profile')" class="menu-item flex flex-col justify-center items-center py-5 cursor-pointer">
       <div class="w-12 h-12 overflow-hidden rounded-full border border-transparent">
         <img
-          *ngIf="this.previewCoverImage"
-          [src]="'http://localhost:8080'+ previewCoverImage[0]?.url"
+
+          [src]="'http://localhost:8080'+ user.image.url"
           alt="No Image"
           class="w-full h-full object-cover object-center"
         />

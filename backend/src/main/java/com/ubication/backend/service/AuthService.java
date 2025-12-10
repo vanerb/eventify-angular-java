@@ -1,7 +1,10 @@
 package com.ubication.backend.service;
 
 import com.ubication.backend.model.User;
+import com.ubication.backend.dto.UserDTO;
+import com.ubication.backend.dto.ImageDTO;
 import com.ubication.backend.repository.UserRepository;
+import com.ubication.backend.repository.ImageRepository;
 import com.ubication.backend.security.JwtUtil;
 import com.ubication.backend.interfaces.AuthInterface;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +25,9 @@ public class AuthService implements AuthInterface {
 
     @Autowired
     private ImageService imageService;
+
+     @Autowired
+     private ImageRepository imageRepository;
 
     public AuthService(UserRepository repository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.repository = repository;
@@ -75,7 +81,7 @@ public class AuthService implements AuthInterface {
     }
 
     @Override
-    public User findUserByToken(String header) {
+    public UserDTO findUserByToken(String header) {
         String token = header.replace("Bearer ", "");
 
         String email = jwtUtil.extractEmail(token);
@@ -87,6 +93,21 @@ public class AuthService implements AuthInterface {
             throw new RuntimeException("Invalid token");
         }
 
-        return user;
+
+         UserDTO userDTO = user != null
+                                        ? new UserDTO(
+                                                user.getId(),
+                                                user.getName(),
+                                                 user.getBio(),
+                                                user.getUsername(),
+                                                user.getEmail(),
+                                                imageRepository.findByFromTypeAndFromId("USER", user.getId()).stream()
+                                                        .findFirst()
+                                                        .map(img -> new ImageDTO(img.getId(), img.getUrl()))
+                                                        .orElse(null)
+                                        )
+                                        : null;
+
+        return userDTO;
     }
 }

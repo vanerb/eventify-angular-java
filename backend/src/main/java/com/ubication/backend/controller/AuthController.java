@@ -1,6 +1,7 @@
 package com.ubication.backend.controller;
 
 import com.ubication.backend.model.User;
+import com.ubication.backend.dto.UserDTO;
 import com.ubication.backend.service.AuthService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +39,7 @@ public class AuthController {
 
 
    @GetMapping("/user")
-   public User getUserFromToken(@RequestHeader("Authorization") String authHeader) {
+   public UserDTO getUserFromToken(@RequestHeader("Authorization") String authHeader) {
         return authService.findUserByToken(authHeader);
    }
 }

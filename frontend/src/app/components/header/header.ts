@@ -31,7 +31,7 @@ export class Header implements OnInit {
   isLogged: boolean = false;
   drawerMode: 'side' | 'over' = 'side';
   user!: any
-  previewCoverImage!: any[];
+
 
   constructor(
     private readonly authService: AuthService,
@@ -57,8 +57,6 @@ export class Header implements OnInit {
 
     if (this.authService.getToken()) {
       this.user = await firstValueFrom(this.authService.getUserByToken()) || null
-      console.log("USWER",this.user)
-      this.previewCoverImage = await this.imagesService.getImage(this.user.id, 'user')
     } else {
 
     }
