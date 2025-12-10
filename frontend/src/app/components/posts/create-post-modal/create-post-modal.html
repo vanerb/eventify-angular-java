@@ -1,0 +1,116 @@
+<div class="w-full h-full">
+  <form [formGroup]="form" class="h-full w-full">
+    <div class=" w-full h-[calc(100%_-_30px)]">
+
+      <div class="w-full h-full flex justify-center space-x-5">
+        <div class="flex justify-center items-center mb-5 w-[50%]">
+          <div class="h-full w-full flex justify-center items-end relative">
+            <div class="w-full h-full bg-[rgb(66,66,66)] overflow-hidden rounded-lg mx-auto border border-transparent">
+              <img *ngIf="previewCoverImage" [src]="previewCoverImage" alt="No Image"
+                   class="w-full h-full object-cover object-center">
+              <img *ngIf="!previewCoverImage" src="http://localhost:8080/uploads/No_Image_Available.jpg"
+                   class="w-full h-full object-cover object-center">
+            </div>
+
+            <div class="absolute -right-0">
+              <!-- Botón para cambiar imagen -->
+              <input type="file" accept="image/*" #fileInput hidden (change)="onImageChange($event)"/>
+              <button type="button" mat-raised-button color="primary"
+                      (click)="fileInput.click()"
+                      class="w-12 h-12 rounded-full flex justify-center items-center">
+                <i class="bi bi-pencil text-xl"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div class="h-[calc(100%_-_10px)] overflow-auto w-[50%]">
+          <h1 class="mb-4 text-center">Crear publicación</h1>
+          <mat-form-field class="w-full">
+            <mat-label>Descripción</mat-label>
+            <textarea class="w-full" rows="8" formControlName="description" placeholder="Descripción de la publicación..."
+                      matInput></textarea>
+          </mat-form-field>
+
+          <mat-form-field class="w-full">
+            <mat-label>Evento</mat-label>
+            <input
+              type="text"
+              placeholder="Indica el evento con el que se relaciona la publicación..."
+              matInput
+              [formControl]="eventsControl"
+              [matAutocomplete]="autoEvents"
+            >
+            <mat-autocomplete #autoEvents="matAutocomplete" (optionSelected)="addEvent($event.option.value)">
+              <mat-option *ngFor="let option of filteredEvents | async" [value]="option">
+                {{ option.name }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <div *ngIf="eventFormArray.controls.length > 0"
+               class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5">
+            <mat-chip-row class="h-full flex justify-center items-center"
+                          *ngFor="let event of eventFormArray.controls; let i = index">
+              <div class="flex justify-center items-center space-x-2">
+          <span class="h-full">
+                 {{ event.value.name }}
+              </span>
+                <i (click)="removeEvent(i)" class="bi bi-x-circle"></i>
+              </div>
+            </mat-chip-row>
+
+          </div>
+
+          <mat-form-field class="w-full">
+            <mat-label>Hashtags</mat-label>
+            <input class="w-full"  (keydown.enter)="addHashtagEnter($event)" placeholder="Añade los hashtags de la publicación..."
+                      matInput>
+          </mat-form-field>
+
+          <div *ngIf="hashtagsFormArray.controls.length > 0"
+               class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5">
+            <mat-chip-row class="h-full flex justify-center items-center"
+                          *ngFor="let hashtag of hashtagsFormArray.controls; let i = index">
+              <div class="flex justify-center items-center space-x-2">
+          <span class="h-full">
+                 {{ hashtag.value.name }}
+              </span>
+                <i (click)="removeHashtag(i)" class="bi bi-x-circle"></i>
+              </div>
+            </mat-chip-row>
+
+          </div>
+
+
+
+          <mat-form-field color="primary" class="flex-1 w-full rounded-lg">
+            <mat-label>Url</mat-label>
+            <!--      <span matPrefix>-->
+            <!--              <i class="bi bi-alphabet-uppercase text-white text-xl mx-2"></i>-->
+            <!--            </span>-->
+            <input formControlName="url" matInput placeholder="Introduce una URL si la publicación tiene una..." class="w-full">
+          </mat-form-field>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+    <div class="flex justify-end aling-end space-x-2">
+      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
+
+      <button (click)="createPost()" mat-raised-button color="primary">Aceptar</button>
+
+
+    </div>
+  </form>
+
+
+</div>

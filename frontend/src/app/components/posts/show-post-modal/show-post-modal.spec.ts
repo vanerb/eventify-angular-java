@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EventCard } from './event-card';
+import { ShowPostModal } from './show-post-modal';
 
-describe('EventCard', () => {
-  let component: EventCard;
-  let fixture: ComponentFixture<EventCard>;
+describe('ShowPostModal', () => {
+  let component: ShowPostModal;
+  let fixture: ComponentFixture<ShowPostModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventCard]
+      imports: [ShowPostModal]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EventCard);
+    fixture = TestBed.createComponent(ShowPostModal);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

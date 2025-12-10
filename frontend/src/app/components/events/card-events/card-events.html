@@ -1,0 +1,85 @@
+<mat-card class="mb-4 " appearance="outlined">
+
+  <div  class="w-full h-24 overflow-hidden ">
+    <img *ngIf="event?.image?.url"  src="{{ 'http://localhost:8080'+event.image.url }}" class="object-cover object-center h-32 w-full rounded-t-md">
+  </div>
+  <div class="h-[calc(100%_-_140px)]">
+    <mat-card-header class="m-0 flex justify-center items-center text-center">
+      <mat-card-title class="line-clamp-1">{{ event.name }}</mat-card-title>
+      <mat-card-subtitle>
+        <div *ngIf="event.type === 'online'">
+          <i class="bi bi-globe"></i> Online
+
+        </div>
+
+        <div *ngIf="event.type === 'notOnline'">
+          <i class="bi bi-geo"></i> Presencial
+        </div>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="mt-4 ">
+      <div class="flex flex-col justify-center items-center space-y-2 text-center">
+              <span class="line-clamp-4">
+            {{ event.description }}
+              </span>
+
+        <div class="flex flex-wrap justify-center align-center space-x-2 space-y-1">
+          <mat-chip-row >
+            <div class="flex justify-center items-center">
+              <i class="bi bi-calendar mr-2"></i>{{ transformDate(event.initDate) }}
+            </div>
+
+          </mat-chip-row>
+          <mat-chip-row>
+            <div class="flex justify-center items-center">
+              <i class="bi bi-calendar mr-2"></i> {{ transformDate(event.endDate) }}
+            </div>
+          </mat-chip-row>
+        </div>
+
+
+        <div class="space-x-2 flex flex-wrap justify-center align-center space-y-1">
+          <mat-chip-row *ngFor="let theme of event.themes;">
+            {{ theme.name }}
+          </mat-chip-row>
+        </div>
+
+        <div *ngIf="event.ubication" class="flex justify-center items-center">
+              <span >
+                <i class="bi bi-geo-alt"></i> {{ event.ubication }}
+              </span>
+        </div>
+
+      </div>
+
+    </mat-card-content>
+  </div>
+
+  <mat-card-actions class="flex flex-wrap justify-between items-end">
+    <div class="flex justify-center items-center space-x-2">
+      <i class="bi bi-person "></i>
+      <span>{{ event.participants.length }} participantes</span>
+    </div>
+
+    <div class="space-x-2 flex flex-wrap">
+      <button (click)="delete()" *ngIf="event.creator.id === this.user.id" mat-stroked-button color="warn">
+        <i class="bi bi-trash"></i>
+      </button>
+
+      <button (click)="edit()" *ngIf="event.creator.id === this.user.id" mat-stroked-button color="accent">
+        <i class="bi bi-pencil"></i>
+      </button>
+
+      <button (click)="show()" mat-raised-button color="primary" >
+        <div class="flex justify-center items-center space-x-2">
+          <i class="bi bi-eye "></i>
+          <span class="h-full">
+                 Ver
+              </span>
+        </div>
+
+      </button>
+    </div>
+
+  </mat-card-actions>
+</mat-card>
