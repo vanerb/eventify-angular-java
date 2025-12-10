@@ -26,7 +26,7 @@ import {CardEvents} from './card-events/card-events';
   styleUrl: './events.css',
   standalone: true
 })
-export class Events {
+export class Events implements OnInit, AfterViewInit{
   private L: any;
   map: any;
   currentMarker: any;
@@ -40,18 +40,47 @@ export class Events {
   }
 
 
-  async ngOnInit() {
+  async ngAfterViewInit() {
 
 
+    if (typeof window !== 'undefined') {
+      this.user = await firstValueFrom(this.authService.getUserByToken())
+
+      const leaflet = await import('leaflet');
+
+      this.L = leaflet;
+
+
+      const DefaultIcon = this.L.icon({
+        iconUrl: 'assets/leaflet/marker-icon.png',
+        iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
+        shadowUrl: 'assets/leaflet/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+      this.L.Marker.prototype.options.icon = DefaultIcon;
+
+      this.initMap();
+    }
+  }
+
+
+   ngOnInit() {
     this.getAllEvents()
-    this.user = await firstValueFrom(this.authService.getUserByToken())
+
     this.initMap();
+
+
+    console.log("AAA",this.events)
   }
 
   getAllEvents(){
     this.eventService.getAll()
       .subscribe(async events => {
         this.events = events;
+        console.log(events)
       });
   }
 
@@ -138,28 +167,7 @@ export class Events {
       });
   }
 
-  async ngAfterViewInit() {
-    if (typeof window !== 'undefined') {
 
-      const leaflet = await import('leaflet');
-
-      this.L = leaflet;
-
-
-      const DefaultIcon = this.L.icon({
-        iconUrl: 'assets/leaflet/marker-icon.png',
-        iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
-        shadowUrl: 'assets/leaflet/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-      });
-      this.L.Marker.prototype.options.icon = DefaultIcon;
-
-      this.initMap();
-    }
-  }
 
 
   updateMap() {

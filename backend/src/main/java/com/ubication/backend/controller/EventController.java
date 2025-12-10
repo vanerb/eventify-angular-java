@@ -4,6 +4,7 @@ package com.ubication.backend.controller;
 import com.ubication.backend.model.User;
 import com.ubication.backend.model.Event;
 import com.ubication.backend.dto.EventDTO;
+import com.ubication.backend.dto.UserDTO;
 import com.ubication.backend.service.EventService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -65,7 +66,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}/users")
-    public List<User> getUsers(@PathVariable Long eventId) {
+    public List<UserDTO> getUsers(@PathVariable Long eventId) {
         return service.getUsersByEvent(eventId);
     }
 }

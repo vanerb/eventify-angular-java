@@ -8,19 +8,19 @@
         <img src="" class="object-cover object-center h-32 w-full">
       </div>
 
-      <div class="absolute w-full h-16 -bottom-7 left-0 right-0 flex justify-center">
+      <div class="absolute w-full h-24 -bottom-10 left-0 right-0 flex justify-center">
         <div class="flex items-center space-x-2 rounded-lg w-fit">
-          <img class="w-16 h-16 rounded-full object-cover object-center" src="">
+          <img class="w-24 h-24 rounded-full object-cover object-center" src="{{'http://localhost:8080'+user.profileImageName}}">
         </div>
       </div>
     </div>
 
     <div class="mt-10 space-y-4 text-center">
       <div>
-        <h1>Vanesa</h1>
+        <h1>{{ user.name }}</h1>
         <span class="  rounded-full ">{{ '@' + 'vanerb' }}</span>
       </div>
-      <p>DescricionDescricionDescricionDescricionDescricionDescricionDescricionDescricionDescricionDescricion</p>
+      <p>{{ user.description }}</p>
 
       <mat-divider></mat-divider>
 
@@ -28,17 +28,14 @@
         <mat-tab label="Publicaciones">
 
 
-          <div class="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-4 mt-4">
-            <div class="w-32 h-32 overflow-hidden rounded-lg">
-              <img src="" class="object-cover object-center h-32 w-full rounded-lg">
-            </div>
-          </div>
+
+          <app-posts></app-posts>
 
 
         </mat-tab>
         <mat-tab label="Eventos">
 
-
+          <app-events></app-events>
 
         </mat-tab>
       </mat-tab-group>

@@ -1,7 +1,8 @@
 package com.ubication.backend.dto;
 import java.time.LocalDateTime;
-import com.ubication.backend.model.User;
-import com.ubication.backend.model.Event;
+import com.ubication.backend.dto.UserDTO;
+import com.ubication.backend.dto.EventDTO;
+import com.ubication.backend.dto.HashtagDTO;
 import com.ubication.backend.dto.ImageDTO;
 import java.util.List;
 import com.ubication.backend.dto.ThemeDTO;
@@ -9,7 +10,9 @@ import com.ubication.backend.dto.ThemeDTO;
 public record PostDTO(
         Long id,
         String description,
-        Event event,
-        User creator,
+        String url,
+        List<HashtagDTO> hashtags,
+        EventDTO event,
+        UserDTO creator,
         ImageDTO image
 ) {}

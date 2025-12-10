@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -16,6 +19,7 @@ public class Post {
     private Long id;
 
     private String description;
+     private String url;
 
     @ManyToOne
         @JoinColumn(name = "creator_id")
@@ -23,6 +27,8 @@ public class Post {
         private User creator;
 
 
+   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+   private List<Hashtag> hashtags = new ArrayList<>(); // lista inicializada
 
     @ManyToOne
        @JoinColumn(name = "event_id", nullable = true) // relación opcional

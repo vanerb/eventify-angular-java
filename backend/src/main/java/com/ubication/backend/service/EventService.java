@@ -3,6 +3,7 @@ package com.ubication.backend.service;
 import com.ubication.backend.model.User;
 import com.ubication.backend.model.Event;
 import com.ubication.backend.dto.ImageDTO;
+import com.ubication.backend.dto.UserDTO;
 import com.ubication.backend.model.Theme;
 import com.ubication.backend.model.Image;
 import com.ubication.backend.repository.UserRepository;
@@ -176,97 +177,163 @@ public class EventService implements EventInterface {
     }
 
     @Override
-    public List<User> getUsersByEvent(Long eventId) {
+    public List<UserDTO> getUsersByEvent(Long eventId) {
         Event event = repository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
-        return event.getParticipants();
+
+        return event.getParticipants().stream()
+                .map(u -> {
+                    // Buscar imagen de perfil
+                    List<Image> images = imageRepository.findByFromTypeAndFromId("USER", u.getId());
+                    ImageDTO imageDTO = images.isEmpty()
+                            ? null
+                            : new ImageDTO(images.get(0).getId(), images.get(0).getUrl());
+
+                    // Construir UserDTO
+                    return new UserDTO(
+                            u.getId(),
+                            u.getName(),
+                            u.getUsername(),
+                            u.getEmail(),
+                            imageDTO
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     public List<Event> findByUserId(Long userId) {
         return repository.findByCreatorId(userId);
     }
 
-    public List<EventDTO> findMyEventParticipations(String header) {
-        String token = header.replace("Bearer ", "");
-        String email = jwtUtil.extractEmail(token);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!token.equals(user.getToken())) {
-            throw new RuntimeException("Invalid token");
+     public List<EventDTO> findMyEventParticipations(String header) {
+            String token = header.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(token);
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            if (!token.equals(user.getToken())) {
+                throw new RuntimeException("Invalid token");
+            }
+
+            return repository.findAllByParticipantsId(user.getId())
+                    .stream()
+                    .map(e -> {
+                        List<ThemeDTO> themes = e.getThemes() != null
+                                ? e.getThemes().stream()
+                                        .map(t -> new ThemeDTO(t.getId(), t.getName()))
+                                        .collect(Collectors.toList())
+                                : Collections.emptyList();
+
+                        List<Image> images = imageRepository.findByFromTypeAndFromId("EVENT", e.getId());
+                        ImageDTO imageDTO = images.isEmpty()
+                                ? null
+                                : new ImageDTO(images.get(0).getId(), images.get(0).getUrl());
+
+                        List<UserDTO> participantsDTO = e.getParticipants() != null
+                                ? e.getParticipants().stream()
+                                        .map(u -> {
+                                            List<Image> userImages = imageRepository.findByFromTypeAndFromId("USER", u.getId());
+                                            ImageDTO userImageDTO = userImages.isEmpty()
+                                                    ? null
+                                                    : new ImageDTO(userImages.get(0).getId(), userImages.get(0).getUrl());
+                                            return new UserDTO(u.getId(), u.getName(), u.getUsername(), u.getEmail(), userImageDTO);
+                                        })
+                                        .collect(Collectors.toList())
+                                : Collections.emptyList();
+
+                        User creator = e.getCreator();
+                        UserDTO creatorDTO = creator != null
+                                ? new UserDTO(
+                                        creator.getId(),
+                                        creator.getName(),
+                                        creator.getUsername(),
+                                        creator.getEmail(),
+                                        imageRepository.findByFromTypeAndFromId("USER", creator.getId()).stream()
+                                                .findFirst()
+                                                .map(img -> new ImageDTO(img.getId(), img.getUrl()))
+                                                .orElse(null)
+                                )
+                                : null;
+
+                        return new EventDTO(
+                                e.getId(),
+                                e.getInitDate(),
+                                e.getEndDate(),
+                                e.getPlaceId(),
+                                themes,
+                                participantsDTO,
+                                e.getUbication(),
+                                e.getLatitude(),
+                                e.getLongitude(),
+                                e.getName(),
+                                e.getDescription(),
+                                e.getType(),
+                                creatorDTO,
+                                imageDTO
+                        );
+                    })
+                    .collect(Collectors.toList());
         }
 
-        return repository.findAllByParticipantsId(user.getId())
-                .stream()
-                .map(e -> {
-                    List<ThemeDTO> themes = e.getThemes() != null
-                            ? e.getThemes().stream()
-                                    .map(t -> new ThemeDTO(t.getId(), t.getName()))
-                                    .collect(Collectors.toList())
-                            : Collections.emptyList();
-
-                    List<Image> images = imageRepository.findByFromTypeAndFromId("EVENT", e.getId());
-                    ImageDTO imageDTO = images.isEmpty()
-                            ? null
-                            : new ImageDTO(
-                                    images.get(0).getId(),
-                                    images.get(0).getUrl());
-
-                    return new EventDTO(
-                            e.getId(), // Long id
-                            e.getInitDate(), // LocalDateTime initDate
-                            e.getEndDate(), // LocalDateTime endDate
-                            e.getPlaceId(), // String placeId
-                            themes, // List<ThemeDTO> themes
-                            e.getParticipants(), // List<User> participants
-                            e.getUbication(), // String ubication
-
-                            e.getLatitude(), // Double latitude
-                            e.getLongitude(), // Double longitude
-                            e.getName(), // String name
-                            e.getDescription(), // String description
-                            e.getType(),
-                            e.getCreator(), // User creator
-                            imageDTO);
-                })
-                .collect(Collectors.toList());
-    }
-
     public List<EventDTO> findAll() {
-        return repository.findAll()
-                .stream()
-                .map(e -> {
-                    List<ThemeDTO> themes = e.getThemes() != null
-                            ? e.getThemes().stream()
-                                    .map(t -> new ThemeDTO(t.getId(), t.getName()))
-                                    .collect(Collectors.toList())
-                            : Collections.emptyList();
+            return repository.findAll()
+                    .stream()
+                    .map(e -> {
+                        List<ThemeDTO> themes = e.getThemes() != null
+                                ? e.getThemes().stream()
+                                        .map(t -> new ThemeDTO(t.getId(), t.getName()))
+                                        .collect(Collectors.toList())
+                                : Collections.emptyList();
 
-                    List<Image> images = imageRepository.findByFromTypeAndFromId("EVENT", e.getId());
-                    ImageDTO imageDTO = images.isEmpty()
-                            ? null
-                            : new ImageDTO(
-                                    images.get(0).getId(),
-                                    images.get(0).getUrl());
+                        List<Image> images = imageRepository.findByFromTypeAndFromId("EVENT", e.getId());
+                        ImageDTO imageDTO = images.isEmpty()
+                                ? null
+                                : new ImageDTO(images.get(0).getId(), images.get(0).getUrl());
 
-                    return new EventDTO(
-                            e.getId(), // Long id
-                            e.getInitDate(), // LocalDateTime initDate
-                            e.getEndDate(), // LocalDateTime endDate
-                            e.getPlaceId(), // String placeId
-                            themes, // List<ThemeDTO> themes
-                            e.getParticipants(), // List<User> participants
-                            e.getUbication(), // String ubication
+                        List<UserDTO> participantsDTO = e.getParticipants() != null
+                                ? e.getParticipants().stream()
+                                        .map(u -> {
+                                            List<Image> userImages = imageRepository.findByFromTypeAndFromId("USER", u.getId());
+                                            ImageDTO userImageDTO = userImages.isEmpty()
+                                                    ? null
+                                                    : new ImageDTO(userImages.get(0).getId(), userImages.get(0).getUrl());
+                                            return new UserDTO(u.getId(), u.getName(), u.getUsername(), u.getEmail(), userImageDTO);
+                                        })
+                                        .collect(Collectors.toList())
+                                : Collections.emptyList();
 
-                            e.getLatitude(), // Double latitude
-                            e.getLongitude(), // Double longitude
-                            e.getName(), // String name
-                            e.getDescription(), // String description
-                            e.getType(),
-                            e.getCreator(), // User creator
-                            imageDTO);
-                })
-                .collect(Collectors.toList());
-    }
+                        User creator = e.getCreator();
+                        UserDTO creatorDTO = creator != null
+                                ? new UserDTO(
+                                        creator.getId(),
+                                        creator.getName(),
+                                        creator.getUsername(),
+                                        creator.getEmail(),
+                                        imageRepository.findByFromTypeAndFromId("USER", creator.getId()).stream()
+                                                .findFirst()
+                                                .map(img -> new ImageDTO(img.getId(), img.getUrl()))
+                                                .orElse(null)
+                                )
+                                : null;
+
+                        return new EventDTO(
+                                e.getId(),
+                                e.getInitDate(),
+                                e.getEndDate(),
+                                e.getPlaceId(),
+                                themes,
+                                participantsDTO,
+                                e.getUbication(),
+                                e.getLatitude(),
+                                e.getLongitude(),
+                                e.getName(),
+                                e.getDescription(),
+                                e.getType(),
+                                creatorDTO,
+                                imageDTO
+                        );
+                    })
+                    .collect(Collectors.toList());
+        }
 
     @Transactional
     public void delete(Long id) {
