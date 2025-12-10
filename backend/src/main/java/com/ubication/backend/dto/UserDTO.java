@@ -11,6 +11,7 @@ import com.ubication.backend.dto.ThemeDTO;
 public record UserDTO(
        Long id,
             String name,
+             String bio,
             String username,
             String email,
             ImageDTO image

@@ -155,7 +155,7 @@ public class PostService implements PostInterface {
                                           ImageDTO userImageDTO = userImages.isEmpty()
                                                   ? null
                                                   : new ImageDTO(userImages.get(0).getId(), userImages.get(0).getUrl());
-                                          return new UserDTO(u.getId(), u.getName(), u.getUsername(), u.getEmail(), userImageDTO);
+                                          return new UserDTO(u.getId(), u.getName(), u.getBio(), u.getUsername(), u.getEmail(), userImageDTO);
                                       })
                                       .collect(Collectors.toList())
                                 : Collections.emptyList();
@@ -166,6 +166,7 @@ public class PostService implements PostInterface {
                                 ? new UserDTO(
                                         creator.getId(),
                                         creator.getName(),
+                                          creator.getBio(),
                                         creator.getUsername(),
                                         creator.getEmail(),
                                         imageRepository.findByFromTypeAndFromId("USER", creator.getId()).stream()
@@ -211,6 +212,7 @@ public class PostService implements PostInterface {
                     UserDTO userDTO = new UserDTO(
                             creator.getId(),
                             creator.getName(),
+                             creator.getBio(),
                             creator.getUsername(),
                             creator.getEmail(),
                             creatorImageDTO

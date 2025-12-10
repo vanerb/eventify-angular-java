@@ -193,6 +193,7 @@ public class EventService implements EventInterface {
                     return new UserDTO(
                             u.getId(),
                             u.getName(),
+                             u.getBio(),
                             u.getUsername(),
                             u.getEmail(),
                             imageDTO
@@ -235,7 +236,7 @@ public class EventService implements EventInterface {
                                             ImageDTO userImageDTO = userImages.isEmpty()
                                                     ? null
                                                     : new ImageDTO(userImages.get(0).getId(), userImages.get(0).getUrl());
-                                            return new UserDTO(u.getId(), u.getName(), u.getUsername(), u.getEmail(), userImageDTO);
+                                            return new UserDTO(u.getId(), u.getName(), u.getBio(), u.getUsername(), u.getEmail(), userImageDTO);
                                         })
                                         .collect(Collectors.toList())
                                 : Collections.emptyList();
@@ -245,6 +246,7 @@ public class EventService implements EventInterface {
                                 ? new UserDTO(
                                         creator.getId(),
                                         creator.getName(),
+                                         creator.getBio(),
                                         creator.getUsername(),
                                         creator.getEmail(),
                                         imageRepository.findByFromTypeAndFromId("USER", creator.getId()).stream()
@@ -296,7 +298,7 @@ public class EventService implements EventInterface {
                                             ImageDTO userImageDTO = userImages.isEmpty()
                                                     ? null
                                                     : new ImageDTO(userImages.get(0).getId(), userImages.get(0).getUrl());
-                                            return new UserDTO(u.getId(), u.getName(), u.getUsername(), u.getEmail(), userImageDTO);
+                                            return new UserDTO(u.getId(), u.getName(), u.getBio(), u.getUsername(), u.getEmail(), userImageDTO);
                                         })
                                         .collect(Collectors.toList())
                                 : Collections.emptyList();
@@ -306,6 +308,7 @@ public class EventService implements EventInterface {
                                 ? new UserDTO(
                                         creator.getId(),
                                         creator.getName(),
+                                        creator.getBio(),
                                         creator.getUsername(),
                                         creator.getEmail(),
                                         imageRepository.findByFromTypeAndFromId("USER", creator.getId()).stream()
