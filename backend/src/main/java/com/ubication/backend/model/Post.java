@@ -34,4 +34,7 @@ public class Post {
        @JoinColumn(name = "event_id", nullable = true) // relación opcional
        @JsonIgnoreProperties({"posts"}) // si necesitas evitar recursión
        private Event event;
+
+       @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+       private List<Comment> comments = new ArrayList<>();
 }

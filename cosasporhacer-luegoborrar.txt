@@ -2,7 +2,7 @@
 POSTS
 ----------------
 dar likes
-poner hashtags
+poner hashtags (HECHO)
 poner guardar
-poner url
+poner url para compartir (Frontend)
 poner comentarios
