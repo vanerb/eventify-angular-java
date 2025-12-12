@@ -183,6 +183,10 @@ public class PostService implements PostInterface {
                                       .collect(Collectors.toList())
                                 : Collections.emptyList();
 
+
+                        List<Image> imageEvent = imageRepository.findByFromTypeAndFromId("EVENT", event.getId());
+                        ImageDTO imageEventDTO = imageEvent.isEmpty() ? null  : new ImageDTO(imageEvent.get(0).getId(), imageEvent.get(0).getUrl());
+
                         // Construimos EventDTO
                         eventDTO = new EventDTO(
                                 event.getId(),
@@ -198,7 +202,7 @@ public class PostService implements PostInterface {
                                 event.getDescription(),
                                 event.getType(),
                                 creatorDTO,
-                                null  // Imagen del evento si quieres añadir
+                                imageEventDTO  // Imagen del evento si quieres añadir
                         );
                     }
 

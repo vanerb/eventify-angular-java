@@ -4,6 +4,8 @@ import {MatChipRow} from '@angular/material/chips';
 import {transformDate} from '../../../services/utilities-service';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
+import {MatMenuModule} from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-card-events',
@@ -12,7 +14,9 @@ import {MatButton} from '@angular/material/button';
     MatChipRow,
     NgForOf,
     NgIf,
-    MatButton
+    MatButton,
+    MatMenuModule,
+    MatTooltipModule
   ],
   templateUrl: './card-events.html',
   styleUrl: './card-events.css',
@@ -21,8 +25,12 @@ import {MatButton} from '@angular/material/button';
 export class CardEvents {
   @Input() event!: any
   @Input() user!: any
+  @Input() view: 'small' | 'complete' = 'complete'
+  @Input() realOnly : boolean = false;
 
   @Output() actions = new EventEmitter()
+
+  showDescriptionFull: boolean = false
 
   delete(){
     this.actions.emit({
@@ -43,6 +51,14 @@ export class CardEvents {
   show(){
     this.actions.emit({
       action: 'show',
+      event: this.event,
+      user: this.user,
+    })
+  }
+
+  join(){
+    this.actions.emit({
+      action: 'join',
       event: this.event,
       user: this.user,
     })

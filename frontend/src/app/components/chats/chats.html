@@ -16,51 +16,7 @@
                     </div>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
-                <div class="space-y-6">
-                  <div class="w-full h-32  relative">
-                    <div class="w-full h-32 overflow-hidden rounded-lg">
-                      <img src="{{'http://localhost:8080'+event.image.url}}"
-                           class="object-cover object-center h-32 w-full">
-                    </div>
-
-                    <div class="absolute w-full h-16 -bottom-4 left-0  ">
-                      <div class=" flex items-center space-x-2  rounded-lg w-fit">
-                        <img class="w-16 h-16 rounded-full object-cover object-center "
-                             src="http://localhost:8080{{event.creator.profileImageName}}">
-                        <span class="  rounded-full ">{{ '@' + event.creator.username }}</span>
-                      </div>
-
-                    </div>
-                  </div>
-                  <div class="mt-4 text-center space-y-4">
-                    <h1>{{ event.name }}</h1>
-                    <p class="line-clamp-4">{{ event.description }}</p>
-                  </div>
-
-                  <div class="space-x-2 flex-wrap  flex justify-center align-center  space-y-4">
-                    <mat-chip-row *ngFor="let theme of event.themes;">
-                      {{ theme.name }}
-                    </mat-chip-row>
-                  </div>
-
-                  <div class="flex flex-wrap justify-center align-center space-x-2 space-y-4">
-                    <mat-chip-row>
-                      <div class="flex justify-center items-center">
-                        <i class="bi bi-calendar mr-2"></i>{{ transformDate(event.initDate) }}
-                      </div>
-
-                    </mat-chip-row>
-                    <mat-chip-row>
-                      <div class="flex justify-center items-center">
-                        <i class="bi bi-calendar mr-2"></i> {{ transformDate(event.endDate) }}
-                      </div>
-                    </mat-chip-row>
-                  </div>
-
-                  <div class="text-center">
-                    <span><i class="bi bi-geo-alt"></i> {{ event.ubication }}</span>
-                  </div>
-                </div>
+                <app-card-events [event]="event" [user]="event.creator" [view]="'complete'" [realOnly]="true"></app-card-events>
 
               </mat-expansion-panel>
             </mat-accordion>

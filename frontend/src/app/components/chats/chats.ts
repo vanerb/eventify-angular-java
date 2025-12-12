@@ -17,6 +17,7 @@ import {AuthService} from '../../services/auth-service';
 import {firstValueFrom, Subscription} from 'rxjs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatChipRow} from '@angular/material/chips';
+import {CardEvents} from '../events/card-events/card-events';
 
 @Component({
   selector: 'app-chats',
@@ -32,7 +33,8 @@ import {MatChipRow} from '@angular/material/chips';
     MatButton,
     NgIf,
     MatExpansionModule,
-    MatChipRow
+    MatChipRow,
+    CardEvents
   ],
   templateUrl: './chats.html',
   styleUrl: './chats.css',

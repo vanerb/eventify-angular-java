@@ -11,6 +11,8 @@ import {CardPosts} from './card-posts/card-posts';
 import {firstValueFrom} from 'rxjs';
 import {AuthService} from '../../services/auth-service';
 import {After} from 'node:v8';
+import {ShowEventModal} from '../events/show-event-modal/show-event-modal';
+import {ShowPostModal} from './show-post-modal/show-post-modal';
 
 @Component({
   selector: 'app-posts',
@@ -89,7 +91,7 @@ export class Posts implements OnInit, AfterViewInit{
       switch (data.action){
 
         case 'show':
-          this.show(data.event)
+          this.show(data.post)
           break
 
       }
@@ -98,7 +100,18 @@ export class Posts implements OnInit, AfterViewInit{
 
 
 
-  show(post: any){
+  show(post: any) {
+    this.modalService.open(ShowPostModal, {
+        width: '180vh',
+        height: '90vh',
+      },
+      {
+        post: post
+      }).then(async (item: FormData) => {
 
+    })
+      .catch(() => {
+        this.modalService.close()
+      });
   }
 }
