@@ -1,89 +1,145 @@
-<div class="w-full h-full">
-  <div class="flex justify-between  w-full h-full space-x-4">
+<div class="w-full h-[calc(90vh_-_20px)]">
+
+  <div class="flex justify-between w-full h-full space-x-4">
+
+    <!-- LADO IZQUIERDO (IMAGEN) -->
     <div class="w-[50%] h-full rounded-lg overflow-hidden">
       <div class="w-full h-full flex justify-center items-center overflow-hidden">
         <img
           class="max-w-full max-h-full object-contain"
           [src]="'http://localhost:8080' + post.image.url"
-          alt="Imagen"
-        >
+          alt="Imagen">
       </div>
     </div>
 
-    <div class="flex flex-col w-[50%] ">
-      <div class="h-full overflow-auto space-y-4 text-center px-4">
-        <div class="w-full h-32 relative">
-          <div class="w-full h-32 overflow-hidden">
-            <img src="" class="object-cover object-center h-32 w-full">
+    <!-- LADO DERECHO -->
+    <div class="flex flex-col w-[50%] h-full overflow-hidden">
+
+      <!-- CONTENIDO SCROLLEABLE COMPLETO -->
+      <div class="flex-1 overflow-auto px-4 space-y-4">
+
+        <!-- CABECERA -->
+        <div class="w-full h-24 relative">
+          <div class="w-full h-24 overflow-hidden">
+            <img src="" class="object-cover h-24 w-full">
           </div>
-          <div class="absolute w-full h-24 -bottom-10 left-0 right-0 flex justify-center">
-            <div class="flex items-center space-x-2 rounded-lg w-fit">
-              <img class="w-24 h-24 rounded-full object-cover object-center"
-                   src="{{'http://localhost:8080'+post.creator.image.url}}">
+
+          <div class="absolute w-full h-16 -bottom-8 left-0 flex justify-center">
+            <img class="w-16 h-16 rounded-full object-cover"
+                 [src]="'http://localhost:8080'+post.creator.image.url">
+          </div>
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="pt-10">
+
+          <div class="w-full">
+            <span>{{ post.description }}</span>
+          </div>
+
+          <div class="w-full mt-2">
+            <div class="flex flex-wrap justify-center gap-1">
+              <mat-chip-row *ngFor="let hashtag of post.hashtags">
+                {{ '#' + hashtag.name }}
+              </mat-chip-row>
             </div>
           </div>
+
         </div>
 
-        <div class="w-full mt-12">
-          <span>{{ post.description }}</span>
-        </div>
+        <!-- TABS -->
+        <mat-tab-group class="h-[57vh] overflow-hidden">
 
-        <div class="w-full">
+          <!-- TAB: COMENTARIOS -->
+          <mat-tab label="Comentarios">
 
-          <div class="space-x-2 flex flex-wrap justify-center align-center space-y-1">
-            <mat-chip-row *ngFor="let hashtag of post.hashtags;">
-              {{ '#' + hashtag.name }}
-            </mat-chip-row>
-          </div>
-        </div>
+            <!-- NECESARIO: ALTURA TOTAL -->
+            <div class="h-full flex flex-col overflow-hidden">
 
-        <div class="space-y-2 w-full">
+              <!-- SCROLL REAL -->
+              <div class="flex-1 overflow-auto py-2 space-y-2">
 
-          <mat-tab-group>
-            <mat-tab label="Descripción">
-              <div>
-                <app-card-events [view]="'complete'" [realOnly]="true" [user]="post.creator"
-                                 [event]="post.event"></app-card-events>
-              </div>
-            </mat-tab>
-            <mat-tab label="Participantes">
+                <div class="bg-[rgb(66,66,66)] rounded-lg p-3 shadow-lg relative"
+                     *ngFor="let comment of post.comments">
 
-              <div>
-                <div class=" space-y-4 ">
-                  <mat-list>
-                    <div *ngFor="let participant of post.event.participants">
-                      <mat-list-item>
-                        <div class=" flex items-center space-x-2  rounded-lg w-fit">
-                          <img class="w-10 h-10 rounded-full object-cover object-center "
-                               src="http://localhost:8080{{participant.image.url}}">
-                          <span class="  rounded-full ">{{ '@' + participant.username }}</span>
-                        </div>
-                      </mat-list-item>
-                      <mat-divider></mat-divider>
-                    </div>
+                  <div class="absolute right-0 top-0">
+                    <button class="p-2" [matMenuTriggerFor]="menu">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="delete(comment.id)">
+                        <i class="bi bi-trash mr-2"></i>Eliminar
+                      </button>
+                    </mat-menu>
+                  </div>
 
-                  </mat-list>
+                  <div class="flex items-center space-x-2 h-10 mb-2">
+                    <img class="w-10 h-10 rounded-full object-cover"
+                         [src]="'http://localhost:8080'+comment.user.image.url">
+                    <span>{{ comment.user.username }}</span>
+                  </div>
+
+                  <span>{{ comment.comment }}</span>
+                  <span class="block text-end">{{ transformDate(comment.createdAt) }}</span>
+
                 </div>
-              </div>
-            </mat-tab>
-          </mat-tab-group>
-        </div>
 
-        <div class="space-y-2">
-          <span>{{ post.url }}</span>
-        </div>
+              </div>
+
+              <!-- INPUT -->
+              <div class="flex space-x-2 mt-2">
+                <mat-form-field class="w-full" appearance="outline">
+                  <input matInput placeholder="Escribe un comentario..." [(ngModel)]="comment">
+                </mat-form-field>
+                <button (click)="sendComment()" mat-raised-button color="primary">
+                  <i class="bi bi-send"></i>
+                </button>
+              </div>
+
+            </div>
+
+          </mat-tab>
+
+          <!-- TAB: DESCRIPCIÓN EVENTO -->
+          <mat-tab label="Descripción">
+            <div class="py-4">
+              <app-card-events [view]="'complete'"
+                               [realOnly]="true"
+                               [user]="post.creator"
+                               [event]="post.event">
+              </app-card-events>
+            </div>
+          </mat-tab>
+
+          <!-- TAB: PARTICIPANTES -->
+          <mat-tab label="Participantes">
+            <div class="py-4 space-y-4 overflow-auto h-full">
+              <mat-list>
+                <div *ngFor="let participant of post.event.participants">
+                  <mat-list-item>
+                    <div class="flex items-center space-x-2">
+                      <img class="w-10 h-10 rounded-full object-cover"
+                           [src]="'http://localhost:8080'+participant.image.url">
+                      <span>{{ '@' + participant.username }}</span>
+                    </div>
+                  </mat-list-item>
+                  <mat-divider></mat-divider>
+                </div>
+              </mat-list>
+            </div>
+          </mat-tab>
+
+        </mat-tab-group>
+
       </div>
-      <div class="flex justify-end align-end space-x-2 mt-4">
+
+      <!-- BOTÓN CERRAR -->
+      <div class="w-full flex justify-end items-center py-2">
         <button (click)="close()" mat-stroked-button color="primary">Cerrar</button>
       </div>
-    </div>
 
+    </div>
 
   </div>
 
-
 </div>
-
-
-
-

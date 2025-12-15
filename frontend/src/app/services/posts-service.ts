@@ -20,6 +20,9 @@ export class PostsService {
     return this.http.post<any>(`${this.url}/create`, data, {headers});
   }
 
+  getById(id: string){
+    return this.http.get<any[]>(`${this.url}/findById/${id}`)
+  }
 
   getAll(){
     return this.http.get<any[]>(`${this.url}/getAll`)

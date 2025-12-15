@@ -12,6 +12,8 @@ public interface PostInterface {
 
     List<Post> findByUserId(String userId);
 
+    PostDTO findById(Long id);
+
     List<PostDTO> findAll();
 
     void delete(Long id);

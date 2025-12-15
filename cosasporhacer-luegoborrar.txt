@@ -6,3 +6,7 @@ poner hashtags (HECHO)
 poner guardar
 poner url para compartir (Frontend)
 poner comentarios
+
+USUARIO
+-------------
+Añadir banner

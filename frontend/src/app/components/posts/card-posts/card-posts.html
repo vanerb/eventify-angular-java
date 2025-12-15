@@ -1,6 +1,11 @@
 
-<div (click)="view()" class="w-full h-full border border-[#808080] rounded-lg cursor-pointer">
-
+<div (click)="view()" class="w-full h-full border border-[#808080] rounded-lg cursor-pointer relative">
+  <div *ngIf="post.creator.id === this.user.id" class="absolute right-0">
+    <button (click)="$event.stopPropagation()" matButton [matMenuTriggerFor]="menu"><i class="bi bi-list"></i></button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="delete()"><i class="bi bi-trash mr-2"></i>Eliminar</button>
+    </mat-menu>
+  </div>
   <div class="w-full h-12 bg-[rgb(66,66,66)] rounded-t-lg ">
     <div class="flex justify-start items-center w-full h-full px-2 space-x-2">
       <div class="w-10 h-10 rounded-full overflow-hidden ">
@@ -19,7 +24,11 @@
   </div>
 
   <div class="h-12 text-white bg-[rgb(66,66,66)] shadow-lg rounded-b-lg w-full flex justify-end items-center space-x-2 px-2 ">
-    <i class="bi bi-chat"></i>
+    <div class="flex items-center space-x-2 justify-center">
+      <i class="bi bi-chat"></i>
+      <span>{{ post.comments.length }}</span>
+    </div>
+
     <i class="bi bi-bookmark"></i>
     <i class="bi bi-heart"></i>
   </div>

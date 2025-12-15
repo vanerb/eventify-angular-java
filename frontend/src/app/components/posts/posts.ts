@@ -13,6 +13,7 @@ import {AuthService} from '../../services/auth-service';
 import {After} from 'node:v8';
 import {ShowEventModal} from '../events/show-event-modal/show-event-modal';
 import {ShowPostModal} from './show-post-modal/show-post-modal';
+import {WarningModal} from '../general/warning-modal/warning-modal';
 
 @Component({
   selector: 'app-posts',
@@ -58,7 +59,7 @@ export class Posts implements OnInit, AfterViewInit{
         events: this.myEvents
       }).then(async (item: FormData) => {
         this.postService.create(item).subscribe({
-          next: async () => {
+          next: () => {
             this.getMyPosts()
           },
           error: error => {
@@ -69,6 +70,7 @@ export class Posts implements OnInit, AfterViewInit{
       })
         .catch(() => {
           this.modalService.close()
+          this.getAllPosts()
         });
 
   }
@@ -83,6 +85,8 @@ export class Posts implements OnInit, AfterViewInit{
   getAllPosts(){
     this.postService.getAll().subscribe((posts) => {
       this.posts = posts
+
+      console.log("AAA",this.posts)
     })
   }
 
@@ -94,8 +98,47 @@ export class Posts implements OnInit, AfterViewInit{
           this.show(data.post)
           break
 
+        case 'delete':
+          this.delete(data.post)
+          break
+
       }
     }
+  }
+
+  delete(post: any){
+    this.modalService.open(WarningModal, {
+        width: '60vh',
+      },
+      {
+        props: {
+          title: 'Eliminar',
+          message: '¿Está seguro de que quiere eliminar el post?',
+          type: 'delete'
+        }
+
+      }).then(async (item: FormData) => {
+
+
+      this.postService.delete(post.id).subscribe({
+        next: (message) => {
+          this.getAllPosts()
+          console.log(message)
+        },
+        error: (err) => {
+
+        }
+      })
+
+
+
+    })
+      .catch(() => {
+        this.modalService.close()
+      });
+
+
+
   }
 
 
@@ -106,12 +149,14 @@ export class Posts implements OnInit, AfterViewInit{
         height: '90vh',
       },
       {
-        post: post
-      }).then(async (item: FormData) => {
+        post: post,
+        user: this.user
+      }).then(async (item: any) => {
 
     })
       .catch(() => {
         this.modalService.close()
+        this.getAllPosts()
       });
   }
 }

@@ -4,6 +4,7 @@ import com.ubication.backend.dto.UserDTO;
 import com.ubication.backend.dto.EventDTO;
 import com.ubication.backend.dto.HashtagDTO;
 import com.ubication.backend.dto.ImageDTO;
+import com.ubication.backend.dto.CommentDTO;
 import java.util.List;
 import com.ubication.backend.dto.ThemeDTO;
 
@@ -14,5 +15,6 @@ public record PostDTO(
         List<HashtagDTO> hashtags,
         EventDTO event,
         UserDTO creator,
-        ImageDTO image
+        ImageDTO image,
+        List<CommentDTO> comments
 ) {}

@@ -32,6 +32,11 @@ public class PostController {
         return service.findByUserId(authHeader);
     }
 
+     @GetMapping("/findById/{id}")
+        public PostDTO findById(@PathVariable Long id) {
+            return service.findById(id);
+        }
+
     @GetMapping("/getAll")
     public List<PostDTO> findAll() {
         return service.findAll();
