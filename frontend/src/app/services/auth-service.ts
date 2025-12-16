@@ -69,10 +69,10 @@ export class AuthService {
     return this.http.get<any>('http://localhost:8080/api/auth/user', {headers})
   }
 
-  update(formData: FormData) {
+  update( formData: FormData) {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.getToken()}`
     });
-    return this.http.put<any>('http://localhost:8080/api/user', formData, {headers})
+    return this.http.post<any>('http://localhost:8080/api/auth/update', formData, {headers})
   }
 }

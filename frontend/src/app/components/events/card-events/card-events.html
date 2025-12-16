@@ -1,6 +1,6 @@
 <mat-card class="mb-4 relative" appearance="outlined">
-  <div *ngIf="event.creator.id === this.user.id && view === 'complete' && realOnly === false" class="absolute right-0">
-    <button matButton [matMenuTriggerFor]="menu"><i class="bi bi-list"></i></button>
+  <div *ngIf="event.creator.id === this.user.id && view === 'complete' && realOnly === false" class="absolute right-2 top-2">
+    <button class="cursor-pointer" [matMenuTriggerFor]="menu"><i class="bi bi-three-dots-vertical"></i></button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="edit()"><i class="bi bi-pencil mr-2"></i>Editar</button>
       <button mat-menu-item (click)="delete()"><i class="bi bi-trash mr-2"></i>Eliminar</button>

@@ -2,6 +2,7 @@ package com.ubication.backend.controller;
 
 import com.ubication.backend.model.User;
 import com.ubication.backend.dto.UserDTO;
+import com.ubication.backend.dto.UpdateUserDTO;
 import com.ubication.backend.service.AuthService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,15 @@ public class AuthController {
         String token = authService.login(body.get("email"), body.get("password"));
         return Map.of("token", token);
     }
+
+      @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+           public User update(
+                   @RequestHeader("Authorization") String authHeader,
+                   @RequestPart("user") UpdateUserDTO userDTO,
+                   @RequestPart(value = "banner", required = false) MultipartFile banner,
+                   @RequestPart(value = "profilePic", required = false) MultipartFile profileImage) {
+               return authService.update(authHeader, userDTO, banner, profileImage);
+           }
 
 
    @GetMapping("/user")

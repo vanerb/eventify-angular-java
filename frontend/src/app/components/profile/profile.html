@@ -1,11 +1,12 @@
 <app-container>
 
-  <div class="w-full h-full">
-
+  <div class="w-full h-full relative">
+    <button (click)="updateProfile()" class="absolute top-2 right-2 z-1 rounded-lg bg-[#c2185b] px-4 p-1 cursor-pointer"><i class="bi bi-gear"></i></button>
 
     <div class="w-full h-32 relative">
-      <div class="w-full h-32 overflow-hidden">
-        <img src="" class="object-cover object-center h-32 w-full">
+      <div class="w-full h-32 overflow-hidden rounded-lg">
+        <img *ngIf="user?.banner?.url" src="{{'http://localhost:8080'+user?.banner?.url}}" class="object-cover object-center h-32 w-full">
+        <img *ngIf="!user?.banner?.url" src="{{'http://localhost:8080/uploads/No_Image_Available.jpg'}}" class="object-cover object-center h-32 w-full">
       </div>
 
       <div class="absolute w-full h-24 -bottom-10 left-0 right-0 flex justify-center">

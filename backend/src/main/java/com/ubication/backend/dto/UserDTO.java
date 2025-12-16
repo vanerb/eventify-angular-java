@@ -14,5 +14,6 @@ public record UserDTO(
              String bio,
             String username,
             String email,
-            ImageDTO image
+            ImageDTO image,
+             ImageDTO banner
 ) {}

@@ -31,9 +31,9 @@
         </div>
 
         <!-- DESCRIPCIÓN -->
-        <div class="pt-10">
+        <div class="pt-6">
 
-          <div class="w-full">
+          <div class="w-full text-center">
             <span>{{ post.description }}</span>
           </div>
 
@@ -48,7 +48,7 @@
         </div>
 
         <!-- TABS -->
-        <mat-tab-group class="h-[57vh] overflow-hidden">
+        <mat-tab-group class="h-[59vh] overflow-hidden">
 
           <!-- TAB: COMENTARIOS -->
           <mat-tab label="Comentarios">
@@ -59,11 +59,15 @@
               <!-- SCROLL REAL -->
               <div class="flex-1 overflow-auto py-2 space-y-2">
 
+                <div *ngIf="post.comments.length === 0" class="w-full text-center">
+                  <span>Aún no hay comentarios</span>
+                </div>
+
                 <div class="bg-[rgb(66,66,66)] rounded-lg p-3 shadow-lg relative"
                      *ngFor="let comment of post.comments">
 
-                  <div class="absolute right-0 top-0">
-                    <button class="p-2" [matMenuTriggerFor]="menu">
+                  <div class="absolute right-2 top-2">
+                    <button class="cursor-pointer" [matMenuTriggerFor]="menu">
                       <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <mat-menu #menu="matMenu">
@@ -87,15 +91,17 @@
               </div>
 
               <!-- INPUT -->
-              <div class="flex space-x-2 mt-2">
-                <mat-form-field class="w-full" appearance="outline">
+
+              <div class="flex space-x-2 ">
+                <mat-form-field class="w-full mb-[-20px]" appearance="outline">
                   <input matInput placeholder="Escribe un comentario..." [(ngModel)]="comment">
                 </mat-form-field>
-                <button (click)="sendComment()" mat-raised-button color="primary">
-                  <i class="bi bi-send"></i>
-                </button>
+                <div class="flex justify-center items-center" >
+                  <button (click)="sendComment()" mat-raised-button color="primary">
+                    <i class="bi bi-send"></i>
+                  </button>
+                </div>
               </div>
-
             </div>
 
           </mat-tab>

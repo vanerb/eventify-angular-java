@@ -1,0 +1,103 @@
+
+  <div class="w-full relative h-full">
+    <div class="h-[calc(100%_-_40px)] overflow-auto">
+      <div class="w-full h-32 relative">
+        <div class="w-full h-32 overflow-hidden rounded-lg">
+          <img *ngIf="previewBannerCoverImage" src="{{previewBannerCoverImage}}" class="object-cover object-center h-32 w-full">
+          <img *ngIf="!previewBannerCoverImage" src="{{'http://localhost:8080/uploads/No_Image_Available.jpg'}}" class="object-cover object-center h-32 w-full">
+          <div class="absolute -right-0 -bottom-0">
+            <!-- Botón para cambiar imagen -->
+            <input type="file" accept="image/*" #fileInput hidden (change)="onImageBannerChange($event)" />
+            <button type="button"  color="primary"
+                    (click)="fileInput.click()" mat-raised-button
+                    class="w-10 h-10 rounded-sm flex justify-center items-center bg-[#c2185b] cursor-pointer">
+              <i class="bi bi-pencil text-xl"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="absolute w-full h-24 -bottom-10 left-0 right-0 flex justify-center">
+          <div class="flex items-center space-x-2 rounded-lg w-fit">
+            <div class="w-24 h-24 relative">
+              <img class="w-24 h-24 rounded-full object-cover object-center" src="{{previewProfileCoverImage}}">
+              <div class="absolute -right-4 -bottom-0">
+                <!-- Botón para cambiar imagen -->
+                <input type="file" accept="image/*" #fileInput hidden (change)="onImageProfileChange($event)" />
+                <button type="button"  color="primary"
+                        (click)="fileInput.click()"
+                        class="w-10 h-10 rounded-md flex justify-center items-center bg-[#c2185b] cursor-pointer">
+                  <i class="bi bi-pencil text-xl"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 space-y-4 text-center">
+        <form [formGroup]="form" class="space-y-6">
+
+          <div>
+            <h2 class="mb-4">Actualizar perfil</h2>
+            <mat-form-field class="w-full">
+              <mat-label>Nombre</mat-label>
+              <input class="w-full" formControlName="name" placeholder="Introduce tu nombre..."
+                     matInput>
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+              <mat-label>Usuario</mat-label>
+              <input class="w-full" formControlName="username" placeholder="Introduce tu nombre de usuario..."
+                     matInput>
+            </mat-form-field>
+
+
+            <mat-form-field class="w-full mb-[-20px]">
+              <mat-label>Biografia</mat-label>
+              <textarea class="w-full" rows="5" formControlName="bio" placeholder="Cuenta a los demas algo mas de ti..."
+                        matInput></textarea>
+            </mat-form-field>
+          </div>
+
+
+          <div>
+            <mat-divider></mat-divider>
+          </div>
+
+
+          <div>
+            <h2 class="mb-4">Cambiar contraseña</h2>
+            <mat-form-field class="w-full">
+              <mat-label>Contraseña</mat-label>
+              <input class="w-full" type="password" formControlName="password" placeholder="Introduce tu nueva contraseña..."
+                     matInput>
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+              <mat-label>Repetir contraseña</mat-label>
+              <input class="w-full" type="password" formControlName="repeatPassword" placeholder="Repite tu nueva contraseña..."
+                     matInput>
+            </mat-form-field>
+          </div>
+
+
+
+
+        </form>
+
+      </div>
+    </div>
+    <div class="flex justify-end aling-end space-x-2 mt-2">
+      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
+
+      <button (click)="update()" mat-raised-button color="primary">Aceptar</button>
+
+
+    </div>
+
+
+  </div>
+
+
