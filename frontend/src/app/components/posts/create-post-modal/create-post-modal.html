@@ -1,5 +1,5 @@
 <div class="w-full h-full">
-  <form [formGroup]="form" class="h-full w-full">
+  <form [formGroup]="form" (ngSubmit)="createPost()" class="h-full w-full">
     <div class=" w-full h-[calc(100%_-_30px)]">
 
       <div class="w-full h-full flex justify-center space-x-5">
@@ -103,10 +103,10 @@
 
 
 
-    <div class="flex justify-end aling-end space-x-2">
+    <div class="flex justify-end align-end space-x-2">
       <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
 
-      <button (click)="createPost()" mat-raised-button color="primary">Aceptar</button>
+      <button type="submit" mat-raised-button color="primary">Aceptar</button>
 
 
     </div>

@@ -38,7 +38,7 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
-    @JsonIgnoreProperties({"createdEvents", "joinedEvents"})
+    @JsonIgnoreProperties({"createdEvents", "joinedEvents", "participants"})
     private User creator;
 
     @ManyToMany(mappedBy = "joinedEvents", cascade = CascadeType.ALL)

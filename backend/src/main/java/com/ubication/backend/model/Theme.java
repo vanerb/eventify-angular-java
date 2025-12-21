@@ -2,6 +2,8 @@ package com.ubication.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Data
@@ -17,5 +19,6 @@ public class Theme {
 
    @ManyToOne
    @JoinColumn(name = "event_id")
+   @JsonIgnore
    private Event event;
 }

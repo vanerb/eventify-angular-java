@@ -58,7 +58,7 @@ public class EventService implements EventInterface {
     // CREATE
     // =========================
     @Override
-    public Event create(EventDTO dto, MultipartFile file) {
+    public EventDTO create(EventDTO dto, MultipartFile file) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         String email = jwtUtil.extractEmail(token);
 
@@ -99,62 +99,64 @@ public class EventService implements EventInterface {
             }
         }
 
-        return savedEvent;
+        return toEventDTO(savedEvent);
     }
 
     // =========================
     // UPDATE
     // =========================
-    @Transactional
-    @Override
-    public Event update(Long eventId, EventDTO dto, MultipartFile file) {
-        String token = request.getHeader("Authorization").replace("Bearer ", "");
-        String email = jwtUtil.extractEmail(token);
+   @Override
+   @Transactional
+   public EventDTO update(Long eventId, EventDTO dto, MultipartFile file) {
+       String token = request.getHeader("Authorization").replace("Bearer ", "");
+       String email = jwtUtil.extractEmail(token);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+       User user = userRepository.findByEmail(email)
+               .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Event event = repository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+       Event event = repository.findById(eventId)
+               .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
 
-        event.setName(dto.name());
-        event.setDescription(dto.description());
-        event.setType(dto.type());
-        event.setInitDate(dto.initDate());
-        event.setEndDate(dto.endDate());
-        event.setPlaceId(dto.placeId());
-        event.setUbication(dto.ubication());
-        event.setLatitude(dto.latitude());
-        event.setLongitude(dto.longitude());
-        event.setCreator(user);
+       // Actualizar campos
+       event.setName(dto.name());
+       event.setDescription(dto.description());
+       event.setType(dto.type());
+       event.setInitDate(dto.initDate());
+       event.setEndDate(dto.endDate());
+       event.setPlaceId(dto.placeId());
+       event.setUbication(dto.ubication());
+       event.setLatitude(dto.latitude());
+       event.setLongitude(dto.longitude());
+       event.setCreator(user);
 
-        themeRepository.deleteByEventId(eventId);
+       themeRepository.deleteByEventId(eventId);
 
-        if (dto.themes() != null && !dto.themes().isEmpty()) {
-            List<Theme> themes = dto.themes().stream()
-                    .map(t -> {
-                        Theme theme = new Theme();
-                        theme.setName(t.name());
-                        theme.setEvent(event);
-                        return theme;
-                    })
-                    .collect(Collectors.toList());
-            event.setThemes(themes);
-        }
+       if (dto.themes() != null && !dto.themes().isEmpty()) {
+           List<Theme> themes = dto.themes().stream()
+                   .map(t -> {
+                       Theme theme = new Theme();
+                       theme.setName(t.name());
+                       theme.setEvent(event);
+                       return theme;
+                   })
+                   .collect(Collectors.toList());
+           event.setThemes(themes);
+       }
 
-        Event savedEvent = repository.save(event);
+       Event savedEvent = repository.save(event);
 
-        if (file != null && !file.isEmpty()) {
-            imageService.deleteByFromId("EVENT", savedEvent.getId());
-            try {
-                imageService.upload(file, "EVENT", savedEvent.getId(), true);
-            } catch (IOException e) {
-                throw new RuntimeException("Error al guardar la imagen", e);
-            }
-        }
+       if (file != null && !file.isEmpty()) {
+           imageService.deleteByFromId("EVENT", savedEvent.getId());
+           try {
+               imageService.upload(file, "EVENT", savedEvent.getId(), true);
+           } catch (IOException e) {
+               throw new RuntimeException("Error al guardar la imagen", e);
+           }
+       }
 
-        return savedEvent;
-    }
+       // Devuelve DTO limpio para evitar ciclos
+       return toEventDTO(savedEvent);
+   }
 
 
     @Override
@@ -177,7 +179,7 @@ public class EventService implements EventInterface {
     // JOIN EVENT
     // =========================
     @Override
-    public Event joinEvent(Long eventId, Long userId) {
+    public EventDTO joinEvent(Long eventId, Long userId) {
         Event event = repository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
 
@@ -190,7 +192,7 @@ public class EventService implements EventInterface {
             userRepository.save(user);
         }
 
-        return event;
+        return toEventDTO(event);
     }
 
     // =========================

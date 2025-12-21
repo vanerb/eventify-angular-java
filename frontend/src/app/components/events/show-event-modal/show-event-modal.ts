@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {MatButton} from '@angular/material/button';
 import {ImagesService} from '../../../services/images-service';
 import {MatChipRow} from '@angular/material/chips';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {MatTabsModule} from '@angular/material/tabs';
 import {transformDate} from '../../../services/utilities-service';
 import {MatDividerModule} from '@angular/material/divider';
@@ -16,7 +16,8 @@ import {MatListModule} from '@angular/material/list';
     NgForOf,
     MatTabsModule,
     MatDividerModule,
-    MatListModule
+    MatListModule,
+    NgIf
   ],
   templateUrl: './show-event-modal.html',
   styleUrl: './show-event-modal.css',

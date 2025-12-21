@@ -23,7 +23,7 @@ public class EventController {
     private EventService service;
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Event create(
+    public EventDTO create(
             @RequestPart("event") EventDTO eventDTO,
             @RequestPart(value = "file", required = false) MultipartFile file) {
 
@@ -31,7 +31,7 @@ public class EventController {
     }
 
     @PostMapping(value = "/update/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        public Event update(
+        public EventDTO update(
                 @PathVariable Long eventId,
                 @RequestPart("event") EventDTO eventDTO,
                 @RequestPart(value = "file", required = false) MultipartFile file) {
@@ -61,7 +61,7 @@ public class EventController {
 
 
     @PostMapping("/{eventId}/join/{userId}")
-    public Event joinEvent(@PathVariable Long eventId, @PathVariable Long userId) {
+    public EventDTO joinEvent(@PathVariable Long eventId, @PathVariable Long userId) {
         return service.joinEvent(eventId, userId);
     }
 

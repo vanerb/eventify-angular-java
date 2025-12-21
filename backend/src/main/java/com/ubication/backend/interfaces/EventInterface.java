@@ -9,9 +9,9 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface EventInterface {
-    Event create(EventDTO dto, MultipartFile file);
+    EventDTO create(EventDTO dto, MultipartFile file);
 
-    Event update(Long eventId, EventDTO dto, MultipartFile file);
+    EventDTO update(Long eventId, EventDTO dto, MultipartFile file);
 
     List<EventDTO> findByUserId(String authHeader);
 
@@ -19,7 +19,7 @@ public interface EventInterface {
 
     void delete(Long id);
 
-    Event joinEvent(Long eventId, Long userId);
+    EventDTO joinEvent(Long eventId, Long userId);
 
     List<UserDTO> getUsersByEvent(Long eventId);
 

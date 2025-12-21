@@ -10,7 +10,6 @@ import {NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {ModalService} from '../../services/modal-service';
 import {UpdateUserModal} from './update-user-modal/update-user-modal';
-import {sleep} from '../../services/utilities-service';
 
 @Component({
   selector: 'app-profile',
@@ -25,7 +24,6 @@ export class Profile implements OnInit{
 
   constructor(private readonly authService: AuthService, private readonly modalService: ModalService) {
   }
-
 
   async ngOnInit() {
 
@@ -57,10 +55,6 @@ export class Profile implements OnInit{
           console.log(error)
         }
       })
-
-
-      await sleep(1000)
-      window.location.reload()
 
     })
       .catch(() => {

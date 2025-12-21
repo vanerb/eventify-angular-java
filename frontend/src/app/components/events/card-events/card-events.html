@@ -15,20 +15,25 @@
     <mat-card-header class="m-0 flex justify-center items-center text-center">
       <mat-card-title class="line-clamp-1">{{ event.name }}</mat-card-title>
       <mat-card-subtitle>
-        <div *ngIf="event.type === 'online'">
-          <i class="bi bi-globe"></i> Online
-
+        <div  *ngIf="event.type === 'online'" class="w-full flex justify-center">
+          <div class="flex items-center gap-2 leading-none">
+            <i class="bi bi-globe text-lg"></i>
+              Online
+          </div>
         </div>
 
-        <div *ngIf="event.type === 'notOnline'">
-          <i class="bi bi-geo"></i> Presencial
-          <span *ngIf="view === 'small'">
+        <div  *ngIf="event.type === 'notOnline'" class="w-full flex justify-center">
+          <div class="flex items-center gap-2 leading-none">
+            <i class="bi bi-geo text-lg"></i>
+            Presencial
+            <span *ngIf="view === 'small'">
               · <i class="bi bi-geo-alt"></i> {{ event.ubication }}
               </span>
+          </div>
         </div>
       </mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content class="mt-4 ">
+    <mat-card-content class=" ">
       <div class="flex flex-col justify-center items-center space-y-2 text-center">
         <div>
            <span *ngIf="view === 'complete'" [class.line-clamp-4]="!showDescriptionFull">

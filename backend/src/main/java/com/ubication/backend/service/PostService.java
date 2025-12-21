@@ -32,7 +32,7 @@ public class PostService implements PostInterface {
     // CREATE
     // =========================
     @Override
-    public Post create(PostDTO dto, MultipartFile file) {
+    public PostDTO create(PostDTO dto, MultipartFile file) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         String email = jwtUtil.extractEmail(token);
 
@@ -72,7 +72,7 @@ public class PostService implements PostInterface {
             }
         }
 
-        return saved;
+        return toPostDTO(saved);
     }
 
     // =========================

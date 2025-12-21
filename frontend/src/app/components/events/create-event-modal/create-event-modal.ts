@@ -11,6 +11,8 @@ import {map, Observable, startWith} from 'rxjs';
 import {combineDateAndTime, formatToSqlTimestamp, getThemes, getThemesIcon} from '../../../services/utilities-service';
 import {MatChipRow} from '@angular/material/chips';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {WarningModal} from '../../general/warning-modal/warning-modal';
+import {ModalService} from '../../../services/modal-service';
 
 @Component({
   selector: 'app-create-event-modal',
@@ -47,7 +49,7 @@ export class CreateEventModal implements OnInit {
   confirm!: (result?: any) => void;
   close!: () => void;
 
-  constructor(private readonly http: HttpClient, private formBuilder: FormBuilder, private cd: ChangeDetectorRef) {
+  constructor(private readonly http: HttpClient, private formBuilder: FormBuilder, private cd: ChangeDetectorRef, private readonly modalService:ModalService) {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
@@ -126,27 +128,49 @@ export class CreateEventModal implements OnInit {
 
   createEvent(){
 
+    if(this.form.valid){
+      const event = {
+        name: this.form.get('name')?.value ?? '',
+        description: this.form.get('description')?.value,
+        type:  this.form.get('type')?.value ? 'online' : 'notOnline',
+        themes: this.themesFormArray.value,
+        initDate: formatToSqlTimestamp(combineDateAndTime(this.form.get('initDate')?.value,  this.form.get('initHour')?.value))  ,
+        endDate: formatToSqlTimestamp(combineDateAndTime(this.form.get('endDate')?.value,  this.form.get('endHour')?.value)) ,
+        placeId: this.form.get('placeId')?.value,
+        ubication: this.form.get('ubication')?.value,
+        latitude: this.form.get('latitude')?.value,
+        longitude: this.form.get('longitude')?.value,
+      };
 
-    const event = {
-      name: this.form.get('name')?.value ?? '',
-      description: this.form.get('description')?.value,
-      type:  this.form.get('type')?.value ? 'online' : 'notOnline',
-      themes: this.themesFormArray.value,
-      initDate: formatToSqlTimestamp(combineDateAndTime(this.form.get('initDate')?.value,  this.form.get('initHour')?.value))  ,
-      endDate: formatToSqlTimestamp(combineDateAndTime(this.form.get('endDate')?.value,  this.form.get('endHour')?.value)) ,
-      placeId: this.form.get('placeId')?.value,
-      ubication: this.form.get('ubication')?.value,
-      latitude: this.form.get('latitude')?.value,
-      longitude: this.form.get('longitude')?.value,
-    };
+      const formData = new FormData();
+      formData.append('file', this.selectedImagesCover[0]); // archivo
+      formData.append('event', new Blob([JSON.stringify(event)], { type: 'application/json' }));
 
-    const formData = new FormData();
-    formData.append('file', this.selectedImagesCover[0]); // archivo
-    formData.append('event', new Blob([JSON.stringify(event)], { type: 'application/json' }));
+      console.log(formData)
 
-    console.log(formData)
+      this.confirm(formData);
+    }
 
-    this.confirm(formData);
+    else{
+      this.modalService.open(WarningModal, {
+          width: '60vh',
+        },
+        {
+          props: {
+            title: 'Aviso',
+            message: 'El formulario no es correcto. ',
+            type: 'info'
+          }
+
+        }).then(async (item: FormData) => {
+
+      })
+        .catch(() => {
+          this.modalService.close()
+        });
+    }
+
+
   }
 
   addTheme(genre: { id: number; name: string }) {

@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface PostInterface {
-    Post create(PostDTO dto, MultipartFile file);
+    PostDTO create(PostDTO dto, MultipartFile file);
 
     List<PostDTO> findByUserId(String userId);
 

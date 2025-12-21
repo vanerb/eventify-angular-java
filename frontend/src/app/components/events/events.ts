@@ -1,5 +1,4 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Container} from '../general/container/container';
 import {ModalService} from '../../services/modal-service';
 import {CreateEventModal} from '../events/create-event-modal/create-event-modal';
@@ -15,10 +14,12 @@ import {MatButton} from '@angular/material/button';
 import {firstValueFrom} from 'rxjs';
 import {AuthService} from '../../services/auth-service';
 import {FormsModule} from '@angular/forms';
-import {WarningModal} from '../general/warning-modal/warning-modal';
-import {UpdateEventModal} from '../events/update-event-modal/update-event-modal';
 import {CardEvents} from './card-events/card-events';
 import {User} from '../../models/users';
+import {MapService} from '../../services/map-service';
+import {UpdateEventModal} from './update-event-modal/update-event-modal';
+import {WarningModal} from '../general/warning-modal/warning-modal';
+import {Loader} from '../general/loader/loader';
 
 @Component({
   selector: 'app-events',
@@ -28,274 +29,170 @@ import {User} from '../../models/users';
   standalone: true
 })
 export class Events implements OnInit, AfterViewInit{
-  private L: any;
   map: any;
-  currentMarker: any;
-  events: Events[] = []
-  myEvents: Events[] = []
-  user!: User
-  selectedView: string = 'list'
+  events: any[] = [];
+  myEvents: any[] = [];
+  user!: User;
+  selectedView: string = 'list';
 
-  @Input() view: 'general' | 'my' = 'general'
+  @Input() view: 'general' | 'my' = 'general';
 
-
-  constructor(private http: HttpClient, private readonly modalService: ModalService, private readonly eventService: EventSevice, private readonly imageService: ImagesService, private readonly authService: AuthService) {
-  }
-
+  constructor(
+    private readonly mapService: MapService,
+    private readonly modalService: ModalService,
+    private readonly eventService: EventSevice,
+    private readonly imageService: ImagesService,
+    private readonly authService: AuthService,
+    private readonly cd: ChangeDetectorRef,
+  ) {}
 
   async ngAfterViewInit() {
+    this.user = await firstValueFrom(this.authService.getUserByToken());
 
+    await this.mapService.initLeaflet();
 
-    if (typeof window !== 'undefined') {
-      this.user = await firstValueFrom(this.authService.getUserByToken())
-
-      const leaflet = await import('leaflet');
-
-      this.L = leaflet;
-
-
-      const DefaultIcon = this.L.icon({
-        iconUrl: 'assets/leaflet/marker-icon.png',
-        iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
-        shadowUrl: 'assets/leaflet/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-      });
-      this.L.Marker.prototype.options.icon = DefaultIcon;
-
-      this.initMap();
-    }
   }
 
+  updateMap() { this.initMap(); }
+
+  initMap(){
+    this.map = this.mapService.createMap('map');
+
+    this.mapService.onMapClick(async (lat, lng) => {
+      this.mapService.getLocation(lat, lng).subscribe(data => {
+        const displayName = data.display_name || 'Sin información';
+        this.mapService.addMarker(lat, lng, displayName);
+      });
+    });
+
+    this.loadEventMarkers();
+  }
 
    ngOnInit() {
-    this.getAllEvents()
-     this.getAllMyEvents()
-
-    this.initMap();
 
 
-    console.log("AAA",this.events)
+    this.updateView()
+
+
+
+
   }
 
-  getAllEvents(){
-    this.eventService.getAll()
-      .subscribe(async events => {
-        this.events = events;
-        console.log(events)
-      });
-  }
-
-  getAllMyEvents(){
-    this.eventService.getMyEvents()
-      .subscribe(async events => {
-        this.myEvents = events;
-        console.log(events)
-      });
-  }
-
-  eventActions(data: any){
-    if(data){
-      switch (data.action){
-        case 'delete':
-          this.delete(data.event)
-          break
-
-        case 'show':
-          this.show(data.event)
-          break
-
-        case 'edit':
-          this.edit(data.event)
-          break
-
-
-        case 'join':
-          this.join(data.event)
-          break
-      }
+  updateView(){
+    if(this.view === 'general'){
+      this.getAllEvents();
+    }
+    else{
+      this.getAllMyEvents();
     }
   }
 
-
-  join(event: any){
-    this.modalService.open(WarningModal, {
-        width: '60vh',
-      },
-      {
-        props: {
-          title: 'Confirmación',
-          message: '¿Está seguro de que quiere unirse al evento ' + event.name + '?',
-          type: 'delete'
-        }
-
-      }).then(async (item: FormData) => {
-      this.eventService.joinEvent(event.id, this.user.id).subscribe(async result => {
-        console.log(result)
-      });
-
-
-    })
-      .catch(() => {
-        this.modalService.close()
-      });
-  }
-
-  show(event: any) {
-    this.modalService.open(ShowEventModal, {
-        width: '90vh',
-        height: '90vh',
-      },
-      {
-        ubication: event
-      }).then(async (item: FormData) => {
-        this.join(event)
-    })
-      .catch(() => {
-        this.modalService.close()
-      });
-  }
-
-  delete(event: any) {
-    this.modalService.open(WarningModal, {
-        width: '60vh',
-      },
-      {
-        props: {
-          title: 'Eliminar',
-          message: '¿Está seguro de que quiere eliminar ' + event.name + '?',
-          type: 'delete'
-        }
-
-      }).then(async (item: FormData) => {
-
-
-      this.eventService.delete(event.id).subscribe(async (result: any) => {
-        console.log(result)
-        this.getAllEvents()
-      })
-
-
-    })
-      .catch(() => {
-        this.modalService.close()
-      });
-  }
-
-  edit(event: any) {
-    this.modalService.open(UpdateEventModal, {
-        width: '90vh',
-        height: '90vh',
-      },
-      {
-        event: event
-      }).then(async (item: FormData) => {
-      this.eventService.update(event.id, item).subscribe(async (result: any) => {
-        this.getAllEvents()
-      })
-    })
-      .catch(() => {
-        this.modalService.close()
-      });
-  }
-
-
-
-
-  updateMap() {
-    this.initMap();
-  }
-
-
-  private initMap(): void {
-    this.map = this.L.map('map').setView([40.4168, -3.7038], 6);
-
-    this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
-
-    this.getEventLocations();
-
-    this.map.on('click', (e: any) => {
-      const {lat, lng} = e.latlng;
-
-      // Eliminar marcador anterior
-      if (this.currentMarker) {
-        this.map.removeLayer(this.currentMarker);
-      }
-
-      // Crear marcador
-      this.currentMarker = this.L.marker([lat, lng]).addTo(this.map);
-
-
-      // Obtener info de la ubicación
-      this.getLocationInfo(lat, lng);
-
-
+  getAllEvents() {
+    this.eventService.getAll().subscribe(events => {
+      this.events = events
+      this.cd.detectChanges()
     });
   }
 
-
-  private getLocationInfo(lat: number, lng: number) {
-    const url = `http://localhost:8080/api/location?lat=${lat}&lng=${lng}`;
-
-    this.http.get(url).subscribe((data: any) => {
-      const displayName = data.display_name || 'Sin información';
-      console.log('Información de la ubicación:', data);
-      // Mostrar en popup
-      this.currentMarker.bindPopup(displayName).openPopup();
+  getAllMyEvents() {
+    this.eventService.getMyEvents().subscribe(events => {
+      this.myEvents = events
+      this.cd.detectChanges()
     });
   }
 
-  private getEventLocations() {
-    this.eventService.getAll()
-      .subscribe(events => {
-        events.forEach(event => {
-
-          const marker = this.L.marker([event.latitude, event.longitude])
-            .addTo(this.map)
-            .bindPopup(`<b>${event.name}</b>`);
-
-          marker.on('click', () => {
-            this.modalService.open(ShowEventModal, {
-                width: '90vh',
-                height: '90vh',
-              },
-              {
-                ubication: event
-              }).then(async (item: FormData) => {
-
-
-            })
-              .catch(() => {
-                this.modalService.close()
-              });
-          });
-        });
+  loadEventMarkers() {
+    this.eventService.getAll().subscribe(events => {
+      this.mapService.addEventMarkers(events, (event) => {
+        this.modalService.open(ShowEventModal, {
+          width: '90vh',
+          height: '90vh',
+        }, { ubication: event }).catch(() => this.modalService.close());
       });
+    });
   }
 
   createEvent() {
-    this.modalService.open(CreateEventModal, {
-      width: '90vh',
-      height: '90vh',
-    }).then(async (item: FormData) => {
-      this.eventService.create(item).subscribe({
-        next: async () => {
-          this.getAllEvents()
-        },
-        error: error => {
-          console.log(error)
-        }
-      })
-
-    })
-      .catch(() => {
-        this.modalService.close()
-      });
+    this.modalService.open(CreateEventModal, { width: '90vh', height: '90vh' })
+      .then(async (item: FormData) => {
+        this.eventService.create(item).subscribe({
+          next: () => {
+            this.updateView()
+          },
+          error: err => console.log(err)
+        });
+      }).catch(() => this.modalService.close());
   }
+
+
+  eventActions(data: any) {
+    if (data) {
+      switch (data.action) {
+        case 'delete':
+          this.delete(data.event);
+          break;
+        case 'show':
+          this.show(data.event);
+          break;
+        case 'edit':
+          this.edit(data.event);
+          break;
+        case 'join':
+          this.join(data.event);
+          break;
+      }
+    }
+  }
+
+  join(event: any) {
+    this.modalService.open(WarningModal, { width: '60vh' }, {
+      props: {
+        title: 'Confirmación',
+        message: `¿Está seguro de que quiere unirse al evento ${event.name}?`,
+        type: 'delete'
+      }
+    }).then(() => {
+      this.eventService.joinEvent(event.id, this.user.id).subscribe(result => {
+        console.log(result);
+        this.updateView()
+      });
+    }).catch(() => this.modalService.close());
+  }
+
+  show(event: any) {
+    this.modalService.open(ShowEventModal, { width: '90vh', height: '90vh' }, { ubication: event })
+      .then(() => {
+        this.join(event);
+      }).catch(() => this.modalService.close());
+  }
+
+  delete(event: any) {
+    this.modalService.open(WarningModal, { width: '60vh' }, {
+      props: {
+        title: 'Eliminar',
+        message: `¿Está seguro de que quiere eliminar ${event.name}?`,
+        type: 'delete'
+      }
+    }).then(() => {
+      this.eventService.delete(event.id).subscribe(() =>  this.updateView());
+    }).catch(() => this.modalService.close());
+  }
+
+  edit(event: any) {
+    this.modalService.open(UpdateEventModal, { width: '90vh', height: '90vh' }, { event: event })
+      .then((item: FormData) => {
+        this.eventService.update(event.id, item).subscribe(async () => {
+
+
+          this.updateView()
+
+
+
+        });
+      }).catch(() => this.modalService.close());
+  }
+
+
 
   protected readonly formatDate = formatDate;
   protected readonly transformDate = transformDate;

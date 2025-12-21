@@ -23,7 +23,7 @@ public class AuthController {
 
    // Registro con imagen de perfil
        @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-       public User register(
+       public UserDTO register(
                @RequestParam("email") String email,
                @RequestParam("password") String password,
                 @RequestParam("name") String name,
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
       @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-           public User update(
+           public UserDTO update(
                    @RequestHeader("Authorization") String authHeader,
                    @RequestPart("user") UpdateUserDTO userDTO,
                    @RequestPart(value = "banner", required = false) MultipartFile banner,

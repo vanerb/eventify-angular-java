@@ -59,7 +59,6 @@ export class UpdateUserModal implements OnInit{
   }
 
   update(){
-
     let user = null;
 
     if (this.form.get('password')?.value !== '' && this.form.get('repeatPassword')?.value !== '') {

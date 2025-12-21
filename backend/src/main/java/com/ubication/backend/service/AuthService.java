@@ -46,7 +46,7 @@ public class AuthService implements AuthInterface {
     // REGISTER
     // =========================
     @Override
-    public User register(String email, String password, String name, String username, MultipartFile file) {
+    public UserDTO register(String email, String password, String name, String username, MultipartFile file) {
 
         User user = new User();
         user.setEmail(email);
@@ -64,7 +64,8 @@ public class AuthService implements AuthInterface {
             }
         }
 
-        return savedUser;
+
+        return toUserDto(savedUser);
     }
 
     // =========================
@@ -72,7 +73,7 @@ public class AuthService implements AuthInterface {
     // =========================
     @Override
     @Transactional
-    public User update(String authHeader, UpdateUserDTO dto, MultipartFile banner, MultipartFile profileImage) {
+    public UserDTO update(String authHeader, UpdateUserDTO dto, MultipartFile banner, MultipartFile profileImage) {
 
         String token = authHeader.replace("Bearer ", "");
             String email = jwtUtil.extractEmail(token);
@@ -103,7 +104,9 @@ public class AuthService implements AuthInterface {
             throw new RuntimeException("Error al actualizar imágenes", e);
         }
 
-        return repository.save(user);
+        repository.save(user);
+
+        return toUserDto(user);
     }
 
     // =========================
@@ -142,6 +145,14 @@ public class AuthService implements AuthInterface {
             throw new RuntimeException("Invalid token");
         }
 
+       return toUserDto(user);
+    }
+
+
+    // =========================
+    // CONVERT USER TO UserDTO
+    // =========================
+    private UserDTO toUserDto(User user) {
         ImageDTO profile = imageRepository.findByFromTypeAndFromId("USER", user.getId())
                 .stream()
                 .findFirst()

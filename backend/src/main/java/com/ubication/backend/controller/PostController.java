@@ -20,7 +20,7 @@ public class PostController {
     private PostService service;
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Post create(
+    public PostDTO create(
             @RequestPart("post") PostDTO postDTO,
             @RequestPart(value = "file", required = false) MultipartFile file) {
 

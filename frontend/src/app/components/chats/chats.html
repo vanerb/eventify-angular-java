@@ -3,12 +3,12 @@
   <mat-drawer-container class="h-full w-full rounded-lg">
     <mat-drawer mode="side" opened>
       <div class="w-[300px]">
-        <mat-list class="w-full">
-          <div class="w-full cursor-pointer mt-[-8px]" *ngFor="let event of events">
-            <mat-accordion>
+        <mat-accordion [multi]="false">
+          <div class="w-full cursor-pointer mb-2" *ngFor="let event of events">
+
               <mat-expansion-panel (click)="changeEvent(event.id)">
                 <mat-expansion-panel-header>
-                  <mat-panel-title><span class="text-center line-clamp-1">{{ event.name }}</span></mat-panel-title>
+                  <mat-panel-title><span class="line-clamp-1">{{ event.name }}</span></mat-panel-title>
                   <mat-panel-description>
                     <div class="flex justify-center items-center space-x-2">
                       <i class="bi bi-person "></i>
@@ -16,12 +16,15 @@
                     </div>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
-                <app-card-events [event]="event" [user]="event.creator" [view]="'complete'" [realOnly]="true"></app-card-events>
+                <app-card-events [event]="event" [user]="event.creator" [view]="'complete'"
+                                 [realOnly]="true"></app-card-events>
 
               </mat-expansion-panel>
-            </mat-accordion>
+
+
           </div>
-        </mat-list>
+        </mat-accordion>
+
       </div>
     </mat-drawer>
     <mat-drawer-content>
@@ -39,8 +42,8 @@
         </div>
       </div>
 
-      <div *ngIf="eventId" class="w-full h-full " >
-        <div class="w-full h-[calc(100vh_-_198px)] overflow-auto p-4" #scrollContainer >
+      <div *ngIf="eventId" class="w-full h-full ">
+        <div class="w-full h-[calc(100vh_-_198px)] overflow-auto p-4" #scrollContainer>
           <div *ngFor="let group of groupedMessages">
             <div class="text-center my-2 font-semibold">{{ group.date }}</div>
 
@@ -70,7 +73,7 @@
           <mat-form-field class="w-full mb-[-20px]" appearance="outline">
             <input matInput placeholder="Escribe un mensaje..." [(ngModel)]="newMessage">
           </mat-form-field>
-          <div class="flex justify-center items-center" >
+          <div class="flex justify-center items-center">
             <button (click)="sendMessage()" mat-raised-button color="primary">
               <i class="bi bi-send"></i>
             </button>

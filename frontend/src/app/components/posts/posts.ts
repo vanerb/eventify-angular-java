@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Container} from '../general/container/container';
 import {CardEvents} from '../events/card-events/card-events';
 import {NgForOf, NgIf} from '@angular/common';
@@ -30,7 +30,7 @@ export class Posts implements OnInit, AfterViewInit{
   @Input() view: 'general' | 'my' = 'general'
 
 
-  constructor(private readonly modalService: ModalService, private readonly postService: PostsService, private eventService: EventSevice, private authService: AuthService) {
+  constructor(private readonly modalService: ModalService, private readonly postService: PostsService, private eventService: EventSevice, private authService: AuthService, private readonly cd: ChangeDetectorRef) {
   }
 
   async ngOnInit() {
@@ -40,14 +40,24 @@ export class Posts implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit() {
-    this.getMyEvents()
-    this.getAllPosts()
-    this.getMyPosts()
+   this.updateView()
+
+  }
+
+  updateView(){
+    if(this.view === 'general'){
+      this.getAllPosts()
+    }
+    else{
+      this.getMyEvents()
+      this.getMyPosts()
+    }
   }
 
   getMyEvents(){
     this.eventService.getMyEventParticipations().subscribe((events) => {
       this.myEvents = events;
+      this.cd.detectChanges()
     })
   }
 
@@ -58,20 +68,14 @@ export class Posts implements OnInit, AfterViewInit{
         height: '90vh',
       },{
         events: this.myEvents
-      }).then(async (item: FormData) => {
-        this.postService.create(item).subscribe({
-          next: () => {
-            this.getMyPosts()
-          },
-          error: error => {
-            console.log(error)
-          }
+      }).then( (item: FormData) => {
+        this.postService.create(item).subscribe(() => {
+          this.updateView()
         })
-
       })
         .catch(() => {
           this.modalService.close()
-          this.getAllPosts()
+          this.updateView()
         });
 
   }
@@ -80,14 +84,14 @@ export class Posts implements OnInit, AfterViewInit{
   getMyPosts(){
     this.postService.getMyPosts().subscribe((posts) => {
       this.myPosts = posts
+      this.cd.detectChanges()
     })
   }
 
   getAllPosts(){
     this.postService.getAll().subscribe((posts) => {
       this.posts = posts
-
-      console.log("AAA",this.posts)
+      this.cd.detectChanges()
     })
   }
 
@@ -118,16 +122,9 @@ export class Posts implements OnInit, AfterViewInit{
           type: 'delete'
         }
 
-      }).then(async (item: FormData) => {
-
-
-      this.postService.delete(post.id).subscribe({
-        next: (message) => {
-          this.getAllPosts()
-          console.log(message)
-        },
-        error: (err) => {
-        }
+      }).then( (item: FormData) => {
+      this.postService.delete(post.id).subscribe(()=>{
+        this.updateView()
       })
     })
       .catch(() => {
@@ -150,7 +147,7 @@ export class Posts implements OnInit, AfterViewInit{
     })
       .catch(() => {
         this.modalService.close()
-        this.getAllPosts()
+        this.updateView()
       });
   }
 }

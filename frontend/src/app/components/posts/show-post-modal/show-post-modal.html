@@ -7,7 +7,7 @@
       <div class="w-full h-full flex justify-center items-center overflow-hidden">
         <img
           class="max-w-full max-h-full object-contain"
-          [src]="'http://localhost:8080' + post.image.url"
+          [src]="'http://localhost:8080' + post?.image?.url"
           alt="Imagen">
       </div>
     </div>
@@ -16,42 +16,41 @@
     <div class="flex flex-col w-[50%] h-full overflow-hidden">
 
       <!-- CONTENIDO SCROLLEABLE COMPLETO -->
-      <div class="flex-1 overflow-auto px-4 space-y-4">
+      <div class="flex-1 overflow-auto px-4 space-y-2">
 
         <!-- CABECERA -->
         <div class="w-full h-24 relative">
           <div class="w-full h-24 overflow-hidden rounded-lg">
-            <img  [src]="'http://localhost:8080'+post.creator.banner.url" class="object-cover h-24 w-full">
+            <img  [src]="'http://localhost:8080'+post?.creator?.banner?.url" class="object-cover h-24 w-full">
           </div>
 
           <div class="absolute w-full h-16 -bottom-8 left-0 flex justify-center">
             <img class="w-16 h-16 rounded-full object-cover"
-                 [src]="'http://localhost:8080'+post.creator.image.url">
+                 [src]="'http://localhost:8080'+post?.creator?.image?.url">
           </div>
         </div>
 
         <!-- DESCRIPCIÓN -->
-        <div class="pt-6">
-
+        <div class="pt-6 space-y-2">
           <div class="w-full text-center">
-            <span>{{ post.description }}</span>
+            <span>{{ post?.description }}</span>
           </div>
 
-          <div class="w-full flex justify-center">
+          <div *ngIf="post?.url" class="w-full flex justify-center">
             <div class="flex items-center gap-2 leading-none">
-              <i class="bi bi-link text-lg"></i>
+              <i class="bi bi-link "></i>
               <a
-                [href]="post.url"
+                [href]="post?.url"
                 target="_blank"
                 class="leading-none text-blue-500 hover:underline"
               >
-                {{ post.url }}
+                {{ post?.url }}
               </a>
             </div>
           </div>
 
-          <div class="w-full mt-2">
-            <div class="flex flex-wrap justify-center gap-1">
+          <div class="w-full ">
+            <div class="flex flex-wrap justify-center gap-2">
               <mat-chip-row *ngFor="let hashtag of post.hashtags">
                 {{ '#' + hashtag.name }}
               </mat-chip-row>
@@ -61,7 +60,7 @@
         </div>
 
         <!-- TABS -->
-        <mat-tab-group class="h-[59vh] overflow-hidden">
+        <mat-tab-group class=" ">
 
           <!-- TAB: COMENTARIOS -->
           <mat-tab label="Comentarios">
