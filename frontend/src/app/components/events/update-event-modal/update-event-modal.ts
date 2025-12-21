@@ -17,6 +17,7 @@ import {
 } from '../../../services/utilities-service';
 import {MatChipRow} from '@angular/material/chips';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {Event} from '../../../models/events';
 
 @Component({
   selector: 'app-update-event-modal',
@@ -41,7 +42,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
   standalone: true
 })
 export class UpdateEventModal implements OnInit{
-  event!: any
+  event!: Event
   searchResults: any[] = [];
   searchTimeout: any;
   form!: FormGroup;
@@ -104,7 +105,7 @@ export class UpdateEventModal implements OnInit{
   }
 
 
-  async onImageChange(event: Event) {
+  async onImageChange(event: any) {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
       this.selectedImagesCover = [input.files[0]];

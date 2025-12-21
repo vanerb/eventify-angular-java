@@ -15,6 +15,8 @@ import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/mater
 import {combineDateAndTime, formatToSqlTimestamp, getThemes, getThemesIcon} from '../../../services/utilities-service';
 import {map, Observable, startWith} from 'rxjs';
 import {MatChipRow} from '@angular/material/chips';
+import {WarningModal} from '../../general/warning-modal/warning-modal';
+import {ModalService} from '../../../services/modal-service';
 
 
 @Component({
@@ -50,7 +52,7 @@ export class CreatePostModal implements OnInit{
   close!: () => void;
 
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private readonly modalService: ModalService) {
     this.form = this.formBuilder.group({
       description: ['', Validators.required],
       hashtags: this.formBuilder.array([], Validators.required),
@@ -131,20 +133,42 @@ export class CreatePostModal implements OnInit{
 
 
   createPost(){
-    const post = {
-      description: this.form.get('description')?.value,
-      event: this.eventFormArray.value[0],
-      hashtags: this.hashtagsFormArray.value,
-      url: this.form.get('url')?.value,
-    };
+    if(this.form.valid){
+      const post = {
+        description: this.form.get('description')?.value,
+        event: this.eventFormArray.value[0],
+        hashtags: this.hashtagsFormArray.value,
+        url: this.form.get('url')?.value,
+      };
 
-    const formData = new FormData();
-    formData.append('file', this.selectedImagesCover[0]); // archivo
-    formData.append('post', new Blob([JSON.stringify(post)], { type: 'application/json' }));
+      const formData = new FormData();
+      formData.append('file', this.selectedImagesCover[0]); // archivo
+      formData.append('post', new Blob([JSON.stringify(post)], { type: 'application/json' }));
 
-    console.log(formData)
+      console.log(formData)
 
-    this.confirm(formData);
+      this.confirm(formData);
+    }
+    else{
+      this.modalService.open(WarningModal, {
+          width: '60vh',
+        },
+        {
+          props: {
+            title: 'Aviso',
+            message: 'El formulario no es correcto. ',
+            type: 'info'
+          }
+
+        }).then(async (item: FormData) => {
+
+      })
+        .catch(() => {
+          this.modalService.close()
+        });
+    }
+
+
   }
 
 

@@ -41,6 +41,7 @@ public class PostService implements PostInterface {
 
         Post post = new Post();
         post.setDescription(dto.description());
+       post.setUrl(dto.url());
         post.setCreator(user);
 
         if (dto.event() != null) {
@@ -208,7 +209,7 @@ public class PostService implements PostInterface {
     }
 
     @Override
-    public List<Post> findByUserId(String authHeader) {
+    public List<PostDTO> findByUserId(String authHeader) {
 
         String token = authHeader.replace("Bearer ", "");
         String email = jwtUtil.extractEmail(token);
@@ -220,6 +221,10 @@ public class PostService implements PostInterface {
             throw new RuntimeException("Invalid token");
         }
 
-        return repository.findByCreatorId(user.getId());
+
+        return repository.findByCreatorId(user.getId())
+                        .stream()
+                        .map(this::toPostDTO)
+                        .collect(Collectors.toList());
     }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 
@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  url = 'http://localhost:8080/';
+  url = 'http://localhost:8080/api/auth/';
 
   constructor( private router: Router, private http: HttpClient) {}
 
@@ -46,12 +46,12 @@ export class AuthService {
   }
 
 
-  login(data: any){
-    return this.http.post<any>(this.url+'api/auth/login', data, {})
+  login(data: FormData){
+    return this.http.post<any>(this.url+'login', data, {})
   }
 
   register(user: FormData) {
-    return this.http.post<any>(this.url + 'api/auth/register', user)
+    return this.http.post<any>(this.url + 'register', user)
   }
 
   async logout() {
@@ -66,13 +66,13 @@ export class AuthService {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.getToken()}`
     });
-    return this.http.get<any>('http://localhost:8080/api/auth/user', {headers})
+    return this.http.get<any>(this.url+'user', {headers})
   }
 
   update( formData: FormData) {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.getToken()}`
     });
-    return this.http.post<any>('http://localhost:8080/api/auth/update', formData, {headers})
+    return this.http.post<any>(this.url+'update', formData, {headers})
   }
 }

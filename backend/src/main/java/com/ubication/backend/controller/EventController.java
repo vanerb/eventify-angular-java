@@ -39,9 +39,9 @@ public class EventController {
             return service.update(eventId, eventDTO, file);
         }
 
-    @GetMapping("/findByUserId/{userId}")
-    public List<Event> findByUserId(@PathVariable Long userId) {
-        return service.findByUserId(userId);
+    @GetMapping("/findByUserId")
+    public List<EventDTO> findByUserId(@RequestHeader("Authorization") String authHeader) {
+        return service.findByUserId(authHeader);
     }
 
     @GetMapping("/findMyEventParticipations")

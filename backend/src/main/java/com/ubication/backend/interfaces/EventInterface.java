@@ -13,7 +13,7 @@ public interface EventInterface {
 
     Event update(Long eventId, EventDTO dto, MultipartFile file);
 
-    List<Event> findByUserId(Long userId);
+    List<EventDTO> findByUserId(String authHeader);
 
     List<EventDTO> findAll();
 
@@ -25,40 +25,3 @@ public interface EventInterface {
 
 
 }
-
-
-
-
-//package com.ubication.backend.service;
-//
-//import com.ubication.backend.model.User;
-//import com.ubication.backend.model.Event;
-//
-//@Service
-//public class EventService {
-//
-//    @Autowired
-//    private EventRepository repo;
-//
-//    @Autowired
-//    private UserRepository userRepo;
-//
-//    public Event create(Long userId, Event event) {
-//        User user = userRepo.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-//        event.setEvent(user);
-//        return repo.save(event);
-//    }
-//
-//    public List<Event> findByUserId(Long userId) {
-//        return repo.findByUserId(userId);
-//    }
-//
-//    public List<Event> findAll() {
-//        return repo.findAll();
-//    }
-//
-//    public void delete(Long id) {
-//        repo.deleteById(id);
-//    }
-//}

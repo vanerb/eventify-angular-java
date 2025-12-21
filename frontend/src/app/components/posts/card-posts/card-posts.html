@@ -9,7 +9,7 @@
   <div class="w-full h-12 bg-[rgb(66,66,66)] rounded-t-lg ">
     <div class="flex justify-start items-center w-full h-full px-2 space-x-2">
       <div class="w-10 h-10 rounded-full overflow-hidden ">
-        <img src="{{ 'http://localhost:8080'+post.creator.image.url }}" class="object-cover object-center h-full w-full rounded-lg">
+        <img src="{{ 'http://localhost:8080'+post?.creator?.image?.url }}" class="object-cover object-center h-full w-full rounded-lg">
       </div>
 
       <div>
@@ -19,8 +19,7 @@
   </div>
 
   <div  class="w-full  overflow-hidden w-64 h-64">
-    <img src="{{ 'http://localhost:8080'+post.image.url }}" class="object-cover object-center h-64 w-full ">
-
+    <img src="{{ 'http://localhost:8080'+post?.image?.url }}" class="object-cover object-center h-64 w-full ">
   </div>
 
   <div class="h-12 text-white bg-[rgb(66,66,66)] shadow-lg rounded-b-lg w-full flex justify-end items-center space-x-2 px-2 ">

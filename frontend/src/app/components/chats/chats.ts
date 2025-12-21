@@ -1,5 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {ChatMessage} from '../../models/chat-message';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ChatService} from '../../services/chat-service';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
@@ -18,6 +17,7 @@ import {firstValueFrom, Subscription} from 'rxjs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatChipRow} from '@angular/material/chips';
 import {CardEvents} from '../events/card-events/card-events';
+import {ChatMessage} from '../../models/chats';
 
 @Component({
   selector: 'app-chats',
@@ -51,6 +51,7 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
   private messageDdbbSub?: Subscription;
 
   groupedMessages: { date: string, messages: any[] }[] = [];
+  @ViewChild('bottom') bottom!: ElementRef;
 
   constructor(
     private chatService: ChatService,
@@ -61,13 +62,18 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit() {
     this.user = await firstValueFrom(this.authService.getUserByToken());
+
   }
 
   ngAfterViewInit() {
     this.eventService.getMyEventParticipations().subscribe((events) => {
       this.events = events;
     });
+
+
   }
+
+
 
   /** AGRUPAR */
   groupMessagesByDate() {
@@ -120,7 +126,14 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(msgs => {
         this.messages = msgs;
         this.groupMessagesByDate();
+
+        setTimeout(() => {
+          this.bottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+        }, 0);
+
       });
+
+
   }
 
   /** ENVIAR MENSAJE */
@@ -139,6 +152,9 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
     this.newMessage = '';
 
     setTimeout(() => this.refreshMessages(), 200);
+    setTimeout(() => {
+      this.bottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+    }, 0);
   }
 
   /** CAMBIAR EVENTO */
@@ -148,9 +164,13 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
     this.eventId = id;
     this.messages = [];
 
+
+
     if (this.messagesSub) this.messagesSub.unsubscribe();
 
     this.initConnection();
+
+
   }
 
   ngOnDestroy() {

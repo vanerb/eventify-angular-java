@@ -28,7 +28,7 @@ public class PostController {
     }
 
     @GetMapping("/findByUserId")
-    public List<Post> findByUserId(@RequestHeader("Authorization") String authHeader) {
+    public List<PostDTO> findByUserId(@RequestHeader("Authorization") String authHeader) {
         return service.findByUserId(authHeader);
     }
 

@@ -8,9 +8,9 @@ import {Posts} from '../posts/posts';
 import {Events} from '../events/events';
 import {NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
-import {CreatePostModal} from '../posts/create-post-modal/create-post-modal';
 import {ModalService} from '../../services/modal-service';
 import {UpdateUserModal} from './update-user-modal/update-user-modal';
+import {sleep} from '../../services/utilities-service';
 
 @Component({
   selector: 'app-profile',
@@ -51,11 +51,16 @@ export class Profile implements OnInit{
       this.authService.update(item).subscribe({
         next: async (message) => {
           await this.updateUser()
+
         },
         error: error => {
           console.log(error)
         }
       })
+
+
+      await sleep(1000)
+      window.location.reload()
 
     })
       .catch(() => {

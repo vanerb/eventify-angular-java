@@ -1,9 +1,14 @@
 <app-container>
   <div class="w-full h-[calc(100vh_-_170px)]">
 
-    <div class="grid gap-4 mt-4"
+    <div *ngIf="view === 'general'" class="grid gap-4 mt-4"
          style="grid-template-columns: repeat(auto-fill, minmax(250px, max-content));">
       <app-card-posts  *ngFor="let post of posts" [post]="post" [user]="user" (actions)="postActions($event)"></app-card-posts>
+    </div>
+
+    <div *ngIf="view === 'my'" class="grid gap-4 mt-4"
+         style="grid-template-columns: repeat(auto-fill, minmax(250px, max-content));">
+      <app-card-posts  *ngFor="let post of myPosts" [post]="post" [user]="user" (actions)="postActions($event)"></app-card-posts>
     </div>
 
     <button (click)="createPost()"

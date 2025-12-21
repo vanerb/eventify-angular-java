@@ -16,21 +16,24 @@
       </div>
     </div>
 
-    <div class="mt-10 space-y-4 text-center">
+    <div class="mt-10 space-y-2 text-center">
       <div>
         <h1>{{ user.name }}</h1>
-        <span class="  rounded-full ">{{ '@' + 'vanerb' }}</span>
+        <span>{{ '@' + 'vanerb' }}</span>
       </div>
-      <p>{{ user.description }}</p>
+      <div>
+        <span>{{ user.bio }}</span>
+      </div>
+
 
       <mat-divider></mat-divider>
 
       <mat-tab-group>
         <mat-tab label="Publicaciones">
-          <app-posts></app-posts>
+          <app-posts [view]="'my'"></app-posts>
         </mat-tab>
         <mat-tab label="Eventos">
-          <app-events></app-events>
+          <app-events  [view]="'my'"></app-events>
         </mat-tab>
       </mat-tab-group>
     </div>

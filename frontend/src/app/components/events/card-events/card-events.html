@@ -85,7 +85,20 @@
       <span>{{ event.participants.length }} participantes</span>
     </div>
 
+
+
     <div class="space-x-2 flex flex-wrap">
+      <button (click)="join()" mat-raised-button color="primary">
+        <div class="flex justify-center items-center space-x-2">
+          <i class="bi bi-box-arrow-right "></i>
+          <span class="h-full">
+                 Unirse
+              </span>
+        </div>
+
+      </button>
+
+
       <button (click)="show()" mat-raised-button color="primary">
         <div class="flex justify-center items-center space-x-2">
           <i class="bi bi-eye "></i>

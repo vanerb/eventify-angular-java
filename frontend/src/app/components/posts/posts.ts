@@ -1,8 +1,7 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {Container} from '../general/container/container';
 import {CardEvents} from '../events/card-events/card-events';
 import {NgForOf, NgIf} from '@angular/common';
-import {CreateEventModal} from '../events/create-event-modal/create-event-modal';
 import {ModalService} from '../../services/modal-service';
 import {PostsService} from '../../services/posts-service';
 import {CreatePostModal} from './create-post-modal/create-post-modal';
@@ -10,10 +9,10 @@ import {EventSevice} from '../../services/event-sevice';
 import {CardPosts} from './card-posts/card-posts';
 import {firstValueFrom} from 'rxjs';
 import {AuthService} from '../../services/auth-service';
-import {After} from 'node:v8';
-import {ShowEventModal} from '../events/show-event-modal/show-event-modal';
 import {ShowPostModal} from './show-post-modal/show-post-modal';
 import {WarningModal} from '../general/warning-modal/warning-modal';
+import {Post} from '../../models/posts';
+import {User} from '../../models/users';
 
 @Component({
   selector: 'app-posts',
@@ -23,10 +22,12 @@ import {WarningModal} from '../general/warning-modal/warning-modal';
   standalone: true
 })
 export class Posts implements OnInit, AfterViewInit{
-  myEvents: any[] = []
-  myPosts: any[] = []
-  user!: any
-  posts: any[] = []
+  myEvents: Event[] = []
+  myPosts: Post[] = []
+  user!: User
+  posts: Post[] = []
+
+  @Input() view: 'general' | 'my' = 'general'
 
 
   constructor(private readonly modalService: ModalService, private readonly postService: PostsService, private eventService: EventSevice, private authService: AuthService) {
@@ -41,6 +42,7 @@ export class Posts implements OnInit, AfterViewInit{
   ngAfterViewInit() {
     this.getMyEvents()
     this.getAllPosts()
+    this.getMyPosts()
   }
 
   getMyEvents(){
@@ -51,7 +53,6 @@ export class Posts implements OnInit, AfterViewInit{
 
 
   createPost(){
-
       this.modalService.open(CreatePostModal, {
         width: '180vh',
         height: '90vh',
@@ -126,19 +127,12 @@ export class Posts implements OnInit, AfterViewInit{
           console.log(message)
         },
         error: (err) => {
-
         }
       })
-
-
-
     })
       .catch(() => {
         this.modalService.close()
       });
-
-
-
   }
 
 

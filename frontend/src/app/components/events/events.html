@@ -1,7 +1,8 @@
 <app-container>
 
   <div class="w-full h-[calc(100vh_-_170px)]">
-    <div class="w-full flex justify-end items-center">
+
+    <div  *ngIf="view === 'general'" class="w-full flex justify-end items-center">
       <span *ngIf="selectedView === 'map'" class="mr-4">* En la vista de mapa solo seran visibles los eventos presenciales.</span>
       <mat-button-toggle-group [(ngModel)]="selectedView">
         <mat-button-toggle (click)="updateMap()" value="map"><i class="bi bi-map mr-2"></i> Mapa</mat-button-toggle>
@@ -9,15 +10,22 @@
       </mat-button-toggle-group>
     </div>
 
-    <div *ngIf="selectedView === 'list'" class="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
-      <app-card-events  *ngFor="let event of events" [event]="event" [user]="user" (actions)="eventActions($event)"></app-card-events>
+    <div *ngIf="view === 'general'">
+      <div *ngIf="selectedView === 'list'" class="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
+        <app-card-events  *ngFor="let event of events" [event]="event" [user]="user" (actions)="eventActions($event)"></app-card-events>
+      </div>
     </div>
+
+    <div *ngIf="view === 'my'">
+      <div *ngIf="selectedView === 'list'" class="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
+        <app-card-events  *ngFor="let event of myEvents" [event]="event" [user]="user" (actions)="eventActions($event)"></app-card-events>
+      </div>
+    </div>
+
 
     <div class="w-full h-full mt-4" *ngIf="selectedView === 'map'">
       <div id="map"  class="w-full h-full"></div>
     </div>
-
-
 
     <button (click)="createEvent()"
             class="fixed bottom-6 right-6 bg-blue-600 text-white w-14 h-14 rounded-full text-3xl flex items-center justify-center shadow-lg hover:bg-blue-700 z-9999 cursor-pointer"

@@ -20,8 +20,8 @@
 
         <!-- CABECERA -->
         <div class="w-full h-24 relative">
-          <div class="w-full h-24 overflow-hidden">
-            <img src="" class="object-cover h-24 w-full">
+          <div class="w-full h-24 overflow-hidden rounded-lg">
+            <img  [src]="'http://localhost:8080'+post.creator.banner.url" class="object-cover h-24 w-full">
           </div>
 
           <div class="absolute w-full h-16 -bottom-8 left-0 flex justify-center">
@@ -35,6 +35,19 @@
 
           <div class="w-full text-center">
             <span>{{ post.description }}</span>
+          </div>
+
+          <div class="w-full flex justify-center">
+            <div class="flex items-center gap-2 leading-none">
+              <i class="bi bi-link text-lg"></i>
+              <a
+                [href]="post.url"
+                target="_blank"
+                class="leading-none text-blue-500 hover:underline"
+              >
+                {{ post.url }}
+              </a>
+            </div>
           </div>
 
           <div class="w-full mt-2">
@@ -92,7 +105,7 @@
 
               <!-- INPUT -->
 
-              <div class="flex space-x-2 ">
+              <div class="flex space-x-2 mt-2">
                 <mat-form-field class="w-full mb-[-20px]" appearance="outline">
                   <input matInput placeholder="Escribe un comentario..." [(ngModel)]="comment">
                 </mat-form-field>

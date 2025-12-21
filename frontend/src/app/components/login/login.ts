@@ -28,12 +28,11 @@ export class Login {
 
 
   login() {
-    const login = {
-      email: this.form.get('email')?.value,
-      password: this.form.get('password')?.value,
-    }
+    const formData = new FormData();
+    formData.append('email', this.form.get('email')?.value);
+    formData.append('password', this.form.get('password')?.value);
 
-    this.authService.login(login).subscribe({
+    this.authService.login(formData).subscribe({
       next: async (token: any) => {
         console.log(token)
 

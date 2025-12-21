@@ -158,8 +158,19 @@ public class EventService implements EventInterface {
 
 
     @Override
-    public List<Event> findByUserId(Long userId) {
-        return repository.findByCreatorId(userId);
+    public List<EventDTO> findByUserId(String authHeader) {
+      String token = authHeader.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(token);
+
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+     return repository.findByCreatorId(user.getId())
+                    .stream()
+                    .map(this::toEventDTO)
+                    .collect(Collectors.toList());
+
     }
 
     // =========================

@@ -1,3 +1,7 @@
+export interface Chat{
+
+}
+
 export interface ChatMessage {
   sender: string;
   content: string;

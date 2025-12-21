@@ -1,5 +1,5 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {Container} from '../general/container/container';
 import {ModalService} from '../../services/modal-service';
 import {CreateEventModal} from '../events/create-event-modal/create-event-modal';
@@ -18,6 +18,7 @@ import {FormsModule} from '@angular/forms';
 import {WarningModal} from '../general/warning-modal/warning-modal';
 import {UpdateEventModal} from '../events/update-event-modal/update-event-modal';
 import {CardEvents} from './card-events/card-events';
+import {User} from '../../models/users';
 
 @Component({
   selector: 'app-events',
@@ -30,10 +31,12 @@ export class Events implements OnInit, AfterViewInit{
   private L: any;
   map: any;
   currentMarker: any;
-  events: any[] = []
-  bannerImage!: any[]
-  user!: any
+  events: Events[] = []
+  myEvents: Events[] = []
+  user!: User
   selectedView: string = 'list'
+
+  @Input() view: 'general' | 'my' = 'general'
 
 
   constructor(private http: HttpClient, private readonly modalService: ModalService, private readonly eventService: EventSevice, private readonly imageService: ImagesService, private readonly authService: AuthService) {
@@ -69,6 +72,7 @@ export class Events implements OnInit, AfterViewInit{
 
    ngOnInit() {
     this.getAllEvents()
+     this.getAllMyEvents()
 
     this.initMap();
 
@@ -80,6 +84,14 @@ export class Events implements OnInit, AfterViewInit{
     this.eventService.getAll()
       .subscribe(async events => {
         this.events = events;
+        console.log(events)
+      });
+  }
+
+  getAllMyEvents(){
+    this.eventService.getMyEvents()
+      .subscribe(async events => {
+        this.myEvents = events;
         console.log(events)
       });
   }
@@ -98,10 +110,38 @@ export class Events implements OnInit, AfterViewInit{
         case 'edit':
           this.edit(data.event)
           break
+
+
+        case 'join':
+          this.join(data.event)
+          break
       }
     }
   }
 
+
+  join(event: any){
+    this.modalService.open(WarningModal, {
+        width: '60vh',
+      },
+      {
+        props: {
+          title: 'Confirmación',
+          message: '¿Está seguro de que quiere unirse al evento ' + event.name + '?',
+          type: 'delete'
+        }
+
+      }).then(async (item: FormData) => {
+      this.eventService.joinEvent(event.id, this.user.id).subscribe(async result => {
+        console.log(result)
+      });
+
+
+    })
+      .catch(() => {
+        this.modalService.close()
+      });
+  }
 
   show(event: any) {
     this.modalService.open(ShowEventModal, {
@@ -111,13 +151,7 @@ export class Events implements OnInit, AfterViewInit{
       {
         ubication: event
       }).then(async (item: FormData) => {
-
-
-      this.eventService.joinEvent(event.id, this.user.id).subscribe(async result => {
-        console.log(result)
-      });
-
-
+        this.join(event)
     })
       .catch(() => {
         this.modalService.close()

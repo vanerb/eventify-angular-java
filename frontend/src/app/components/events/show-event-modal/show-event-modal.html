@@ -4,13 +4,13 @@
       <img src="{{'http://localhost:8080'+ubication.image.url}}" class="object-cover object-center h-32 w-full">
     </div>
 
-    <div class="absolute w-full h-16 -bottom-4 left-0  ">
-      <div class=" flex items-center space-x-2  rounded-lg w-fit">
-        <img class="w-16 h-16 rounded-full object-cover object-center " src="http://localhost:8080{{ubication.creator.image.url}}">
-        <span class="  rounded-full ">{{'@'+ ubication.creator.username }}</span>
-      </div>
+<!--    <div class="absolute w-full h-16 -bottom-4 left-0  ">-->
+<!--      <div class=" flex items-center space-x-2  rounded-lg w-fit">-->
+<!--        <img class="w-16 h-16 rounded-full object-cover object-center " src="http://localhost:8080{{ubication.creator.image.url}}">-->
+<!--        <span class="  rounded-full ">{{'@'+ ubication.creator.username }}</span>-->
+<!--      </div>-->
 
-    </div>
+<!--    </div>-->
   </div>
 
 
@@ -50,7 +50,15 @@
 
         <div class="w-full flex justify-end align-center space-x-2 ">
           <button mat-stroked-button color="primary" (click)="close()" class="">Cerrar</button>
-          <button mat-raised-button color="primary" (click)="join()" class="">Unirse</button>
+          <button (click)="join()" mat-raised-button color="primary">
+            <div class="flex justify-center items-center space-x-2">
+              <i class="bi bi-box-arrow-right "></i>
+              <span class="h-full">
+                 Unirse
+              </span>
+            </div>
+
+          </button>
         </div>
       </div>
 

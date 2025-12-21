@@ -31,7 +31,14 @@ export class EventSevice {
     return this.http.get<any[]>('http://localhost:8080/api/events/findMyEventParticipations',{headers})
   }
 
-  joinEvent(eventId: string, userId: string){
+  getMyEvents(){
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+    return this.http.get<any[]>('http://localhost:8080/api/events/findByUserId',{headers})
+  }
+
+  joinEvent(eventId: string, userId: number){
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
