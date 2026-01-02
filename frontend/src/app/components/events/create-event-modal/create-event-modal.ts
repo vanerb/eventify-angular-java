@@ -8,7 +8,13 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {map, Observable, startWith} from 'rxjs';
-import {combineDateAndTime, formatToSqlTimestamp, getThemes, getThemesIcon} from '../../../services/utilities-service';
+import {
+  combineDateAndTime,
+  formatToSqlTimestamp,
+  getImage,
+  getThemes,
+  getThemesIcon
+} from '../../../services/utilities-service';
 import {MatChipRow} from '@angular/material/chips';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {WarningModal} from '../../general/warning-modal/warning-modal';
@@ -71,6 +77,8 @@ export class CreateEventModal implements OnInit {
       startWith(''),
       map(value => this._filter(value || '', getThemes()))
     );
+
+    this.previewCoverImage = getImage(null)
   }
 
 

@@ -1,7 +1,7 @@
 <div class="h-full">
 
   <div class="text-center mb-4">
-    <h1>Editar evento</h1>
+    <h1>update event</h1>
   </div>
   <form class="h-full" [formGroup]="form" >
 
@@ -10,10 +10,8 @@
       <div class="flex justify-center items-center mb-5">
         <div class="w-full flex justify-center items-end relative">
           <div class="w-full h-36 bg-[rgb(66,66,66)] overflow-hidden rounded-lg mx-auto border border-transparent">
-            <img *ngIf="previewCoverImage" [src]="previewCoverImage" alt="No Image"
+            <img  [src]="previewCoverImage" alt="No Image"
                  class="w-full h-full object-cover object-center">
-            <img *ngIf="!previewCoverImage" src="http://localhost:8080/uploads/No_Image_Available.jpg"
-                 class="w-full h-36 object-cover object-center">
           </div>
 
           <div class="absolute -right-0">
@@ -31,24 +29,24 @@
 
 
       <mat-form-field color="primary" class="flex-1 w-full rounded-lg">
-        <mat-label>Nombre</mat-label>
+        <mat-label>Name</mat-label>
         <!--      <span matPrefix>-->
         <!--              <i class="bi bi-alphabet-uppercase text-white text-xl mx-2"></i>-->
         <!--            </span>-->
-        <input formControlName="name" matInput placeholder="Nombre del evento..." class="w-full">
+        <input formControlName="name" matInput placeholder="Enter the event name..." class="w-full">
       </mat-form-field>
 
       <mat-form-field class="w-full">
-        <mat-label>Descripción</mat-label>
-        <textarea class="w-full" formControlName="description" placeholder="Descripción del evento..."
+        <mat-label>Description</mat-label>
+        <textarea class="w-full" formControlName="description" placeholder="Enter the event description..."
                   matInput></textarea>
       </mat-form-field>
 
 
-      <mat-checkbox [(ngModel)]="isOnline" class="w-full mb-4" color="primary" formControlName="type">¿Es online?</mat-checkbox>
+      <mat-checkbox [(ngModel)]="isOnline" class="w-full mb-4" color="primary" formControlName="type">Is it online?</mat-checkbox>
 
       <mat-form-field class="w-full">
-        <mat-label>Tema</mat-label>
+        <mat-label>Theme</mat-label>
         <input
           type="text"
           matInput
@@ -79,14 +77,14 @@
 
       <div class="w-full flex justify-center align-center space-x-2">
         <mat-form-field class="w-[80%]">
-          <mat-label>Fecha de inicio</mat-label>
+          <mat-label>Start date</mat-label>
           <input matInput [matDatepicker]="pickerInicio" formControlName="initDate">
           <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
           <mat-datepicker #pickerInicio></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field class="w-[20%]">
-          <mat-label>Hora de inicio</mat-label>
+          <mat-label>Start hour</mat-label>
           <input matInput type="time" formControlName="initHour">
         </mat-form-field>
       </div>
@@ -94,25 +92,25 @@
 
       <div class="w-full flex justify-center align-center space-x-2">
         <mat-form-field class="w-[80%]">
-          <mat-label>Fecha de fin</mat-label>
+          <mat-label>End date</mat-label>
           <input matInput [matDatepicker]="pickerFin" formControlName="endDate">
           <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
           <mat-datepicker #pickerFin></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field class="w-[20%]">
-          <mat-label>Hora de fin</mat-label>
+          <mat-label>End hour</mat-label>
           <input matInput type="time" formControlName="endHour">
         </mat-form-field>
       </div>
 
 
       <mat-form-field *ngIf="!isOnline" color="primary" class="flex-1 w-full rounded-lg">
-        <mat-label>Ubicación</mat-label>
+        <mat-label>Ubication</mat-label>
         <span matPrefix>
               <i class="bi bi-geo-alt text-white text-xl mx-2"></i>
             </span>
-        <input formControlName="ubication" (input)="onSearch($event)" matInput placeholder="Buscar el lugar del evento..."
+        <input formControlName="ubication" (input)="onSearch($event)" matInput placeholder="Find the event venue..."
                class="w-full">
       </mat-form-field>
 
@@ -130,8 +128,8 @@
 
 
     <div class="flex justify-end aling-end space-x-2 mt-2">
-      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
-      <button (click)="updateEvent()" mat-raised-button color="primary">Aceptar</button>
+      <button (click)="close()" mat-stroked-button color="primary">Cancel</button>
+      <button (click)="updateEvent()" mat-raised-button color="primary">Accept</button>
     </div>
   </form>
 

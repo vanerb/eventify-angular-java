@@ -4,7 +4,7 @@ import {ImagesService} from '../../../services/images-service';
 import {MatChipRow} from '@angular/material/chips';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatTabsModule} from '@angular/material/tabs';
-import {transformDate} from '../../../services/utilities-service';
+import {getImage, transformDate} from '../../../services/utilities-service';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatListModule} from '@angular/material/list';
 
@@ -48,4 +48,5 @@ export class ShowEventModal implements OnInit{
 
 
   protected readonly transformDate = transformDate;
+    protected readonly getImage = getImage;
 }

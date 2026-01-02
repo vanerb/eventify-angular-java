@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {NgIf} from "@angular/common";
+import {getImage} from "../../../services/utilities-service";
 
 @Component({
   selector: 'app-card-posts',
@@ -36,4 +37,6 @@ export class CardPosts {
       post: this.post,
     })
   }
+
+    protected readonly getImage = getImage;
 }

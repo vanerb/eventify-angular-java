@@ -12,7 +12,13 @@ import {
 } from '@angular/forms';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
-import {combineDateAndTime, formatToSqlTimestamp, getThemes, getThemesIcon} from '../../../services/utilities-service';
+import {
+  combineDateAndTime,
+  formatToSqlTimestamp,
+  getImage,
+  getThemes,
+  getThemesIcon
+} from '../../../services/utilities-service';
 import {map, Observable, startWith} from 'rxjs';
 import {MatChipRow} from '@angular/material/chips';
 import {WarningModal} from '../../general/warning-modal/warning-modal';
@@ -66,6 +72,8 @@ export class CreatePostModal implements OnInit{
       startWith(''),
       map(value => this._filter(value || '', this.events))
     );
+
+    this.previewCoverImage = getImage(null)
   }
 
 

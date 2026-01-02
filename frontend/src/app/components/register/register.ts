@@ -1,10 +1,10 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth-service';
 import {Router, RouterLink} from '@angular/router';
 import {Container} from '../general/container/container';
 import {NgIf} from '@angular/common';
-import {getLocalImage} from "../../services/utilities-service";
+import {getImage} from "../../services/utilities-service";
 import {MatFormField, MatInput, MatInputModule} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {ModalService} from '../../services/modal-service';
@@ -26,7 +26,7 @@ import {WarningModal} from '../general/warning-modal/warning-modal';
   styleUrl: './register.css',
   standalone: true
 })
-export class Register {
+export class Register implements OnInit{
 
   form!: FormGroup
 
@@ -42,6 +42,10 @@ export class Register {
       repeatPassword: ['', [Validators.required]],
       profile_photo: [null],
     });
+  }
+
+  ngOnInit() {
+    this.previewCoverImage = getImage(null)
   }
 
   async onImageChange(event: Event) {
@@ -151,5 +155,4 @@ export class Register {
 
   }
 
-  protected readonly getLocalImage = getLocalImage;
 }

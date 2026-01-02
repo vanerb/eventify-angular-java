@@ -3,10 +3,10 @@
   <div class="w-full h-[calc(100vh_-_170px)]">
 
     <div  *ngIf="view === 'general'" class="w-full flex justify-end items-center">
-      <span *ngIf="selectedView === 'map'" class="mr-4">* En la vista de mapa solo seran visibles los eventos presenciales.</span>
+      <span *ngIf="selectedView === 'map'" class="mr-4">* Only in-person events will be visible in the map view.</span>
       <mat-button-toggle-group [(ngModel)]="selectedView">
-        <mat-button-toggle (click)="updateMap()" value="map"><i class="bi bi-map mr-2"></i> Mapa</mat-button-toggle>
-        <mat-button-toggle value="list"><i class="bi bi-grid mr-2"></i>Lista</mat-button-toggle>
+        <mat-button-toggle (click)="updateMap()" value="map"><i class="bi bi-map mr-2"></i> Map</mat-button-toggle>
+        <mat-button-toggle value="list"><i class="bi bi-grid mr-2"></i>List</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
 

@@ -2,13 +2,13 @@
   <div *ngIf="event?.creator?.id === this.user?.id && view === 'complete' && realOnly === false" class="absolute right-2 top-2">
     <button class="cursor-pointer" [matMenuTriggerFor]="menu"><i class="bi bi-three-dots-vertical"></i></button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="edit()"><i class="bi bi-pencil mr-2"></i>Editar</button>
-      <button mat-menu-item (click)="delete()"><i class="bi bi-trash mr-2"></i>Eliminar</button>
+      <button mat-menu-item (click)="edit()"><i class="bi bi-pencil mr-2"></i>Update</button>
+      <button mat-menu-item (click)="delete()"><i class="bi bi-trash mr-2"></i>Delete</button>
     </mat-menu>
   </div>
 
   <div class="w-full h-24 overflow-hidden ">
-    <img *ngIf="event?.image?.url" src="{{ 'http://localhost:8080'+event.image.url }}"
+    <img *ngIf="event?.image?.url" src="{{ getImage(event.image.url) }}"
          class="object-cover object-center h-32 w-full rounded-t-md">
   </div>
   <div class="h-[calc(100%_-_140px)]">
@@ -25,7 +25,7 @@
         <div  *ngIf="event.type === 'notOnline'" class="w-full flex justify-center">
           <div class="flex items-center gap-2 leading-none">
             <i class="bi bi-geo text-lg"></i>
-            Presencial
+            Presential
             <span *ngIf="view === 'small'">
               · <i class="bi bi-geo-alt"></i> {{ event.ubication }}
               </span>
@@ -44,7 +44,7 @@
             class="text-pink-600 underline cursor-pointer"
             (click)="viewMore()"
           >
-            {{ showDescriptionFull ? 'Ver menos' : 'Ver más' }}
+            {{ showDescriptionFull ? 'See less' : 'See more' }}
           </button>
         </div>
 
@@ -87,7 +87,7 @@
   <mat-card-actions *ngIf="view === 'complete' && realOnly === false" class="flex flex-wrap justify-between items-end">
     <div class="flex justify-center items-center space-x-2">
       <i class="bi bi-person "></i>
-      <span>{{ event.participants.length }} participantes</span>
+      <span>{{ event.participants.length }} participants</span>
     </div>
 
 
@@ -97,7 +97,7 @@
         <div class="flex justify-center items-center space-x-2">
           <i class="bi bi-box-arrow-right "></i>
           <span class="h-full">
-                 Unirse
+                 Join
               </span>
         </div>
 
@@ -108,7 +108,7 @@
         <div class="flex justify-center items-center space-x-2">
           <i class="bi bi-eye "></i>
           <span class="h-full">
-                 Ver
+                 Show
               </span>
         </div>
 

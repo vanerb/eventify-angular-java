@@ -12,7 +12,7 @@
                   <mat-panel-description>
                     <div class="flex justify-center items-center space-x-2">
                       <i class="bi bi-person "></i>
-                      <span>{{ event.participants.length }} participantes</span>
+                      <span>{{ event.participants.length }} participants</span>
                     </div>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
@@ -35,7 +35,7 @@
           </div>
           <div>
             <span>
-              Selecciona un chat para ver el historial.
+              Select a chat to view the history.
             </span>
           </div>
 
@@ -71,7 +71,7 @@
 
         <div class="flex space-x-2 p-4">
           <mat-form-field class="w-full mb-[-20px]" appearance="outline">
-            <input matInput placeholder="Escribe un mensaje..." [(ngModel)]="newMessage">
+            <input matInput placeholder="Write a message..." [(ngModel)]="newMessage">
           </mat-form-field>
           <div class="flex justify-center items-center">
             <button (click)="sendMessage()" mat-raised-button color="primary">

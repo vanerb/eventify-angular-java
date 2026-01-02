@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 import {MatCardModule} from '@angular/material/card';
 import {MatChipRow} from '@angular/material/chips';
-import {sleep, transformDate} from '../../../services/utilities-service';
+import {getImage, sleep, transformDate} from '../../../services/utilities-service';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
@@ -75,4 +75,5 @@ export class CardEvents {
   }
 
   protected readonly transformDate = transformDate;
+  protected readonly getImage = getImage;
 }

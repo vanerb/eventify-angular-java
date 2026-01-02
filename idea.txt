@@ -1,6 +1,0 @@
--Aplicación de quedadas
-	-implementación de mapa
-	-eventos
-	-Poder unirse a los eventos
-	-Marcar lugares favortios
-	-chat para las quedadas

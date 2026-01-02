@@ -15,10 +15,9 @@
         <div class="flex justify-center items-center mb-5">
           <div class="w-fit flex justify-center items-end relative">
             <div class="w-36 h-36 overflow-hidden rounded-full mx-auto border border-transparent">
-              <img *ngIf="previewCoverImage" [src]="previewCoverImage" alt="No Image"
+              <img [src]="previewCoverImage" alt="No Image"
                    class="w-full h-full object-cover object-center">
-              <img *ngIf="!previewCoverImage" [src]="getLocalImage('No_Image_Available.jpg')"
-                   class="w-full h-full object-cover object-center">
+
             </div>
 
             <div class="absolute -right-2">

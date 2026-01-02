@@ -44,11 +44,6 @@ export function getImage(img: string|null){
 }
 
 
-export function getLocalImage(name: string) {
-  return 'http://localhost:8080/uploads/' + name
-}
-
-
 export function getThemesIcon(platformId: number) {
   const p = themesIcons.find(p => p.id === platformId);
   return p ? p.icon : '';

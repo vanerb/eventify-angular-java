@@ -6,15 +6,23 @@ import com.ubication.backend.interfaces.ImageInterface;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 @Service
 public class ImageService implements ImageInterface {
 
     @Autowired
     private ImageRepository repository;
+
+    @Value("${app.upload.dir}")
+    private String uploadDir;
 
     // Carpeta base absoluta o relativa al proyecto
     private final String UPLOAD_DIR = new File("uploads").getAbsolutePath() + File.separator;
@@ -68,7 +76,28 @@ public class ImageService implements ImageInterface {
     public void deleteByFromId(String fromType, Long fromId) {
         List<Image> images = repository.findByFromTypeAndFromId(fromType, fromId);
         for (Image img : images) {
+            deleteFile(img);
             repository.delete(img);
         }
+
     }
+
+   private void deleteFile(Image img) {
+       try {
+           String relativePath = img.getUrl().replaceFirst("^/uploads/?", "");
+
+           Path filePath = Paths.get(uploadDir)
+                   .resolve(relativePath)
+                   .normalize();
+
+           Files.deleteIfExists(filePath);
+
+           System.out.println("Archivo borrado: " + filePath.toAbsolutePath());
+
+       } catch (IOException e) {
+           throw new RuntimeException(
+                   "No se pudo borrar el archivo: " + img.getUrl(), e
+           );
+       }
+   }
 }

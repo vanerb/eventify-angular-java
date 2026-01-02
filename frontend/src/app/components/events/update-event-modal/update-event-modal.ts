@@ -10,7 +10,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {map, Observable, startWith} from 'rxjs';
 import {
   combineDateAndTime,
-  formatToSqlTimestamp,
+  formatToSqlTimestamp, getImage,
   getThemes,
   getThemesIcon, transformDate,
   transformDateHour
@@ -80,7 +80,7 @@ export class UpdateEventModal implements OnInit{
       map(value => this._filter(value || '', getThemes()))
     );
 
-    this.previewCoverImage = 'http://localhost:8080'+this.event?.image?.url
+    this.previewCoverImage = getImage(this.event?.image?.url)
 
     this.form.get('name')?.setValue(this.event.name)
     this.form.get('description')?.setValue(this.event.description)

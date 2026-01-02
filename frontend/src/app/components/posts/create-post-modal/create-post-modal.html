@@ -6,9 +6,7 @@
         <div class="flex justify-center items-center mb-5 w-[50%]">
           <div class="h-full w-full flex justify-center items-end relative">
             <div class="w-full h-full bg-[rgb(66,66,66)] overflow-hidden rounded-lg mx-auto border border-transparent">
-              <img *ngIf="previewCoverImage" [src]="previewCoverImage" alt="No Image"
-                   class="w-full h-full object-cover object-center">
-              <img *ngIf="!previewCoverImage" src="http://localhost:8080/uploads/No_Image_Available.jpg"
+              <img  [src]="previewCoverImage" alt="No Image"
                    class="w-full h-full object-cover object-center">
             </div>
 
@@ -27,18 +25,18 @@
 
 
         <div class="h-[calc(100%_-_10px)] overflow-auto w-[50%]">
-          <h1 class="mb-4 text-center">Crear publicación</h1>
+          <h1 class="mb-4 text-center">Create post</h1>
           <mat-form-field class="w-full">
-            <mat-label>Descripción</mat-label>
-            <textarea class="w-full" rows="8" formControlName="description" placeholder="Descripción de la publicación..."
+            <mat-label>Description</mat-label>
+            <textarea class="w-full" rows="8" formControlName="description" placeholder="Enter a description for the post..."
                       matInput></textarea>
           </mat-form-field>
 
           <mat-form-field class="w-full">
-            <mat-label>Evento</mat-label>
+            <mat-label>Event</mat-label>
             <input
               type="text"
-              placeholder="Indica el evento con el que se relaciona la publicación..."
+              placeholder="Indicate the event to which the publication relates..."
               matInput
               [formControl]="eventsControl"
               [matAutocomplete]="autoEvents"
@@ -66,7 +64,7 @@
 
           <mat-form-field class="w-full">
             <mat-label>Hashtags</mat-label>
-            <input class="w-full"  (keydown.enter)="addHashtagEnter($event)" placeholder="Añade los hashtags de la publicación..."
+            <input class="w-full"  (keydown.enter)="addHashtagEnter($event)" placeholder="Add the hashtags from the post..."
                       matInput>
           </mat-form-field>
 
@@ -91,7 +89,7 @@
             <!--      <span matPrefix>-->
             <!--              <i class="bi bi-alphabet-uppercase text-white text-xl mx-2"></i>-->
             <!--            </span>-->
-            <input formControlName="url" matInput placeholder="Introduce una URL si la publicación tiene una..." class="w-full">
+            <input formControlName="url" matInput placeholder="Enter a URL if the post has one...." class="w-full">
           </mat-form-field>
 
         </div>
@@ -104,9 +102,9 @@
 
 
     <div class="flex justify-end align-end space-x-2">
-      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
+      <button (click)="close()" mat-stroked-button color="primary">Cancel</button>
 
-      <button type="submit" mat-raised-button color="primary">Aceptar</button>
+      <button type="submit" mat-raised-button color="primary">Accept</button>
 
 
     </div>

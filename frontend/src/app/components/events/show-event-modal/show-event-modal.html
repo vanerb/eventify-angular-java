@@ -1,7 +1,7 @@
 <div class="space-y-5 w-full h-full">
   <div class="w-full h-32  relative rounded-lg">
     <div class="w-full h-32 overflow-hidden rounded-lg">
-      <img src="{{'http://localhost:8080'+ubication.image.url}}" class="object-cover object-center h-32 w-full">
+      <img src="{{getImage(ubication.image.url)}}" class="object-cover object-center h-32 w-full">
     </div>
 
 <!--    <div class="absolute w-full h-16 -bottom-4 left-0  ">-->
@@ -15,7 +15,7 @@
 
 
   <mat-tab-group>
-    <mat-tab label="Descripción">
+    <mat-tab label="Description">
       <div class="h-[calc(90vh_-_0px)]">
         <div class="h-[calc(100%_-_260px)] overflow-auto space-y-4 ">
           <div class="mt-4 text-center space-y-4">
@@ -49,12 +49,12 @@
         </div>
 
         <div class="w-full flex justify-end align-center space-x-2 ">
-          <button mat-stroked-button color="primary" (click)="close()" class="">Cerrar</button>
+          <button mat-stroked-button color="primary" (click)="close()" class="">Close</button>
           <button *ngIf="this.user" (click)="join()" mat-raised-button color="primary">
             <div class="flex justify-center items-center space-x-2">
               <i class="bi bi-box-arrow-right "></i>
               <span class="h-full">
-                 Unirse
+                 Join
               </span>
             </div>
 
@@ -64,7 +64,7 @@
 
 
     </mat-tab>
-    <mat-tab *ngIf="this.user" label="Participantes">
+    <mat-tab *ngIf="this.user" label="Participants">
 
       <div class="h-[calc(90vh_-_0px)]">
         <div class="h-[calc(100%_-_260px)] overflow-auto space-y-4 ">
@@ -72,7 +72,7 @@
             <div *ngFor="let participant of ubication.participants">
               <mat-list-item>
                 <div class=" flex items-center space-x-2  rounded-lg w-fit">
-                  <img class="w-10 h-10 rounded-full object-cover object-center " src="http://localhost:8080{{participant.image.url}}">
+                  <img class="w-10 h-10 rounded-full object-cover object-center " src="{{getImage(participant.image.url)}}">
                   <span class="  rounded-full ">{{'@'+ participant.username }}</span>
                 </div>
               </mat-list-item>
@@ -82,7 +82,7 @@
           </mat-list>
         </div>
         <div  class="w-full flex justify-end align-center space-x-2 ">
-          <button mat-stroked-button color="primary" (click)="close()" class="">Cerrar</button>
+          <button mat-stroked-button color="primary" (click)="close()" class="">Close</button>
         </div>
       </div>
     </mat-tab>

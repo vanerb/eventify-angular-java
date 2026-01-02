@@ -23,9 +23,9 @@
               <img class="w-24 h-24 rounded-full object-cover object-center" src="{{previewProfileCoverImage}}">
               <div class="absolute -right-4 -bottom-0">
                 <!-- Botón para cambiar imagen -->
-                <input type="file" accept="image/*" #fileInput hidden (change)="onImageProfileChange($event)" />
+                <input type="file" accept="image/*" #fileInput1 hidden (change)="onImageProfileChange($event)" />
                 <button type="button"  color="primary"
-                        (click)="fileInput.click()"
+                        (click)="fileInput1.click()"
                         class="w-10 h-10 rounded-md flex justify-center items-center bg-[#c2185b] cursor-pointer">
                   <i class="bi bi-pencil text-xl"></i>
                 </button>
@@ -40,23 +40,23 @@
         <form [formGroup]="form" class="space-y-6">
 
           <div>
-            <h1 class="mb-4">Actualizar perfil</h1>
+            <h1 class="mb-4">Update profile</h1>
             <mat-form-field class="w-full">
-              <mat-label>Nombre</mat-label>
-              <input class="w-full" formControlName="name" placeholder="Introduce tu nombre..."
+              <mat-label>Name</mat-label>
+              <input class="w-full" formControlName="name" placeholder="Enter your name..."
                      matInput>
             </mat-form-field>
 
             <mat-form-field class="w-full">
-              <mat-label>Usuario</mat-label>
-              <input class="w-full" formControlName="username" placeholder="Introduce tu nombre de usuario..."
+              <mat-label>Username</mat-label>
+              <input class="w-full" formControlName="username" placeholder="Enter your username..."
                      matInput>
             </mat-form-field>
 
 
             <mat-form-field class="w-full mb-[-20px]">
-              <mat-label>Biografia</mat-label>
-              <textarea class="w-full" rows="5" formControlName="bio" placeholder="Cuenta a los demas algo mas de ti..."
+              <mat-label>Biography</mat-label>
+              <textarea class="w-full" rows="5" formControlName="bio" placeholder="Tell others something more about yourself..."
                         matInput></textarea>
             </mat-form-field>
           </div>
@@ -68,16 +68,16 @@
 
 
           <div>
-            <h1 class="mb-4">Cambiar contraseña</h1>
+            <h1 class="mb-4">Change password</h1>
             <mat-form-field class="w-full">
-              <mat-label>Contraseña</mat-label>
-              <input class="w-full" type="password" formControlName="password" placeholder="Introduce tu nueva contraseña..."
+              <mat-label>Password</mat-label>
+              <input class="w-full" type="password" formControlName="password" placeholder="Enter your new password..."
                      matInput>
             </mat-form-field>
 
             <mat-form-field class="w-full">
-              <mat-label>Repetir contraseña</mat-label>
-              <input class="w-full" type="password" formControlName="repeatPassword" placeholder="Repite tu nueva contraseña..."
+              <mat-label>Repeat password</mat-label>
+              <input class="w-full" type="password" formControlName="repeatPassword" placeholder="Repeat your new password..."
                      matInput>
             </mat-form-field>
           </div>
@@ -90,9 +90,9 @@
       </div>
     </div>
     <div class="flex justify-end aling-end space-x-2 mt-2">
-      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
+      <button (click)="close()" mat-stroked-button color="primary">Cancel</button>
 
-      <button (click)="update()" mat-raised-button color="primary">Aceptar</button>
+      <button (click)="update()" mat-raised-button color="primary">Accept</button>
 
 
     </div>
