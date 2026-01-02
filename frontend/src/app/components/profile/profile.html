@@ -5,13 +5,12 @@
 
     <div class="w-full h-32 relative">
       <div class="w-full h-32 overflow-hidden rounded-lg">
-        <img *ngIf="user?.banner?.url" src="{{'http://localhost:8080'+user?.banner?.url}}" class="object-cover object-center h-32 w-full">
-        <img *ngIf="!user?.banner?.url" src="{{'http://localhost:8080/uploads/No_Image_Available.jpg'}}" class="object-cover object-center h-32 w-full">
+        <img src="{{getImage(user?.banner?.url)}}" class="object-cover object-center h-32 w-full">
       </div>
 
       <div class="absolute w-full h-24 -bottom-10 left-0 right-0 flex justify-center">
         <div class="flex items-center space-x-2 rounded-lg w-fit">
-          <img class="w-24 h-24 rounded-full object-cover object-center" src="{{'http://localhost:8080'+user.image.url}}">
+          <img class="w-24 h-24 rounded-full object-cover object-center" src="{{getImage(user.image.url)}}">
         </div>
       </div>
     </div>

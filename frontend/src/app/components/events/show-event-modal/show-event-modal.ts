@@ -26,6 +26,7 @@ import {MatListModule} from '@angular/material/list';
 export class ShowEventModal implements OnInit{
 
   @Input() ubication: any
+  @Input() user: any
 
   confirm!: (result?: any) => void;
   close!: () => void;

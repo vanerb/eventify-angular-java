@@ -3,8 +3,8 @@
     <div class="h-[calc(100%_-_40px)] overflow-auto">
       <div class="w-full h-32 relative">
         <div class="w-full h-32 overflow-hidden rounded-lg">
-          <img *ngIf="previewBannerCoverImage" src="{{previewBannerCoverImage}}" class="object-cover object-center h-32 w-full">
-          <img *ngIf="!previewBannerCoverImage" src="{{'http://localhost:8080/uploads/No_Image_Available.jpg'}}" class="object-cover object-center h-32 w-full">
+          <img src="{{previewBannerCoverImage}}" class="object-cover object-center h-32 w-full">
+
           <div class="absolute -right-0 -bottom-0">
             <!-- Botón para cambiar imagen -->
             <input type="file" accept="image/*" #fileInput hidden (change)="onImageBannerChange($event)" />

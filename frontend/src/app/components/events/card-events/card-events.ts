@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 import {MatCardModule} from '@angular/material/card';
 import {MatChipRow} from '@angular/material/chips';
-import {transformDate} from '../../../services/utilities-service';
+import {sleep, transformDate} from '../../../services/utilities-service';
 import {NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-card-events',
@@ -26,13 +26,23 @@ export class CardEvents {
   @Input() event!: any
   @Input() user!: any
   @Input() view: 'small' | 'complete' = 'complete'
-  @Input() realOnly : boolean = false;
+  @Input() realOnly: boolean = false;
 
   @Output() actions = new EventEmitter()
 
+  constructor(private readonly cd: ChangeDetectorRef) {
+  }
+
   showDescriptionFull: boolean = false
 
-  delete(){
+
+  viewMore() {
+    this.showDescriptionFull = !this.showDescriptionFull
+    this.cd.detectChanges()
+  }
+
+
+  delete() {
     this.actions.emit({
       action: 'delete',
       event: this.event,
@@ -40,7 +50,7 @@ export class CardEvents {
     })
   }
 
-  edit(){
+  edit() {
     this.actions.emit({
       action: 'edit',
       event: this.event,
@@ -48,7 +58,7 @@ export class CardEvents {
     })
   }
 
-  show(){
+  show() {
     this.actions.emit({
       action: 'show',
       event: this.event,
@@ -56,7 +66,7 @@ export class CardEvents {
     })
   }
 
-  join(){
+  join() {
     this.actions.emit({
       action: 'join',
       event: this.event,

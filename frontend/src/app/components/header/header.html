@@ -24,7 +24,7 @@
         <span class="mt-2">Events</span>
       </div>
 
-      <div
+      <div *ngIf="this.user"
         (click)="gotTo('/chats')"
         class="menu-item flex flex-col justify-center items-center w-full p-5 cursor-pointer"
       >

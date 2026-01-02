@@ -5,6 +5,7 @@ import {MatInput, MatLabel} from '@angular/material/input';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatDivider} from '@angular/material/divider';
 import {MatButton} from '@angular/material/button';
+import {getImage} from '../../../services/utilities-service';
 
 @Component({
   selector: 'app-update-user-modal',
@@ -48,14 +49,14 @@ export class UpdateUserModal implements OnInit{
   }
 
   ngOnInit() {
+    this.previewProfileCoverImage = getImage(this.user.image.url)
+
+    this.previewBannerCoverImage = getImage(this.user?.banner?.url)
+
     this.form.get('name')?.setValue(this.user.name)
     this.form.get('bio')?.setValue(this.user.bio)
     this.form.get('username')?.setValue(this.user.username)
 
-
-    this.previewProfileCoverImage = 'http://localhost:8080'+this.user?.image?.url
-
-    this.previewBannerCoverImage = 'http://localhost:8080'+ this.user?.banner?.url
   }
 
   update(){

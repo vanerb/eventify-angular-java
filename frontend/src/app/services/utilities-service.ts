@@ -34,6 +34,14 @@ export function formatToSqlTimestamp(date: Date): string {
   return date.toISOString().slice(0, 26);
 }
 
+export function getImage(img: string|null){
+  if(img === null || img == undefined){
+    return 'http://localhost:8080/uploads/No_Image_Available.jpg';
+  }
+  else{
+    return 'http://localhost:8080'+img
+  }
+}
 
 
 export function getLocalImage(name: string) {

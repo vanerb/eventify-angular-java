@@ -63,8 +63,6 @@ public class AuthService implements AuthInterface {
                 throw new RuntimeException("Error al guardar imagen de perfil", e);
             }
         }
-
-
         return toUserDto(savedUser);
     }
 

@@ -47,7 +47,10 @@ export class Events implements OnInit, AfterViewInit{
   ) {}
 
   async ngAfterViewInit() {
-    this.user = await firstValueFrom(this.authService.getUserByToken());
+    if(this.authService.getToken()){
+      this.user = await firstValueFrom(this.authService.getUserByToken());
+    }
+
 
     await this.mapService.initLeaflet();
 
@@ -69,13 +72,7 @@ export class Events implements OnInit, AfterViewInit{
   }
 
    ngOnInit() {
-
-
     this.updateView()
-
-
-
-
   }
 
   updateView(){
@@ -107,7 +104,7 @@ export class Events implements OnInit, AfterViewInit{
         this.modalService.open(ShowEventModal, {
           width: '90vh',
           height: '90vh',
-        }, { ubication: event }).catch(() => this.modalService.close());
+        }, { ubication: event, user: this.user }).catch(() => this.modalService.close());
       });
     });
   }
@@ -160,7 +157,7 @@ export class Events implements OnInit, AfterViewInit{
   }
 
   show(event: any) {
-    this.modalService.open(ShowEventModal, { width: '90vh', height: '90vh' }, { ubication: event })
+    this.modalService.open(ShowEventModal, { width: '90vh', height: '90vh' }, { ubication: event, user: this.user })
       .then(() => {
         this.join(event);
       }).catch(() => this.modalService.close());

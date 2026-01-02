@@ -10,6 +10,7 @@ import {NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {ModalService} from '../../services/modal-service';
 import {UpdateUserModal} from './update-user-modal/update-user-modal';
+import {getImage} from '../../services/utilities-service';
 
 @Component({
   selector: 'app-profile',
@@ -63,4 +64,5 @@ export class Profile implements OnInit{
       });
   }
 
+  protected readonly getImage = getImage;
 }

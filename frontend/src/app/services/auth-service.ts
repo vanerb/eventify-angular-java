@@ -46,7 +46,7 @@ export class AuthService {
   }
 
 
-  login(data: FormData){
+  login(data: any){
     return this.http.post<any>(this.url+'login', data, {})
   }
 

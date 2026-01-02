@@ -7,7 +7,7 @@
       <div class="w-full h-full flex justify-center items-center overflow-hidden">
         <img
           class="max-w-full max-h-full object-contain"
-          [src]="'http://localhost:8080' + post?.image?.url"
+          [src]="getImage(post?.image?.url)"
           alt="Imagen">
       </div>
     </div>
@@ -21,12 +21,12 @@
         <!-- CABECERA -->
         <div class="w-full h-24 relative">
           <div class="w-full h-24 overflow-hidden rounded-lg">
-            <img  [src]="'http://localhost:8080'+post?.creator?.banner?.url" class="object-cover h-24 w-full">
+            <img  [src]="getImage(post?.creator?.banner?.url)" class="object-cover h-24 w-full">
           </div>
 
           <div class="absolute w-full h-16 -bottom-8 left-0 flex justify-center">
             <img class="w-16 h-16 rounded-full object-cover"
-                 [src]="'http://localhost:8080'+post?.creator?.image?.url">
+                 [src]="getImage(post?.creator?.image?.url)">
           </div>
         </div>
 
@@ -78,7 +78,7 @@
                 <div class="bg-[rgb(66,66,66)] rounded-lg p-3 shadow-lg relative"
                      *ngFor="let comment of post.comments">
 
-                  <div class="absolute right-2 top-2">
+                  <div *ngIf="comment?.user?.id === this.user?.id" class="absolute right-2 top-2">
                     <button class="cursor-pointer" [matMenuTriggerFor]="menu">
                       <i class="bi bi-three-dots-vertical"></i>
                     </button>
@@ -91,7 +91,7 @@
 
                   <div class="flex items-center space-x-2 h-10 mb-2">
                     <img class="w-10 h-10 rounded-full object-cover"
-                         [src]="'http://localhost:8080'+comment.user.image.url">
+                         [src]="getImage(comment.user.image.url)">
                     <span>{{ comment.user.username }}</span>
                   </div>
 
@@ -104,7 +104,7 @@
 
               <!-- INPUT -->
 
-              <div class="flex space-x-2 mt-2">
+              <div *ngIf="this.user" class="flex space-x-2 mt-2">
                 <mat-form-field class="w-full mb-[-20px]" appearance="outline">
                   <input matInput placeholder="Escribe un comentario..." [(ngModel)]="comment">
                 </mat-form-field>
@@ -130,14 +130,14 @@
           </mat-tab>
 
           <!-- TAB: PARTICIPANTES -->
-          <mat-tab label="Participantes">
+          <mat-tab *ngIf="this.user" label="Participantes">
             <div class="py-4 space-y-4 overflow-auto h-full">
               <mat-list>
                 <div *ngFor="let participant of post.event.participants">
                   <mat-list-item>
                     <div class="flex items-center space-x-2">
                       <img class="w-10 h-10 rounded-full object-cover"
-                           [src]="'http://localhost:8080'+participant.image.url">
+                           [src]="getImage(participant.image.url)">
                       <span>{{ '@' + participant.username }}</span>
                     </div>
                   </mat-list-item>

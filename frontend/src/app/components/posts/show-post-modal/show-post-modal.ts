@@ -10,7 +10,7 @@ import {
 } from '@angular/material/expansion';
 import {MatChipRow} from '@angular/material/chips';
 import {NgForOf, NgIf} from '@angular/common';
-import {transformDate} from '../../../services/utilities-service';
+import {getImage, transformDate} from '../../../services/utilities-service';
 import {MatDivider} from '@angular/material/divider';
 import {MatList, MatListItem} from '@angular/material/list';
 import {MatTab, MatTabGroup} from '@angular/material/tabs';
@@ -112,4 +112,5 @@ export class ShowPostModal implements OnInit {
   }
 
   protected readonly transformDate = transformDate;
+  protected readonly getImage = getImage;
 }

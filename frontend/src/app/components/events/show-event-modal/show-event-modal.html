@@ -1,6 +1,6 @@
 <div class="space-y-5 w-full h-full">
-  <div class="w-full h-32  relative">
-    <div class="w-full h-32 overflow-hidden">
+  <div class="w-full h-32  relative rounded-lg">
+    <div class="w-full h-32 overflow-hidden rounded-lg">
       <img src="{{'http://localhost:8080'+ubication.image.url}}" class="object-cover object-center h-32 w-full">
     </div>
 
@@ -50,7 +50,7 @@
 
         <div class="w-full flex justify-end align-center space-x-2 ">
           <button mat-stroked-button color="primary" (click)="close()" class="">Cerrar</button>
-          <button (click)="join()" mat-raised-button color="primary">
+          <button *ngIf="this.user" (click)="join()" mat-raised-button color="primary">
             <div class="flex justify-center items-center space-x-2">
               <i class="bi bi-box-arrow-right "></i>
               <span class="h-full">
@@ -64,7 +64,7 @@
 
 
     </mat-tab>
-    <mat-tab label="Participantes">
+    <mat-tab *ngIf="this.user" label="Participantes">
 
       <div class="h-[calc(90vh_-_0px)]">
         <div class="h-[calc(100%_-_260px)] overflow-auto space-y-4 ">

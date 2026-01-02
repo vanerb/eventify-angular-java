@@ -24,6 +24,7 @@ import {User} from '../../models/users';
 export class Posts implements OnInit, AfterViewInit{
   myEvents: Event[] = []
   myPosts: Post[] = []
+  joinedEvents: Event[] = []
   user!: User
   posts: Post[] = []
 
@@ -34,7 +35,10 @@ export class Posts implements OnInit, AfterViewInit{
   }
 
   async ngOnInit() {
-    this.user = await firstValueFrom(this.authService.getUserByToken())
+    if(this.authService.getToken()){
+      this.user = await firstValueFrom(this.authService.getUserByToken())
+    }
+
 
 
   }
@@ -47,6 +51,7 @@ export class Posts implements OnInit, AfterViewInit{
   updateView(){
     if(this.view === 'general'){
       this.getAllPosts()
+      this.getMyEvents()
     }
     else{
       this.getMyEvents()

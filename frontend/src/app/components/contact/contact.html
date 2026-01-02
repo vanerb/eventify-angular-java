@@ -1,3 +1,88 @@
 <app-container>
+  <div class="flex flex-col items-center justify-center">
+    <div class="w-[calc(60vh-60px)]">
+      <div class="w-full h-full">
+        <div class=" rounded-[5px] p-5">
 
+          <div class="text-center px-5">
+            <h1 class="text-white m-0 text-primary">Contact</h1>
+          </div>
+
+          <form
+            [formGroup]="form"
+            class="bg-[var(--background-four)] border-2 border-transparent rounded-[5px] "
+          >
+
+            <div class="mt-5">
+              <div class="flex justify-center items-center gap-2.5">
+
+                <!-- Nombre -->
+                <mat-form-field color="primary" class="rounded-[10px] w-full">
+                  <mat-label>Name</mat-label>
+                  <span matPrefix>
+                    <i class="bi bi-person-circle text-white text-2xl mx-2.5"></i>
+                  </span>
+                  <input
+                    formControlName="name"
+                    matInput
+                    placeholder="Input your name..."
+                    class="w-full"
+                  >
+                </mat-form-field>
+
+                <!-- Apellidos -->
+                <mat-form-field color="primary" class="rounded-[10px] w-full">
+                  <mat-label>Cognames</mat-label>
+                  <input
+                    formControlName="cognames"
+                    matInput
+                    placeholder="Input your cognames..."
+                    class="w-full"
+                  >
+                </mat-form-field>
+
+              </div>
+
+              <mat-form-field color="primary" class="rounded-[10px] w-full">
+                <mat-label>Email</mat-label>
+                <input
+                  formControlName="email"
+                  matInput type="email"
+                  placeholder="Input your email..."
+                  class="w-full"
+                >
+              </mat-form-field>
+
+              <!-- Mensaje -->
+              <mat-form-field class="w-full ">
+                <mat-label>Message</mat-label>
+                <textarea
+                  formControlName="message"
+                  matInput
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  cdkAutosizeMinRows="5"
+                  cdkAutosizeMaxRows="20"
+                  class="w-full"
+                ></textarea>
+              </mat-form-field>
+            </div>
+
+            <!-- Botón enviar -->
+            <div class="flex justify-end  w-full">
+              <button
+                (click)="sendEmail()"
+                mat-raised-button
+                color="primary"
+                class="flex items-center justify-center px-4 h-10 text-white rounded-[10px]"
+              >
+                <i class="bi bi-send mr-1"></i>Send
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-container>

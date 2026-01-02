@@ -7,11 +7,12 @@ import {WarningModal} from '../general/warning-modal/warning-modal';
 import {Container} from '../general/container/container';
 import {MatFormField, MatInput, MatInputModule} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
+import {MatCard} from '@angular/material/card';
 
 
 @Component({
   selector: 'app-login',
-  imports: [Container, ReactiveFormsModule, RouterLink, MatFormField, MatInput, MatInputModule, MatButton],
+  imports: [Container, ReactiveFormsModule, RouterLink, MatFormField, MatInput, MatInputModule, MatButton, MatCard],
   templateUrl: './login.html',
   styleUrl: './login.css',
   standalone: true
@@ -28,11 +29,14 @@ export class Login {
 
 
   login() {
-    const formData = new FormData();
-    formData.append('email', this.form.get('email')?.value);
-    formData.append('password', this.form.get('password')?.value);
 
-    this.authService.login(formData).subscribe({
+
+    const body = {
+      email: this.form.get('email')?.value,
+      password: this.form.get('password')?.value
+    };
+
+    this.authService.login(body).subscribe({
       next: async (token: any) => {
         console.log(token)
 
