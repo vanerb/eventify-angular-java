@@ -1,0 +1,15 @@
+<div *ngIf="params">
+  <div *ngIf="type === 'medium'" class="w-full flex justify-center items-center space-x-4">
+    <button [disabled]="params.page === 0" mat-raised-button color="primary" (click)="changePage('previous')"> <i class="bi bi-caret-left"></i> </button>
+    <span class="h-full flex justify-center align-center">{{showPage}}</span>
+    <button [disabled]="showPage >= params.totalPages" mat-raised-button  color="primary" (click)="changePage('next')"> <i class="bi bi-caret-right"></i> </button>
+    <span *ngIf="params">{{ showPage }} of {{ params.totalPages }}</span>
+  </div>
+
+  <div *ngIf="type === 'small'" class="w-full flex justify-center items-center space-x-2">
+    <button [disabled]="params.page === 0" class="cursor-pointer" (click)="changePage('previous')"> <i class="bi bi-caret-left"></i> </button>
+    <button [disabled]="showPage >= params.totalPages" class="cursor-pointer" (click)="changePage('next')"> <i class="bi bi-caret-right"></i> </button>
+    <span *ngIf="params">{{ showPage }} of {{ params.totalPages }}</span>
+  </div>
+</div>
+

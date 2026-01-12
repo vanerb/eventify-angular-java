@@ -41,11 +41,37 @@
               [formControl]="eventsControl"
               [matAutocomplete]="autoEvents"
             >
-            <mat-autocomplete #autoEvents="matAutocomplete" (optionSelected)="addEvent($event.option.value)">
+            <mat-autocomplete class="w-full" #autoEvents="matAutocomplete" (optionSelected)="addEvent($event.option.value)">
               <mat-option *ngFor="let option of filteredEvents | async" [value]="option">
                 {{ option.name }}
               </mat-option>
+              <!-- Paginación -->
+              <mat-option
+                *ngIf="events.totalPages > 1"
+                class="pagination-option"
+                [value]="null"
+                (onSelectionChange)="$event.source.deselect()">
+
+                <div
+                  class="flex justify-between items-center w-full space-x-2"
+                  (click)="$event.stopPropagation()">
+
+                  <button mat-button (click)="prevPage(); $event.stopPropagation()">
+                    &lt;
+                  </button>
+
+                  <span>Page {{ page + 1 }} of {{ events.totalPages }}</span>
+
+                  <button mat-button (click)="nextPage(); $event.stopPropagation()">
+                    &gt;
+                  </button>
+
+                </div>
+              </mat-option>
             </mat-autocomplete>
+
+
+
           </mat-form-field>
 
           <div *ngIf="eventFormArray.controls.length > 0"

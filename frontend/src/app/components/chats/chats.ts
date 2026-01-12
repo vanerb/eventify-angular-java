@@ -18,6 +18,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatChipRow} from '@angular/material/chips';
 import {CardEvents} from '../events/card-events/card-events';
 import {ChatMessage} from '../../models/chats';
+import {Paginator} from '../general/paginator/paginator';
 
 @Component({
   selector: 'app-chats',
@@ -34,7 +35,8 @@ import {ChatMessage} from '../../models/chats';
     NgIf,
     MatExpansionModule,
     MatChipRow,
-    CardEvents
+    CardEvents,
+    Paginator
   ],
   templateUrl: './chats.html',
   styleUrl: './chats.css',
@@ -45,7 +47,15 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
   newMessage = '';
   eventId: number | null = null;
   events: any[] = [];
+  eventPagination!: {
+    numberElements: number,
+    totalPages: number,
+    page: number
+  }
   user!: any;
+
+  page: number = 0;
+  limit: number = 20;
 
   private messagesSub?: Subscription;
   private messageDdbbSub?: Subscription;
@@ -65,13 +75,28 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  ngAfterViewInit() {
-    this.eventService.getMyEventParticipations().subscribe((events) => {
-      this.events = events;
-    });
-
-
+  updatePagination(page: number, limit: number){
+    this.page = page
+    this.limit = limit
+    this.updateParticipations()
   }
+
+  ngAfterViewInit() {
+   this.updateParticipations()
+  }
+
+
+  updateParticipations(){
+    this.eventService.getMyEventParticipations(this.page, this.limit).subscribe((events: any) => {
+      this.events = events.content;
+      this.eventPagination = {
+        numberElements: events.numberOfElements,
+        totalPages:  events.totalPages,
+        page: events.number
+      }
+    });
+  }
+
 
 
 

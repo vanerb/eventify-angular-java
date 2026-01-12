@@ -8,7 +8,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
 import {formatDate, NgForOf, NgIf} from '@angular/common';
 import {ImagesService} from '../../services/images-service';
-import {sleep, transformDate} from '../../services/utilities-service';
+import {transformDate} from '../../services/utilities-service';
 import {MatChipRow} from '@angular/material/chips';
 import {MatButton} from '@angular/material/button';
 import {firstValueFrom} from 'rxjs';
@@ -19,11 +19,11 @@ import {User} from '../../models/users';
 import {MapService} from '../../services/map-service';
 import {UpdateEventModal} from './update-event-modal/update-event-modal';
 import {WarningModal} from '../general/warning-modal/warning-modal';
-import {Loader} from '../general/loader/loader';
+import {Paginator} from '../general/paginator/paginator';
 
 @Component({
   selector: 'app-events',
-  imports: [Container, MatButtonToggleModule, MatCardModule, NgIf, NgForOf, MatChipRow, MatButton, FormsModule, CardEvents],
+  imports: [Container, MatButtonToggleModule, MatCardModule, NgIf, NgForOf, MatChipRow, MatButton, FormsModule, CardEvents, Paginator],
   templateUrl: './events.html',
   styleUrl: './events.css',
   standalone: true
@@ -34,8 +34,16 @@ export class Events implements OnInit, AfterViewInit{
   myEvents: any[] = [];
   user!: User;
   selectedView: string = 'list';
+  eventPagination!: {
+    numberElements: number,
+    totalPages: number,
+    page: number
+  }
 
   @Input() view: 'general' | 'my' = 'general';
+
+  page: number = 0;
+  limit: number = 20;
 
   constructor(
     private readonly mapService: MapService,
@@ -75,6 +83,14 @@ export class Events implements OnInit, AfterViewInit{
     this.updateView()
   }
 
+  updatePagination(page: number, limit: number){
+    this.page = page
+    this.limit = limit
+    this.updateView()
+  }
+
+
+
   updateView(){
     if(this.view === 'general'){
       this.getAllEvents();
@@ -85,22 +101,38 @@ export class Events implements OnInit, AfterViewInit{
   }
 
   getAllEvents() {
-    this.eventService.getAll().subscribe(events => {
-      this.events = events
+    this.eventService.getAll(this.page, this.limit).subscribe((events:any) => {
+      this.events = events.content
+      this.eventPagination = {
+        numberElements: events.numberOfElements,
+        totalPages:  events.totalPages,
+        page: events.number
+      }
       this.cd.detectChanges()
     });
   }
 
   getAllMyEvents() {
-    this.eventService.getMyEvents().subscribe(events => {
-      this.myEvents = events
+    this.eventService.getMyEvents(this.page, this.limit).subscribe((events:any) => {
+      this.myEvents = events.content
+      this.eventPagination = {
+        numberElements: events.numberOfElements,
+        totalPages:  events.totalPages,
+        page: events.number
+      }
       this.cd.detectChanges()
     });
   }
 
   loadEventMarkers() {
-    this.eventService.getAll().subscribe(events => {
-      this.mapService.addEventMarkers(events, (event) => {
+    this.eventService.getAll(this.page, this.limit).subscribe((events:any) => {
+      this.eventPagination = {
+        numberElements: events.numberOfElements,
+        totalPages:  events.totalPages,
+        page: events.number
+      }
+
+      this.mapService.addEventMarkers(events.content, (event) => {
         this.modalService.open(ShowEventModal, {
           width: '90vh',
           height: '90vh',

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {MatButton} from '@angular/material/button';
 import {AsyncPipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {
@@ -17,12 +17,13 @@ import {
   formatToSqlTimestamp,
   getImage,
   getThemes,
-  getThemesIcon
+  getThemesIcon, sleep
 } from '../../../services/utilities-service';
 import {map, Observable, startWith} from 'rxjs';
 import {MatChipRow} from '@angular/material/chips';
 import {WarningModal} from '../../general/warning-modal/warning-modal';
 import {ModalService} from '../../../services/modal-service';
+import {EventSevice} from '../../../services/event-sevice';
 
 
 @Component({
@@ -48,17 +49,22 @@ import {ModalService} from '../../../services/modal-service';
   standalone: true
 })
 export class CreatePostModal implements OnInit{
-  @Input() events: any[] = []
+  events!: any
   form!: FormGroup;
   previewCoverImage!: string;
   selectedImagesCover: any[] = []
   eventsControl = new FormControl('');
   filteredEvents!: Observable<{id: number, name: string}[]>;
+
+  page = 0;
+  limit = 10;
+
+
   confirm!: (result?: any) => void;
   close!: () => void;
 
 
-  constructor(private formBuilder: FormBuilder, private readonly modalService: ModalService) {
+  constructor(private formBuilder: FormBuilder, private readonly modalService: ModalService, private readonly eventService: EventSevice, private readonly cd: ChangeDetectorRef) {
     this.form = this.formBuilder.group({
       description: ['', Validators.required],
       hashtags: this.formBuilder.array([], Validators.required),
@@ -68,12 +74,36 @@ export class CreatePostModal implements OnInit{
   }
 
   ngOnInit() {
-    this.filteredEvents = this.eventsControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '', this.events))
-    );
+
+    this.getMyEvents()
 
     this.previewCoverImage = getImage(null)
+  }
+
+  getMyEvents(){
+    this.eventService.getMyEventParticipations(this.page, this.limit).subscribe((events:any) => {
+      this.events = events;
+
+      this.filteredEvents = this.eventsControl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value || '', this.events.content))
+      );
+      this.cd.detectChanges()
+    })
+
+
+  }
+
+  prevPage() {
+    if (this.page === 0) return;
+    this.page--;
+    this.getMyEvents()
+  }
+
+  nextPage() {
+    if (this.page + 1 >= this.events.totalPages) return;
+    this.page++;
+    this.getMyEvents()
   }
 
 

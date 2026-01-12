@@ -13,10 +13,11 @@ import {ShowPostModal} from './show-post-modal/show-post-modal';
 import {WarningModal} from '../general/warning-modal/warning-modal';
 import {Post} from '../../models/posts';
 import {User} from '../../models/users';
+import {Paginator} from "../general/paginator/paginator";
 
 @Component({
   selector: 'app-posts',
-  imports: [Container, CardEvents, NgForOf, NgIf, CardPosts],
+    imports: [Container, CardEvents, NgForOf, NgIf, CardPosts, Paginator],
   templateUrl: './posts.html',
   styleUrl: './posts.css',
   standalone: true
@@ -27,6 +28,13 @@ export class Posts implements OnInit, AfterViewInit{
   joinedEvents: Event[] = []
   user!: User
   posts: Post[] = []
+  page: number  = 0
+  limit: number = 20
+  postPagination!: {
+    numberElements: number,
+    totalPages: number,
+    page: number
+  }
 
   @Input() view: 'general' | 'my' = 'general'
 
@@ -48,23 +56,22 @@ export class Posts implements OnInit, AfterViewInit{
 
   }
 
+  updatePagination(page: number, limit: number){
+    this.page = page
+    this.limit = limit
+    this.updateView()
+  }
+
   updateView(){
     if(this.view === 'general'){
       this.getAllPosts()
-      this.getMyEvents()
     }
     else{
-      this.getMyEvents()
       this.getMyPosts()
     }
   }
 
-  getMyEvents(){
-    this.eventService.getMyEventParticipations().subscribe((events) => {
-      this.myEvents = events;
-      this.cd.detectChanges()
-    })
-  }
+
 
 
   createPost(){
@@ -72,7 +79,7 @@ export class Posts implements OnInit, AfterViewInit{
         width: '180vh',
         height: '90vh',
       },{
-        events: this.myEvents
+
       }).then( (item: FormData) => {
         this.postService.create(item).subscribe(() => {
           this.updateView()
@@ -87,15 +94,25 @@ export class Posts implements OnInit, AfterViewInit{
 
 
   getMyPosts(){
-    this.postService.getMyPosts().subscribe((posts) => {
-      this.myPosts = posts
+    this.postService.getMyPosts(this.page, this.limit).subscribe((posts: any) => {
+      this.myPosts = posts.content
+      this.postPagination = {
+        numberElements: posts.numberOfElements,
+        totalPages:  posts.totalPages,
+        page: posts.number
+      }
       this.cd.detectChanges()
     })
   }
 
   getAllPosts(){
-    this.postService.getAll().subscribe((posts) => {
-      this.posts = posts
+    this.postService.getAll(this.page, this.limit).subscribe((posts: any) => {
+      this.posts = posts.content
+      this.postPagination = {
+        numberElements: posts.numberOfElements,
+        totalPages:  posts.totalPages,
+        page: posts.number
+      }
       this.cd.detectChanges()
     })
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {AuthService} from './auth-service';
 
 @Injectable({
@@ -20,22 +20,36 @@ export class EventSevice {
    }
 
 
-   getAll(){
-     return this.http.get<any[]>('http://localhost:8080/api/events/getAll')
+   getAll(page: number = 0, size: number = 20){
+     let params = new HttpParams()
+       .set('page', page.toString())
+       .set('size', size.toString());
+
+     return this.http.get<any[]>('http://localhost:8080/api/events/getAll', { params })
    }
 
-  getMyEventParticipations(){
+  getMyEventParticipations(page: number = 0, size: number = 20){
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
-    return this.http.get<any[]>('http://localhost:8080/api/events/findMyEventParticipations',{headers})
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<any[]>('http://localhost:8080/api/events/findMyEventParticipations',{params, headers: headers})
   }
 
-  getMyEvents(){
+  getMyEvents(page: number = 0, size: number = 20){
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
-    return this.http.get<any[]>('http://localhost:8080/api/events/findByUserId',{headers})
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<any[]>('http://localhost:8080/api/events/findByUserId',{params, headers: headers})
   }
 
   joinEvent(eventId: string, userId: number){

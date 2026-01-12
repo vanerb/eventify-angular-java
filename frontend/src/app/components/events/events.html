@@ -1,8 +1,8 @@
 <app-container>
 
-  <div class="w-full h-[calc(100vh_-_170px)]">
+  <div class="w-full h-[calc(100vh_-_140px)] overflow-auto">
 
-    <div  *ngIf="view === 'general'" class="w-full flex justify-end items-center">
+    <div *ngIf="view === 'general'" class="w-full flex justify-end items-center">
       <span *ngIf="selectedView === 'map'" class="mr-4">* Only in-person events will be visible in the map view.</span>
       <mat-button-toggle-group [(ngModel)]="selectedView">
         <mat-button-toggle (click)="updateMap()" value="map"><i class="bi bi-map mr-2"></i> Map</mat-button-toggle>
@@ -24,8 +24,10 @@
 
 
     <div class="w-full h-full mt-4" *ngIf="selectedView === 'map'">
-      <div id="map"  class="w-full h-full"></div>
+      <div id="map" class="w-full h-full"></div>
     </div>
+
+
 
     <button *ngIf="this.user" (click)="createEvent()"
             class="fixed bottom-6 right-6 bg-[#c2185b] text-white w-14 h-14 rounded-full text-3xl flex items-center justify-center shadow-lg hover:bg-blue-700 z-1 cursor-pointer"
@@ -34,7 +36,7 @@
     </button>
   </div>
 
-
+  <app-paginator *ngIf="selectedView !== 'map'" [limit]="limit" [params]="eventPagination" (update)="updatePagination($event.page, $event.limit)"></app-paginator>
 
 
 </app-container>

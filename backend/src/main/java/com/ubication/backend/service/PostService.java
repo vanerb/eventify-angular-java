@@ -16,6 +16,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageImpl;
 
 @Service
 public class PostService implements PostInterface {
@@ -79,11 +84,15 @@ public class PostService implements PostInterface {
     // FIND ALL
     // =========================
     @Override
-    public List<PostDTO> findAll() {
-        return repository.findAll()
-                .stream()
-                .map(this::toPostDTO)
-                .collect(Collectors.toList());
+    public Page<PostDTO> findAll(int page, int size) {
+      Pageable pageable = PageRequest.of(
+                  page,
+                  size,
+                  Sort.by("id").descending()
+          );
+
+          return repository.findAll(pageable)
+                  .map(this::toPostDTO);
     }
 
     // =========================
@@ -209,22 +218,24 @@ public class PostService implements PostInterface {
     }
 
     @Override
-    public List<PostDTO> findByUserId(String authHeader) {
-
+    public Page<PostDTO> findByUserId(String authHeader, int page, int size) {
         String token = authHeader.replace("Bearer ", "");
-        String email = jwtUtil.extractEmail(token);
+           String email = jwtUtil.extractEmail(token);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+           User user = userRepository.findByEmail(email)
+                   .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!token.equals(user.getToken())) {
-            throw new RuntimeException("Invalid token");
-        }
+           if (!token.equals(user.getToken())) {
+               throw new RuntimeException("Invalid token");
+           }
 
+           Pageable pageable = PageRequest.of(
+                   page,
+                   size,
+                   Sort.by("id").descending()
+           );
 
-        return repository.findByCreatorId(user.getId())
-                        .stream()
-                        .map(this::toPostDTO)
-                        .collect(Collectors.toList());
+           return repository.findByCreatorId(user.getId(), pageable)
+                   .map(this::toPostDTO); // ✅ AQUÍ ESTÁ LA CLAVE
     }
 }

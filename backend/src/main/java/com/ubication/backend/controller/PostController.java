@@ -10,6 +10,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -28,8 +32,8 @@ public class PostController {
     }
 
     @GetMapping("/findByUserId")
-    public List<PostDTO> findByUserId(@RequestHeader("Authorization") String authHeader) {
-        return service.findByUserId(authHeader);
+    public Page<PostDTO> findByUserId(@RequestHeader("Authorization") String authHeader,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return service.findByUserId(authHeader, page, size);
     }
 
      @GetMapping("/findById/{id}")
@@ -38,8 +42,8 @@ public class PostController {
         }
 
     @GetMapping("/getAll")
-    public List<PostDTO> findAll() {
-        return service.findAll();
+    public Page<PostDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return service.findAll(page, size);
     }
 
     @DeleteMapping("/delete/{id}")

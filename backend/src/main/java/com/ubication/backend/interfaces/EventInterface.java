@@ -7,21 +7,23 @@ import com.ubication.backend.dto.EventDTO;
 import com.ubication.backend.dto.UserDTO;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface EventInterface {
     EventDTO create(EventDTO dto, MultipartFile file);
 
     EventDTO update(Long eventId, EventDTO dto, MultipartFile file);
 
-    List<EventDTO> findByUserId(String authHeader);
+    Page<EventDTO> findByUserId(String authHeader, int page, int size);
 
-    List<EventDTO> findAll();
+    Page<EventDTO> findAll(int page, int size);
 
     void delete(Long id);
 
     EventDTO joinEvent(Long eventId, Long userId);
 
-    List<UserDTO> getUsersByEvent(Long eventId);
+    Page<UserDTO> getUsersByEvent(Long eventId, Pageable pageable);
 
 
 }

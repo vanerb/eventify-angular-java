@@ -11,6 +11,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 
 
@@ -39,34 +43,41 @@ public class EventController {
             return service.update(eventId, eventDTO, file);
         }
 
+
+         @DeleteMapping("/delete/{id}")
+            public void delete(@PathVariable Long id) {
+                service.delete(id);
+            }
+
+              @PostMapping("/{eventId}/join/{userId}")
+                public EventDTO joinEvent(@PathVariable Long eventId, @PathVariable Long userId) {
+                    return service.joinEvent(eventId, userId);
+                }
+
+
+
+
+
+
     @GetMapping("/findByUserId")
-    public List<EventDTO> findByUserId(@RequestHeader("Authorization") String authHeader) {
-        return service.findByUserId(authHeader);
+    public Page<EventDTO> findByUserId(@RequestHeader("Authorization") String authHeader,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return service.findByUserId(authHeader, page, size);
     }
 
     @GetMapping("/findMyEventParticipations")
-        public List<EventDTO> findMyEventParticipations(@RequestHeader("Authorization") String authHeader) {
-            return service.findMyEventParticipations(authHeader);
+        public Page<EventDTO> findMyEventParticipations(@RequestHeader("Authorization") String authHeader,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+            return service.findMyEventParticipations(authHeader, page, size);
         }
 
     @GetMapping("/getAll")
-    public List<EventDTO> findAll() {
-        return service.findAll();
+    public Page<EventDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return service.findAll(page, size);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
-    }
-
-
-    @PostMapping("/{eventId}/join/{userId}")
-    public EventDTO joinEvent(@PathVariable Long eventId, @PathVariable Long userId) {
-        return service.joinEvent(eventId, userId);
-    }
 
     @GetMapping("/{eventId}/users")
-    public List<UserDTO> getUsers(@PathVariable Long eventId) {
-        return service.getUsersByEvent(eventId);
+    public Page<UserDTO> getUsers( @PathVariable Long eventId,@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+           return service.getUsersByEvent(eventId, pageable);
     }
 }

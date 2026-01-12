@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {AuthService} from './auth-service';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -24,15 +24,21 @@ export class PostsService {
     return this.http.get<any[]>(`${this.url}/findById/${id}`)
   }
 
-  getAll(){
-    return this.http.get<any[]>(`${this.url}/getAll`)
+  getAll(page: number = 0, size: number = 20){
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<any[]>(`${this.url}/getAll`, {params})
   }
 
-  getMyPosts(){
+  getMyPosts(page: number = 0, size: number = 20){
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
-    return this.http.get<any[]>(`${this.url}/findByUserId`,{headers})
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<any[]>(`${this.url}/findByUserId`,{params, headers: headers})
   }
 
   delete(eventId: string){

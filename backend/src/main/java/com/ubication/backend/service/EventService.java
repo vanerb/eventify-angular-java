@@ -30,6 +30,12 @@ import java.util.List;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageImpl;
+
 @Service
 public class EventService implements EventInterface {
 
@@ -159,83 +165,93 @@ public class EventService implements EventInterface {
    }
 
 
-    @Override
-    public List<EventDTO> findByUserId(String authHeader) {
-      String token = authHeader.replace("Bearer ", "");
-            String email = jwtUtil.extractEmail(token);
-
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-
-     return repository.findByCreatorId(user.getId())
-                    .stream()
-                    .map(this::toEventDTO)
-                    .collect(Collectors.toList());
-
-    }
-
     // =========================
-    // JOIN EVENT
-    // =========================
+       // JOIN EVENT
+       // =========================
+       @Override
+       public EventDTO joinEvent(Long eventId, Long userId) {
+           Event event = repository.findById(eventId)
+                   .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+
+           User user = userRepository.findById(userId)
+                   .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+           if (!event.getParticipants().contains(user)) {
+               event.getParticipants().add(user);
+               user.getJoinedEvents().add(event);
+               userRepository.save(user);
+           }
+
+           return toEventDTO(event);
+       }
+
+
     @Override
-    public EventDTO joinEvent(Long eventId, Long userId) {
-        Event event = repository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+    public Page<EventDTO> findByUserId(String authHeader, int page, int size) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        String token = authHeader.replace("Bearer ", "");
+        String email = jwtUtil.extractEmail(token);
 
-        if (!event.getParticipants().contains(user)) {
-            event.getParticipants().add(user);
-            user.getJoinedEvents().add(event);
-            userRepository.save(user);
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return toEventDTO(event);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        return repository.findByCreatorId(user.getId(), pageable)
+                .map(this::toEventDTO);
     }
 
     // =========================
     // USERS BY EVENT
     // =========================
     @Override
-    public List<UserDTO> getUsersByEvent(Long eventId) {
+    public Page<UserDTO> getUsersByEvent(Long eventId, Pageable pageable) {
         Event event = repository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+                    .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
 
-        return event.getParticipants().stream()
-                .map(this::toUserDTO)
-                .collect(Collectors.toList());
+            List<UserDTO> users = event.getParticipants()
+                    .stream()
+                    .map(this::toUserDTO)
+                    .toList();
+
+            int start = (int) pageable.getOffset();
+            int end = Math.min(start + pageable.getPageSize(), users.size());
+
+            List<UserDTO> pageContent = users.subList(start, end);
+
+            return new PageImpl<>(pageContent, pageable, users.size());
     }
 
     // =========================
     // FIND MY PARTICIPATIONS
     // =========================
-    public List<EventDTO> findMyEventParticipations(String header) {
-        String token = header.replace("Bearer ", "");
-        String email = jwtUtil.extractEmail(token);
+    public Page<EventDTO> findMyEventParticipations( String header,
+                                                            int page,
+                                                            int size) {
+          String token = header.replace("Bearer ", "");
+            String email = jwtUtil.extractEmail(token);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!token.equals(user.getToken())) {
-            throw new RuntimeException("Invalid token");
-        }
+            if (!token.equals(user.getToken())) {
+                throw new RuntimeException("Invalid token");
+            }
 
-        return repository.findAllByParticipantsId(user.getId())
-                .stream()
-                .map(this::toEventDTO)
-                .collect(Collectors.toList());
+            Pageable pageable = PageRequest.of(page, size);
+
+            return repository.findAllByParticipantsId(user.getId(), pageable)
+                    .map(this::toEventDTO);
     }
 
     // =========================
     // FIND ALL
     // =========================
-    public List<EventDTO> findAll() {
-        return repository.findAll()
-                .stream()
-                .map(this::toEventDTO)
-                .collect(Collectors.toList());
+    public Page<EventDTO> findAll(int page, int size) {
+       Pageable pageable = PageRequest.of(page, size);
+
+           return repository.findAll(pageable)
+                   .map(this::toEventDTO);
     }
 
     // =========================

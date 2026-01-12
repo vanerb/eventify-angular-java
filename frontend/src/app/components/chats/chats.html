@@ -3,6 +3,12 @@
   <mat-drawer-container class="h-full w-full rounded-lg">
     <mat-drawer mode="side" opened>
       <div class="w-[300px]">
+        <div class="w-full p-4 flex justify-between align-center">
+          <h1>Chats</h1>
+          <div class="flex space-x-2 items-center">
+           <app-paginator [limit]="limit" (update)="updatePagination($event.page, $event.limit)" type="small" [params]="eventPagination"></app-paginator>
+          </div>
+        </div>
         <mat-accordion [multi]="false">
           <div class="w-full cursor-pointer mb-2" *ngFor="let event of events">
 
