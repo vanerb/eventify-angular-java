@@ -69,7 +69,7 @@ export class CreatePostModal implements OnInit{
     this.form = this.formBuilder.group({
       description: ['', Validators.required],
       hashtags: this.formBuilder.array([], Validators.required),
-      url: ['', Validators.required],
+      url: [''],
       events: this.formBuilder.array([], Validators.required),
     })
   }
