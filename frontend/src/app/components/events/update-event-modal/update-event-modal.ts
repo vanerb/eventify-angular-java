@@ -17,7 +17,7 @@ import {
 } from '../../../services/utilities-service';
 import {MatChipRow} from '@angular/material/chips';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {Event} from '../../../models/events';
+import {Event, EventPage} from '../../../models/events';
 import {WarningModal} from '../../general/warning-modal/warning-modal';
 import {ModalService} from '../../../services/modal-service';
 
@@ -95,8 +95,8 @@ export class UpdateEventModal implements OnInit{
     })
     //this.form.get('themes')?.setValue(this.event.themes)
 
-    this.form.get('initDate')?.setValue(new Date(transformDate(this.event.initDate)))
-    this.form.get('endDate')?.setValue(new Date(transformDate(this.event.endDate)))
+    this.form.get('initDate')?.setValue(new Date(this.event.initDate))
+    this.form.get('endDate')?.setValue(new Date(this.event.endDate))
     this.form.get('initHour')?.setValue(transformDateHour(this.event.initDate))
     this.form.get('endHour')?.setValue(transformDateHour(this.event.endDate))
     this.form.get('placeId')?.setValue(this.event.placeId)

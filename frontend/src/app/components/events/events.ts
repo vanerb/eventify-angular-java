@@ -20,6 +20,8 @@ import {MapService} from '../../services/map-service';
 import {UpdateEventModal} from './update-event-modal/update-event-modal';
 import {WarningModal} from '../general/warning-modal/warning-modal';
 import {Paginator} from '../general/paginator/paginator';
+import {EventPage,Event} from '../../models/events';
+import {Page} from '../../models/pagination';
 
 @Component({
   selector: 'app-events',
@@ -30,15 +32,11 @@ import {Paginator} from '../general/paginator/paginator';
 })
 export class Events implements OnInit, AfterViewInit{
   map: any;
-  events: any[] = [];
-  myEvents: any[] = [];
+  events: Event[] = [];
+  myEvents: Event[] = [];
   user!: User;
   selectedView: string = 'list';
-  eventPagination!: {
-    numberElements: number,
-    totalPages: number,
-    page: number
-  }
+  eventPagination!: EventPage
 
   @Input() view: 'general' | 'my' = 'general';
 
@@ -101,36 +99,24 @@ export class Events implements OnInit, AfterViewInit{
   }
 
   getAllEvents() {
-    this.eventService.getAll(this.page, this.limit).subscribe((events:any) => {
+    this.eventService.getAll(this.page, this.limit).subscribe((events: EventPage) => {
       this.events = events.content
-      this.eventPagination = {
-        numberElements: events.numberOfElements,
-        totalPages:  events.totalPages,
-        page: events.number
-      }
+      this.eventPagination = events
       this.cd.detectChanges()
     });
   }
 
   getAllMyEvents() {
-    this.eventService.getMyEvents(this.page, this.limit).subscribe((events:any) => {
+    this.eventService.getMyEvents(this.page, this.limit).subscribe((events:EventPage) => {
       this.myEvents = events.content
-      this.eventPagination = {
-        numberElements: events.numberOfElements,
-        totalPages:  events.totalPages,
-        page: events.number
-      }
+      this.eventPagination = events
       this.cd.detectChanges()
     });
   }
 
   loadEventMarkers() {
-    this.eventService.getAll(this.page, this.limit).subscribe((events:any) => {
-      this.eventPagination = {
-        numberElements: events.numberOfElements,
-        totalPages:  events.totalPages,
-        page: events.number
-      }
+    this.eventService.getAll(this.page, this.limit).subscribe((events:EventPage) => {
+      this.eventPagination = events
 
       this.mapService.addEventMarkers(events.content, (event) => {
         this.modalService.open(ShowEventModal, {

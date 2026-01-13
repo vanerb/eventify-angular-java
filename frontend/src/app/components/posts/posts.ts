@@ -11,7 +11,7 @@ import {firstValueFrom} from 'rxjs';
 import {AuthService} from '../../services/auth-service';
 import {ShowPostModal} from './show-post-modal/show-post-modal';
 import {WarningModal} from '../general/warning-modal/warning-modal';
-import {Post} from '../../models/posts';
+import {Post, PostPage} from '../../models/posts';
 import {User} from '../../models/users';
 import {Paginator} from "../general/paginator/paginator";
 
@@ -23,18 +23,12 @@ import {Paginator} from "../general/paginator/paginator";
   standalone: true
 })
 export class Posts implements OnInit, AfterViewInit{
-  myEvents: Event[] = []
   myPosts: Post[] = []
-  joinedEvents: Event[] = []
   user!: User
   posts: Post[] = []
   page: number  = 0
   limit: number = 20
-  postPagination!: {
-    numberElements: number,
-    totalPages: number,
-    page: number
-  }
+  postPagination!: PostPage
 
   @Input() view: 'general' | 'my' = 'general'
 
@@ -94,25 +88,17 @@ export class Posts implements OnInit, AfterViewInit{
 
 
   getMyPosts(){
-    this.postService.getMyPosts(this.page, this.limit).subscribe((posts: any) => {
+    this.postService.getMyPosts(this.page, this.limit).subscribe((posts: PostPage) => {
       this.myPosts = posts.content
-      this.postPagination = {
-        numberElements: posts.numberOfElements,
-        totalPages:  posts.totalPages,
-        page: posts.number
-      }
+      this.postPagination = posts
       this.cd.detectChanges()
     })
   }
 
   getAllPosts(){
-    this.postService.getAll(this.page, this.limit).subscribe((posts: any) => {
+    this.postService.getAll(this.page, this.limit).subscribe((posts: PostPage) => {
       this.posts = posts.content
-      this.postPagination = {
-        numberElements: posts.numberOfElements,
-        totalPages:  posts.totalPages,
-        page: posts.number
-      }
+      this.postPagination = posts
       this.cd.detectChanges()
     })
   }

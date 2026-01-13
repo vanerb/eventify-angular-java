@@ -13,4 +13,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
      @Query("SELECT e FROM Event e JOIN e.participants u WHERE u.id = :userId")
      Page<Event> findAllByParticipantsId(Long userId, Pageable pageable);
+
+     Page<Event> findByParticipantsIdAndNameContainingIgnoreCase(
+                 Long participantId,
+                 String name,
+                 Pageable pageable
+         );
 }

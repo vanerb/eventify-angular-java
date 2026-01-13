@@ -3,6 +3,8 @@ import {MatButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {NgIf} from "@angular/common";
 import {getImage} from "../../../services/utilities-service";
+import {Post} from '../../../models/posts';
+import {User} from '../../../models/users';
 
 @Component({
   selector: 'app-card-posts',
@@ -18,8 +20,8 @@ import {getImage} from "../../../services/utilities-service";
   standalone: true
 })
 export class CardPosts {
-  @Input() post!: any
-  @Input() user!:any
+  @Input() post!: Post
+  @Input() user!:User
   @Output() actions = new EventEmitter()
 
 

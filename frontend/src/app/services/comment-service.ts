@@ -19,7 +19,7 @@ export class CommentService {
     return this.http.post<any>(`${this.url}/create`, data, {headers});
   }
 
-  delete(id: string){
+  delete(id: number){
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });

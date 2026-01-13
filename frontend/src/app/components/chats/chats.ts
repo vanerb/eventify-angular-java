@@ -19,6 +19,10 @@ import {MatChipRow} from '@angular/material/chips';
 import {CardEvents} from '../events/card-events/card-events';
 import {ChatMessage} from '../../models/chats';
 import {Paginator} from '../general/paginator/paginator';
+import {Events} from '../events/events';
+import {Page} from '../../models/pagination';
+import {User} from '../../models/users';
+import {EventPage, Event} from '../../models/events';
 
 @Component({
   selector: 'app-chats',
@@ -46,13 +50,9 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
   messages: ChatMessage[] = [];
   newMessage = '';
   eventId: number | null = null;
-  events: any[] = [];
-  eventPagination!: {
-    numberElements: number,
-    totalPages: number,
-    page: number
-  }
-  user!: any;
+  events: Event[] = [];
+  eventPagination!: EventPage
+  user!: User;
 
   page: number = 0;
   limit: number = 20;
@@ -87,13 +87,9 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
 
 
   updateParticipations(){
-    this.eventService.getMyEventParticipations(this.page, this.limit).subscribe((events: any) => {
+    this.eventService.getMyEventParticipations(this.page, this.limit).subscribe((events: EventPage) => {
       this.events = events.content;
-      this.eventPagination = {
-        numberElements: events.numberOfElements,
-        totalPages:  events.totalPages,
-        page: events.number
-      }
+      this.eventPagination = events
     });
   }
 

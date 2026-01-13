@@ -11,6 +11,7 @@ import {MatButton} from '@angular/material/button';
 import {ModalService} from '../../services/modal-service';
 import {UpdateUserModal} from './update-user-modal/update-user-modal';
 import {getImage} from '../../services/utilities-service';
+import {User} from '../../models/users';
 
 @Component({
   selector: 'app-profile',
@@ -21,7 +22,7 @@ import {getImage} from '../../services/utilities-service';
 })
 export class Profile implements OnInit{
 
-  user: any
+  user!: User
 
   constructor(private readonly authService: AuthService, private readonly modalService: ModalService) {
   }

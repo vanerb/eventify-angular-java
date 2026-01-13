@@ -227,21 +227,36 @@ public class EventService implements EventInterface {
     // =========================
     public Page<EventDTO> findMyEventParticipations( String header,
                                                             int page,
-                                                            int size) {
-          String token = header.replace("Bearer ", "");
-            String email = jwtUtil.extractEmail(token);
+                                                            int size,
+                                                            String search) {
+           String token = header.replace("Bearer ", "");
+             String email = jwtUtil.extractEmail(token);
 
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+             User user = userRepository.findByEmail(email)
+                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (!token.equals(user.getToken())) {
-                throw new RuntimeException("Invalid token");
-            }
+             if (!token.equals(user.getToken())) {
+                 throw new RuntimeException("Invalid token");
+             }
 
-            Pageable pageable = PageRequest.of(page, size);
+             Pageable pageable = PageRequest.of(page, size);
 
-            return repository.findAllByParticipantsId(user.getId(), pageable)
-                    .map(this::toEventDTO);
+             Page<Event> events;
+
+             if (search != null && !search.trim().isEmpty()) {
+                 events = repository.findByParticipantsIdAndNameContainingIgnoreCase(
+                         user.getId(),
+                         search,
+                         pageable
+                 );
+             } else {
+                 events = repository.findAllByParticipantsId(
+                         user.getId(),
+                         pageable
+                 );
+             }
+
+             return events.map(this::toEventDTO);
     }
 
     // =========================

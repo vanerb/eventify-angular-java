@@ -6,6 +6,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {MatDivider} from '@angular/material/divider';
 import {MatButton} from '@angular/material/button';
 import {getImage} from '../../../services/utilities-service';
+import {User} from '../../../models/users';
 
 @Component({
   selector: 'app-update-user-modal',
@@ -24,7 +25,7 @@ import {getImage} from '../../../services/utilities-service';
   standalone: true
 })
 export class UpdateUserModal implements OnInit{
-  user!: any
+  user!: User
   selectedImageProfileCover: File[] = [];
   previewProfileCoverImage!: string;
 

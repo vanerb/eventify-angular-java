@@ -2,6 +2,8 @@ import {User} from './users';
 import {Image} from './images';
 import {Hashtag} from './hashtags';
 import {Comment} from './comments';
+import {Page} from './pagination';
+import {Event} from './events';
 
 export interface Post {
   comments: Comment[],
@@ -15,3 +17,4 @@ export interface Post {
 }
 
 
+export type PostPage = Page<Post>;

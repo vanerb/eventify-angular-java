@@ -20,6 +20,8 @@ import {MatInput} from "@angular/material/input";
 import {CommentService} from '../../../services/comment-service';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {PostsService} from '../../../services/posts-service';
+import {Post} from '../../../models/posts';
+import {User} from '../../../models/users';
 
 @Component({
   selector: 'app-show-post-modal',
@@ -54,8 +56,8 @@ import {PostsService} from '../../../services/posts-service';
 })
 export class ShowPostModal implements OnInit {
 
-  post!:any
-  user!:any
+  post!:Post
+  user!:User
   comment: string = ""
 
   confirm!: (result?: any) => void;
@@ -93,7 +95,7 @@ export class ShowPostModal implements OnInit {
 
   }
 
-  getPostById(id: string){
+  getPostById(id: number){
     this.postService.getById(id).subscribe({
       next: async (post) => {
         this.post = post
@@ -102,7 +104,7 @@ export class ShowPostModal implements OnInit {
     })
   }
 
-  delete(id: string){
+  delete(id: number){
     this.commentService.delete(id).subscribe({
       next: async () => {
         this.getPostById(this.post.id)

@@ -1,6 +1,7 @@
 import {User} from './users';
 import {Image} from './images';
 import {Theme} from './themes';
+import {Page} from './pagination';
 
 export interface Event{
   id: number,
@@ -19,3 +20,4 @@ export interface Event{
   ubication: string,
 }
 
+export type EventPage = Page<Event>;

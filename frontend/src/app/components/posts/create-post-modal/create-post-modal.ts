@@ -19,11 +19,12 @@ import {
   getThemes,
   getThemesIcon, sleep
 } from '../../../services/utilities-service';
-import {map, Observable, startWith} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, Observable, of, startWith} from 'rxjs';
 import {MatChipRow} from '@angular/material/chips';
 import {WarningModal} from '../../general/warning-modal/warning-modal';
 import {ModalService} from '../../../services/modal-service';
 import {EventSevice} from '../../../services/event-sevice';
+import {EventPage} from '../../../models/events';
 
 
 @Component({
@@ -49,7 +50,7 @@ import {EventSevice} from '../../../services/event-sevice';
   standalone: true
 })
 export class CreatePostModal implements OnInit{
-  events!: any
+  events!: EventPage
   form!: FormGroup;
   previewCoverImage!: string;
   selectedImagesCover: any[] = []
@@ -74,36 +75,45 @@ export class CreatePostModal implements OnInit{
   }
 
   ngOnInit() {
+    this.eventsControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe(value => {
+        this.page = 0;
+        this.getMyEvents(value || '');
+      });
 
     this.getMyEvents()
 
     this.previewCoverImage = getImage(null)
   }
 
-  getMyEvents(){
-    this.eventService.getMyEventParticipations(this.page, this.limit).subscribe((events:any) => {
-      this.events = events;
+  getMyEvents(search: string = '') {
+    this.eventService
+      .getMyEventParticipations(this.page, this.limit, search)
+      .subscribe((events: EventPage) => {
+        this.events = events;
 
-      this.filteredEvents = this.eventsControl.valueChanges.pipe(
-        startWith(''),
-        map(value => this._filter(value || '', this.events.content))
-      );
-      this.cd.detectChanges()
-    })
+        // 👇 sin filtrar nada
+        this.filteredEvents = of(this.events.content);
 
-
+        this.cd.detectChanges();
+      });
   }
+
 
   prevPage() {
     if (this.page === 0) return;
     this.page--;
-    this.getMyEvents()
+    this.getMyEvents(this.eventsControl.value || '');
   }
 
   nextPage() {
     if (this.page + 1 >= this.events.totalPages) return;
     this.page++;
-    this.getMyEvents()
+    this.getMyEvents(this.eventsControl.value || '');
   }
 
 
@@ -164,10 +174,7 @@ export class CreatePostModal implements OnInit{
     this.hashtagsFormArray.removeAt(index);
   }
 
-  private _filter(value: string, array: any[]): any[] {
-    const filterValue = value.toLowerCase();
-    return array.filter(option => option.name.toLowerCase().includes(filterValue));
-  }
+
 
 
   createPost(){

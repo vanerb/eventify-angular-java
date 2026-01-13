@@ -6,6 +6,8 @@ import {NgForOf, NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {EventPage, Event} from '../../../models/events';
+import {User} from '../../../models/users';
 
 @Component({
   selector: 'app-card-events',
@@ -23,8 +25,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
   standalone: true
 })
 export class CardEvents {
-  @Input() event!: any
-  @Input() user!: any
+  @Input() event!: Event
+  @Input() user!: User
   @Input() view: 'small' | 'complete' = 'complete'
   @Input() realOnly: boolean = false;
 

@@ -65,8 +65,8 @@ public class EventController {
     }
 
     @GetMapping("/findMyEventParticipations")
-        public Page<EventDTO> findMyEventParticipations(@RequestHeader("Authorization") String authHeader,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-            return service.findMyEventParticipations(authHeader, page, size);
+        public Page<EventDTO> findMyEventParticipations(@RequestHeader("Authorization") String authHeader,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,  @RequestParam(required = false) String search) {
+            return service.findMyEventParticipations(authHeader, page, size, search);
         }
 
     @GetMapping("/getAll")

@@ -10,6 +10,7 @@ import {AuthService} from '../../services/auth-service';
 import {firstValueFrom} from 'rxjs';
 import {cleanUrlImage} from '../../services/utilities-service';
 import {ImagesService} from '../../services/images-service';
+import {User} from '../../models/users';
 
 @Component({
   selector: 'app-header',
@@ -30,7 +31,7 @@ export class Header implements OnInit {
   isOpen: boolean = false
   isLogged: boolean = false;
   drawerMode: 'side' | 'over' = 'side';
-  user!: any
+  user!: User
 
 
   constructor(
