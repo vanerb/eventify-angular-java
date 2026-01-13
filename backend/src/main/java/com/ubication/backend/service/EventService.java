@@ -4,6 +4,7 @@ import com.ubication.backend.model.User;
 import com.ubication.backend.model.Event;
 import com.ubication.backend.model.Theme;
 import com.ubication.backend.model.Image;
+import com.ubication.backend.model.Post;
 
 import com.ubication.backend.dto.ImageDTO;
 import com.ubication.backend.dto.UserDTO;
@@ -287,8 +288,12 @@ public class EventService implements EventInterface {
             }
             event.getParticipants().clear();
         }
+         List<Post> posts = postRepository.findByEventId(event.getId());
+         for (Post post : posts) {
+              imageService.deleteByFromId("POST", post.getId());
+         }
 
-        postRepository.deleteByEventId(event.getId());
+         postRepository.deleteByEventId(event.getId());
         imageService.deleteByFromId("EVENT", event.getId());
         themeRepository.deleteByEventId(event.getId());
         repository.deleteById(event.getId());
