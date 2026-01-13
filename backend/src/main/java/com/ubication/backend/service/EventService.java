@@ -14,6 +14,7 @@ import com.ubication.backend.repository.UserRepository;
 import com.ubication.backend.repository.EventRepository;
 import com.ubication.backend.repository.ThemeRepository;
 import com.ubication.backend.repository.ImageRepository;
+import com.ubication.backend.repository.PostRepository;
 
 import com.ubication.backend.security.JwtUtil;
 import com.ubication.backend.interfaces.EventInterface;
@@ -47,6 +48,9 @@ public class EventService implements EventInterface {
 
     @Autowired
     private ThemeRepository themeRepository;
+
+     @Autowired
+     private PostRepository postRepository;
 
     @Autowired
     private ImageRepository imageRepository;
@@ -284,6 +288,7 @@ public class EventService implements EventInterface {
             event.getParticipants().clear();
         }
 
+        postRepository.deleteByEventId(event.getId());
         imageService.deleteByFromId("EVENT", event.getId());
         themeRepository.deleteByEventId(event.getId());
         repository.deleteById(event.getId());

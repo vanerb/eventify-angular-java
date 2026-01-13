@@ -9,5 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
- Page<Post> findByCreatorId(Long userId, Pageable pageable);
+  Page<Post> findByCreatorId(Long userId, Pageable pageable);
+  List<Post> findByEventId(Long eventId);
+  void deleteByEventId(Long eventId);
 }
