@@ -72,7 +72,7 @@
             <div *ngFor="let participant of ubication.participants">
               <mat-list-item>
                 <div class=" flex items-center space-x-2  rounded-lg w-fit">
-                  <img class="w-10 h-10 rounded-full object-cover object-center " src="{{getImage(participant.image.url)}}">
+                  <img class="w-10 h-10 rounded-full object-cover object-center " src="{{getImage(participant.image?.url)}}">
                   <span class="  rounded-full ">{{'@'+ participant.username }}</span>
                 </div>
               </mat-list-item>

@@ -50,7 +50,7 @@ export class UpdateUserModal implements OnInit{
   }
 
   ngOnInit() {
-    this.previewProfileCoverImage = getImage(this.user.image.url)
+    this.previewProfileCoverImage = getImage(this.user.image?.url)
 
     this.previewBannerCoverImage = getImage(this.user?.banner?.url)
 
