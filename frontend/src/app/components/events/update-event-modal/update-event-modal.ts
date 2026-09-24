@@ -15,8 +15,6 @@ import {
   getThemesIcon, transformDate,
   transformDateHour
 } from '../../../services/utilities-service';
-import {MatChipRow} from '@angular/material/chips';
-import {MatCheckboxModule} from '@angular/material/checkbox';
 import {Event, EventPage} from '../../../models/events';
 import {WarningModal} from '../../general/warning-modal/warning-modal';
 import {ModalService} from '../../../services/modal-service';
@@ -35,8 +33,6 @@ import {ModalService} from '../../../services/modal-service';
     MatAutocompleteModule,
     NgClass,
     AsyncPipe,
-    MatChipRow,
-    MatCheckboxModule
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './update-event-modal.html',
@@ -61,7 +57,7 @@ export class UpdateEventModal implements OnInit{
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      type: [false, Validators.required],
+      type: [false],
       themes: this.formBuilder.array([], Validators.required),
       initDate: ['', Validators.required],
       initHour: ['', Validators.required],
@@ -84,7 +80,7 @@ export class UpdateEventModal implements OnInit{
 
     this.form.get('name')?.setValue(this.event.name)
     this.form.get('description')?.setValue(this.event.description)
-    this.form.get('type')?.setValue(this.event.type)
+    this.form.get('type')?.setValue(this.event.type === 'online')
     this.isOnline = this.event.type === 'online' ? true : false
 
     this.event.themes.map((el: any)=>{
@@ -104,6 +100,11 @@ export class UpdateEventModal implements OnInit{
     this.form.get('latitude')?.setValue(this.event.latitude)
     this.form.get('longitude')?.setValue(this.event.longitude)
 
+  }
+
+  toggleOnline(event: globalThis.Event) {
+    this.isOnline = (event.target as HTMLInputElement).checked;
+    this.form.get('type')?.setValue(this.isOnline);
   }
 
 

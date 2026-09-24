@@ -1,10 +1,9 @@
 import {Component} from '@angular/core';
-import {Container} from '../general/container/container';
-import {Events} from '../events/events';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-index',
-  imports: [Container],
+  imports: [RouterLink],
   templateUrl: './index.html',
   styleUrl: './index.css',
   standalone: true

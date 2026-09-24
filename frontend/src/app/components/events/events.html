@@ -1,42 +1,88 @@
 <app-container>
+  <section *ngIf="view === 'general'" class="page-intro">
+    <div><span class="page-kicker">ENCUENTRA TU PRÓXIMO PLAN</span><h1>{{ categoryLabel ? 'Planes de ' + categoryLabel.toLowerCase() : 'Eventos para vivirlos juntos' }}</h1><p>Descubre actividades cerca de ti y conoce gente con tus mismos intereses.</p></div>
+    <button *ngIf="user" (click)="createEvent()" class="create-action"><i class="bi bi-plus-lg"></i><span>Crear evento</span></button>
+  </section>
 
-  <div class="w-full h-[calc(100vh_-_140px)] overflow-auto">
-
-    <div *ngIf="view === 'general'" class="w-full flex justify-end items-center">
-      <span *ngIf="selectedView === 'map'" class="mr-4">* Only in-person events will be visible in the map view.</span>
-      <mat-button-toggle-group [(ngModel)]="selectedView">
-        <mat-button-toggle (click)="updateMap()" value="map"><i class="bi bi-map mr-2"></i> Map</mat-button-toggle>
-        <mat-button-toggle value="list"><i class="bi bi-grid mr-2"></i>List</mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
-
-    <div *ngIf="view === 'general'">
-      <div *ngIf="selectedView === 'list'" class="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
-        <app-card-events  *ngFor="let event of events" [event]="event" [user]="user" (actions)="eventActions($event)"></app-card-events>
-      </div>
-    </div>
-
-    <div *ngIf="view === 'my'">
-      <div *ngIf="selectedView === 'list'" class="grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 mt-4">
-        <app-card-events  *ngFor="let event of myEvents" [event]="event" [user]="user" (actions)="eventActions($event)"></app-card-events>
-      </div>
-    </div>
-
-
-    <div class="w-full h-full mt-4" *ngIf="selectedView === 'map'">
-      <div id="map" class="w-full h-full z-0"></div>
-    </div>
-
-
-
-    <button *ngIf="this.user" (click)="createEvent()"
-            class="fixed bottom-6 right-6 bg-[#c2185b] text-white w-14 h-14 rounded-full text-3xl flex items-center justify-center shadow-lg hover:bg-blue-700 z-1 cursor-pointer"
-    >
-      +
-    </button>
+  <div *ngIf="view === 'general' && categoryLabel" class="active-event-filter">
+    <span><i class="bi bi-funnel-fill"></i> Categoría <b>{{ categoryLabel }}</b></span>
+    <button type="button" (click)="clearCategory()"><i class="bi bi-x-lg"></i> Quitar filtro</button>
   </div>
 
-  <app-paginator *ngIf="selectedView !== 'map'" [limit]="limit" [params]="eventPagination" (update)="updatePagination($event.page, $event.limit)"></app-paginator>
+  <div *ngIf="view === 'general'" class="events-workspace" [class.with-filter-sidenav]="filtersOpen">
+    <aside *ngIf="filtersOpen" class="events-filter-sidenav" aria-label="Filtros de eventos">
+      <form (ngSubmit)="applyFilters()">
+        <header class="filter-sidenav-heading">
+          <span class="filter-heading-icon"><i class="bi bi-sliders"></i></span>
+          <div><span class="page-kicker">PERSONALIZA TU BÚSQUEDA</span><h2>Filtros</h2></div>
+          <button type="button" class="filter-close" (click)="filtersOpen = false" aria-label="Cerrar filtros"><i class="bi bi-x-lg"></i></button>
+        </header>
 
+        <label class="filter-field"><span>Buscar planes</span><span class="filter-input-wrap"><i class="bi bi-search"></i><input type="search" name="eventSearch" [(ngModel)]="filters.search" placeholder="Nombre o descripción"></span></label>
 
+        <label class="filter-field"><span>Categoría</span>
+          <select name="eventCategory" [(ngModel)]="filters.category">
+            <option value="">Todas las categorías</option>
+            <option *ngFor="let theme of themeOptions" [value]="theme.name">{{ theme.name }}</option>
+          </select>
+        </label>
+
+        <label class="filter-field"><span>Modalidad</span>
+          <select name="eventType" [(ngModel)]="filters.type">
+            <option value="">Presencial y online</option><option value="notOnline">Presencial</option><option value="online">Online</option>
+          </select>
+        </label>
+
+        <label class="filter-field"><span>Fecha</span>
+          <select name="eventDate" [(ngModel)]="filters.datePreset">
+            <option value="">Cualquier fecha</option><option value="today">Hoy</option>
+            <option value="weekend">Este fin de semana</option><option value="week">Próximos 7 días</option>
+            <option value="upcoming">Próximos eventos</option>
+          </select>
+        </label>
+
+        <label class="filter-field"><span>Ubicación</span><span class="filter-input-wrap"><i class="bi bi-geo-alt"></i><input type="search" name="eventLocation" [(ngModel)]="filters.location" placeholder="Ciudad o lugar"></span></label>
+
+        <div class="filter-sidenav-actions">
+          <button type="button" class="filter-reset" (click)="resetFilters()">Limpiar</button>
+          <button type="submit" class="filter-apply"><i class="bi bi-check2"></i> Aplicar filtros</button>
+        </div>
+      </form>
+    </aside>
+
+    <main class="events-results-column">
+      <div class="events-content-list w-full">
+        <div class="event-view-toolbar">
+          <span *ngIf="selectedView === 'map'" class="map-hint"><i class="bi bi-info-circle"></i> Solo eventos presenciales con ubicación</span>
+          <button type="button" class="filter-toggle" [class.active]="filtersOpen" (click)="filtersOpen = !filtersOpen" [attr.aria-expanded]="filtersOpen">
+            <i class="bi bi-sliders"></i><span>Filtros</span><b *ngIf="activeFilterCount">{{ activeFilterCount }}</b>
+          </button>
+          <div class="map-switch" role="group" aria-label="Vista de eventos">
+            <button type="button" [class.active]="selectedView === 'map'" [attr.aria-pressed]="selectedView === 'map'" (click)="setView('map')"><i class="bi bi-map"></i><span>Mapa</span></button>
+            <button type="button" [class.active]="selectedView === 'list'" [attr.aria-pressed]="selectedView === 'list'" (click)="setView('list')"><i class="bi bi-grid-3x3-gap"></i><span>Lista</span></button>
+          </div>
+        </div>
+
+        <div *ngIf="selectedView === 'list'" class="event-grid grid gap-4 mt-4">
+          <app-card-events class="event-card" *ngFor="let event of events" [event]="event" [user]="user" (actions)="eventActions($event)"></app-card-events>
+        </div>
+        <div *ngIf="eventPagination && events.length === 0 && selectedView === 'list'" class="content-empty-state">
+          <i class="bi bi-funnel"></i><b>No encontramos eventos con estos filtros</b><span>Prueba a cambiar la categoría, la fecha o la ubicación.</span>
+          <button type="button" class="filter-empty-reset" (click)="resetFilters()">Limpiar filtros</button>
+        </div>
+        <div class="event-map-canvas w-full mt-4" *ngIf="selectedView === 'map'"><div id="map" class="w-full h-full z-0"></div></div>
+      </div>
+
+      <app-paginator *ngIf="selectedView !== 'map' && eventPagination && eventPagination.totalElements > 0" [limit]="limit" [params]="eventPagination" (update)="updatePagination($event.page, $event.limit)"></app-paginator>
+    </main>
+  </div>
+
+  <section *ngIf="view === 'my'" class="events-content-list w-full">
+    <div class="my-events-heading"><span>Mis eventos</span><small>Planes que has creado</small></div>
+    <div class="event-grid grid gap-4 mt-4">
+      <app-card-events class="event-card" *ngFor="let event of myEvents" [event]="event" [user]="user" (actions)="eventActions($event)"></app-card-events>
+    </div>
+    <div *ngIf="eventPagination && myEvents.length === 0" class="content-empty-state"><i class="bi bi-calendar-heart"></i><b>Aún no tienes eventos</b><span>Cuando crees o te unas a un plan, aparecerá aquí.</span></div>
+    <app-paginator *ngIf="eventPagination && eventPagination.totalElements > 0" [limit]="limit" [params]="eventPagination" (update)="updatePagination($event.page, $event.limit)"></app-paginator>
+  </section>
 </app-container>

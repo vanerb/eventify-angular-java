@@ -35,8 +35,8 @@ export function formatToSqlTimestamp(date: Date): string {
 }
 
 export function getImage(img: string|null|undefined){
-  if(img === null || img == undefined){
-    return 'http://localhost:8080/uploads/No_Image_Available.jpg';
+  if(!img){
+    return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Crect width='640' height='420' fill='%23f1eaff'/%3E%3Ccircle cx='320' cy='210' r='112' fill='%23e3d9f8'/%3E%3Cpath d='M320 125l26 61 64 24-64 24-26 61-26-61-64-24 64-24z' fill='%237454d8'/%3E%3C/svg%3E";
   }
   else{
     return 'http://localhost:8080'+img

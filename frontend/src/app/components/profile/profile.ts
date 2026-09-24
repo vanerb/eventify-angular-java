@@ -1,13 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Container} from '../general/container/container';
 import {MatTabsModule} from '@angular/material/tabs';
-import {MatDividerModule} from '@angular/material/divider';
 import {AuthService} from '../../services/auth-service';
 import {firstValueFrom} from 'rxjs';
 import {Posts} from '../posts/posts';
 import {Events} from '../events/events';
 import {NgIf} from '@angular/common';
-import {MatButton} from '@angular/material/button';
 import {ModalService} from '../../services/modal-service';
 import {UpdateUserModal} from './update-user-modal/update-user-modal';
 import {getImage} from '../../services/utilities-service';
@@ -15,7 +13,7 @@ import {User} from '../../models/users';
 
 @Component({
   selector: 'app-profile',
-  imports: [Container, MatTabsModule, MatDividerModule, Posts, Events, NgIf, MatButton],
+  imports: [Container, MatTabsModule, Posts, Events, NgIf],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
   standalone: true

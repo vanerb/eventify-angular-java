@@ -1,43 +1,20 @@
 <app-container>
-
-  <div class="w-full h-full relative">
-    <button (click)="updateProfile()" class="absolute top-2 right-2 z-1 rounded-lg bg-[#c2185b] px-4 p-1 cursor-pointer"><i class="bi bi-gear"></i></button>
-
-    <div class="w-full h-32 relative">
-      <div class="w-full h-32 overflow-hidden rounded-lg">
-        <img src="{{getImage(user?.banner?.url)}}" class="object-cover object-center h-32 w-full">
+  <main class="profile-page">
+    <section class="profile-hero">
+      <div class="profile-cover"><img [src]="getImage(user?.banner?.url)" alt="Portada del perfil"><div class="profile-cover-shade"></div><button (click)="updateProfile()" class="profile-settings" aria-label="Editar perfil"><i class="bi bi-pencil"></i><span>Editar perfil</span></button></div>
+      <div class="profile-identity">
+        <img class="profile-avatar" [src]="getImage(user?.image?.url)" [alt]="user.name">
+        <div class="profile-name"><h1>{{ user.name }}</h1><span>{{ '@' + user.username }}</span></div>
       </div>
+      <p *ngIf="user.bio" class="profile-bio">{{ user.bio }}</p>
+      <div class="profile-meta"><span><i class="bi bi-stars"></i> Parte de la comunidad Eventify</span></div>
+    </section>
 
-      <div class="absolute w-full h-24 -bottom-10 left-0 right-0 flex justify-center">
-        <div class="flex items-center space-x-2 rounded-lg w-fit">
-          <img class="w-24 h-24 rounded-full object-cover object-center" src="{{getImage(user.image?.url)}}">
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-10 space-y-2 text-center">
-      <div>
-        <h1>{{ user.name }}</h1>
-        <span>{{ '@' + user.username }}</span>
-      </div>
-      <div>
-        <span>{{ user.bio }}</span>
-      </div>
-
-
-      <mat-divider></mat-divider>
-
-      <mat-tab-group>
-        <mat-tab label="Posts">
-          <app-posts [view]="'my'"></app-posts>
-        </mat-tab>
-        <mat-tab label="Events">
-          <app-events [view]="'my'"></app-events>
-        </mat-tab>
+    <section class="profile-content">
+      <mat-tab-group class="profile-tabs">
+        <mat-tab label="Mis publicaciones"><app-posts [view]="'my'"></app-posts></mat-tab>
+        <mat-tab label="Mis eventos"><app-events [view]="'my'"></app-events></mat-tab>
       </mat-tab-group>
-    </div>
-
-
-  </div>
-
+    </section>
+  </main>
 </app-container>

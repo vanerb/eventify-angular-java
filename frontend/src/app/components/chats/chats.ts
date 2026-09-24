@@ -5,22 +5,11 @@ import {NgForOf, NgIf} from '@angular/common';
 import {Container} from '../general/container/container';
 import {HttpClient} from '@angular/common/http';
 import {EventSevice} from '../../services/event-sevice';
-import {sleep, transformDate, transformDateHour} from '../../services/utilities-service';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatListModule} from '@angular/material/list';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButton} from '@angular/material/button';
+import {transformDateHour} from '../../services/utilities-service';
 import {AuthService} from '../../services/auth-service';
 import {firstValueFrom, Subscription} from 'rxjs';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatChipRow} from '@angular/material/chips';
-import {CardEvents} from '../events/card-events/card-events';
 import {ChatMessage} from '../../models/chats';
 import {Paginator} from '../general/paginator/paginator';
-import {Events} from '../events/events';
-import {Page} from '../../models/pagination';
 import {User} from '../../models/users';
 import {EventPage, Event} from '../../models/events';
 
@@ -30,16 +19,7 @@ import {EventPage, Event} from '../../models/events';
     FormsModule,
     NgForOf,
     Container,
-    MatSidenavModule,
-    MatDividerModule,
-    MatListModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButton,
     NgIf,
-    MatExpansionModule,
-    MatChipRow,
-    CardEvents,
     Paginator
   ],
   templateUrl: './chats.html',
@@ -61,6 +41,9 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
   private messageDdbbSub?: Subscription;
 
   groupedMessages: { date: string, messages: any[] }[] = [];
+  get selectedEvent(): Event | undefined {
+    return this.events.find(event => event.id === this.eventId);
+  }
   @ViewChild('bottom') bottom!: ElementRef;
 
   constructor(
@@ -202,5 +185,4 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
   }
 
   protected readonly transformDateHour = transformDateHour;
-  protected readonly transformDate = transformDate;
 }

@@ -1,24 +1,17 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
-import {MatCardModule} from '@angular/material/card';
-import {MatChipRow} from '@angular/material/chips';
-import {getImage, sleep, transformDate} from '../../../services/utilities-service';
-import {NgForOf, NgIf} from '@angular/common';
-import {MatButton} from '@angular/material/button';
+import {getImage, transformDate} from '../../../services/utilities-service';
+import {NgForOf, NgIf, SlicePipe} from '@angular/common';
 import {MatMenuModule} from '@angular/material/menu';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {EventPage, Event} from '../../../models/events';
+import {Event} from '../../../models/events';
 import {User} from '../../../models/users';
 
 @Component({
   selector: 'app-card-events',
   imports: [
-    MatCardModule,
-    MatChipRow,
     NgForOf,
     NgIf,
-    MatButton,
-    MatMenuModule,
-    MatTooltipModule
+    SlicePipe,
+    MatMenuModule
   ],
   templateUrl: './card-events.html',
   styleUrl: './card-events.css',
@@ -36,6 +29,10 @@ export class CardEvents {
   }
 
   showDescriptionFull: boolean = false
+
+  isParticipant(): boolean {
+    return !!this.user?.id && (this.event?.creator?.id === this.user.id || this.event?.participants?.some(participant => participant.id === this.user.id) === true);
+  }
 
 
   viewMore() {

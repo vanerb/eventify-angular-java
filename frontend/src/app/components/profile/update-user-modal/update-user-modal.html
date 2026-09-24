@@ -1,6 +1,6 @@
 
-  <div class="w-full relative h-full">
-    <div class="h-[calc(100%_-_40px)] overflow-auto">
+  <div class="profile-form-dialog w-full relative h-full">
+    <div class="profile-form-scroll h-[calc(100%_-_40px)] overflow-auto">
       <div class="w-full h-32 relative">
         <div class="w-full h-32 overflow-hidden rounded-lg">
           <img src="{{previewBannerCoverImage}}" class="object-cover object-center h-32 w-full">
@@ -10,7 +10,7 @@
             <input type="file" accept="image/*" #fileInput hidden (change)="onImageBannerChange($event)" />
             <button type="button"  color="primary"
                     (click)="fileInput.click()" mat-raised-button
-                    class="w-10 h-10 rounded-sm flex justify-center items-center bg-[#c2185b] cursor-pointer">
+                    class="profile-upload-button w-10 h-10 rounded-sm flex justify-center items-center cursor-pointer">
               <i class="bi bi-pencil text-xl"></i>
             </button>
           </div>
@@ -26,7 +26,7 @@
                 <input type="file" accept="image/*" #fileInput1 hidden (change)="onImageProfileChange($event)" />
                 <button type="button"  color="primary"
                         (click)="fileInput1.click()"
-                        class="w-10 h-10 rounded-md flex justify-center items-center bg-[#c2185b] cursor-pointer">
+                        class="profile-upload-button w-10 h-10 rounded-md flex justify-center items-center cursor-pointer">
                   <i class="bi bi-pencil text-xl"></i>
                 </button>
               </div>
@@ -40,23 +40,23 @@
         <form [formGroup]="form" class="space-y-6">
 
           <div>
-            <h1 class="mb-4">Update profile</h1>
-            <mat-form-field class="w-full">
-              <mat-label>Name</mat-label>
-              <input class="w-full" formControlName="name" placeholder="Enter your name..."
+            <h1 class="mb-4">Editar perfil</h1>
+            <mat-form-field floatLabel="always" class="w-full">
+              <mat-label>Nombre</mat-label>
+              <input class="w-full" formControlName="name" placeholder="Tu nombre"
                      matInput>
             </mat-form-field>
 
-            <mat-form-field class="w-full">
-              <mat-label>Username</mat-label>
-              <input class="w-full" formControlName="username" placeholder="Enter your username..."
+            <mat-form-field floatLabel="always" class="w-full">
+              <mat-label>Usuario</mat-label>
+              <input class="w-full" formControlName="username" placeholder="Tu nombre de usuario"
                      matInput>
             </mat-form-field>
 
 
-            <mat-form-field class="w-full mb-[-20px]">
-              <mat-label>Biography</mat-label>
-              <textarea class="w-full" rows="5" formControlName="bio" placeholder="Tell others something more about yourself..."
+            <mat-form-field floatLabel="always" class="w-full mb-[-20px]">
+              <mat-label>Biografía</mat-label>
+              <textarea class="w-full" rows="5" formControlName="bio" placeholder="Cuéntale algo más a la comunidad..."
                         matInput></textarea>
             </mat-form-field>
           </div>
@@ -68,16 +68,16 @@
 
 
           <div>
-            <h1 class="mb-4">Change password</h1>
-            <mat-form-field class="w-full">
-              <mat-label>Password</mat-label>
-              <input class="w-full" type="password" formControlName="password" placeholder="Enter your new password..."
+            <h1 class="mb-4">Cambiar contraseña</h1>
+            <mat-form-field floatLabel="always" class="w-full">
+              <mat-label>Nueva contraseña</mat-label>
+              <input class="w-full" type="password" formControlName="password" placeholder="Escribe tu nueva contraseña"
                      matInput>
             </mat-form-field>
 
-            <mat-form-field class="w-full">
-              <mat-label>Repeat password</mat-label>
-              <input class="w-full" type="password" formControlName="repeatPassword" placeholder="Repeat your new password..."
+            <mat-form-field floatLabel="always" class="w-full">
+              <mat-label>Repite la contraseña</mat-label>
+              <input class="w-full" type="password" formControlName="repeatPassword" placeholder="Confirma la nueva contraseña"
                      matInput>
             </mat-form-field>
           </div>
@@ -89,10 +89,10 @@
 
       </div>
     </div>
-    <div class="flex justify-end aling-end space-x-2 mt-2">
-      <button (click)="close()" mat-stroked-button color="primary">Cancel</button>
+    <div class="profile-form-actions flex justify-end aling-end space-x-2 mt-2">
+      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
 
-      <button (click)="update()" mat-raised-button color="primary">Accept</button>
+      <button (click)="update()" mat-raised-button color="primary">Guardar cambios</button>
 
 
     </div>

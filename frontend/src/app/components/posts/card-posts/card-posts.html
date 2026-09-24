@@ -1,35 +1,14 @@
-
-<div (click)="view()" class="w-full h-full border border-[#808080] rounded-lg cursor-pointer relative">
-  <div *ngIf="post.creator.id === this.user?.id" class="absolute right-2 top-2">
-    <button class="cursor-pointer" (click)="$event.stopPropagation()"  [matMenuTriggerFor]="menu"><i class="bi bi-three-dots-vertical"></i></button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="delete()"><i class="bi bi-trash mr-2"></i>Delete</button>
-    </mat-menu>
+<article class="post-tile" (click)="view()" tabindex="0" (keydown.enter)="view()">
+  <header class="post-tile-header">
+    <img [src]="getImage(post?.creator?.image?.url)" [alt]="post.creator.username" class="post-avatar">
+    <div class="post-author"><b>{{ post.creator.name || post.creator.username }}</b><span>{{ '@' + post.creator.username }}</span></div>
+    <button *ngIf="post.creator.id === this.user?.id" class="post-menu-trigger" aria-label="Opciones de publicación" (click)="$event.stopPropagation()" [matMenuTriggerFor]="menu"><i class="bi bi-three-dots"></i></button>
+    <mat-menu #menu="matMenu"><button mat-menu-item (click)="delete()"><i class="bi bi-trash mr-2"></i>Eliminar</button></mat-menu>
+  </header>
+  <div class="post-cover">
+    <img [src]="getImage(post?.image?.url)" [alt]="post.description || 'Foto de la comunidad'">
+    <span class="post-cover-icon"><i class="bi bi-arrows-angle-expand"></i></span>
   </div>
-  <div class="w-full h-12 bg-[rgb(66,66,66)] rounded-t-lg ">
-    <div class="flex justify-start items-center w-full h-full px-2 space-x-2">
-      <div class="w-10 h-10 rounded-full overflow-hidden ">
-        <img src="{{ getImage(post?.creator?.image?.url) }}" class="object-cover object-center h-full w-full rounded-lg">
-      </div>
-
-      <div>
-        <span>{{ '@'+ post.creator.username }}</span>
-      </div>
-    </div>
-  </div>
-
-  <div  class="w-full  overflow-hidden w-64 h-64">
-    <img src="{{ getImage(post?.image?.url) }}" class="object-cover object-center h-64 w-full ">
-  </div>
-
-  <div class="h-12 text-white bg-[rgb(66,66,66)] shadow-lg rounded-b-lg w-full flex justify-end items-center space-x-2 px-2 ">
-    <div class="flex items-center space-x-2 justify-center">
-      <i class="bi bi-chat"></i>
-      <span>{{ post.comments.length }}</span>
-    </div>
-
-<!--    <i class="bi bi-bookmark"></i>-->
-<!--    <i class="bi bi-heart"></i>-->
-  </div>
-</div>
-
+  <div class="post-tile-caption"><p>{{ post.description }}</p><span *ngIf="post.event" class="post-event-link"><i class="bi bi-calendar-heart"></i>{{ post.event.name }}</span></div>
+  <footer class="post-tile-footer"><span><i class="bi bi-chat-dots"></i>{{ post.comments.length }} comentarios</span><button>Ver publicación <i class="bi bi-arrow-up-right"></i></button></footer>
+</article>

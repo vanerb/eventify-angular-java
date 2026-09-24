@@ -8,7 +8,7 @@ import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth-service';
 import {firstValueFrom} from 'rxjs';
-import {cleanUrlImage} from '../../services/utilities-service';
+import {getImage} from '../../services/utilities-service';
 import {ImagesService} from '../../services/images-service';
 import {User} from '../../models/users';
 
@@ -81,4 +81,6 @@ export class Header implements OnInit {
     window.location.reload();
     this.isOpen = false
   }
+
+  protected readonly getImage = getImage;
 }

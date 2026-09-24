@@ -1,9 +1,9 @@
 <div
   *ngIf="this.show"
-  class="fixed inset-0 bg-black/50 flex justify-center items-center z-[999] pointer-auto"
+  class="modal-backdrop fixed inset-0 bg-[#241b37]/45 flex justify-center items-center z-[999] pointer-auto"
 >
   <div
-    class="bg-gray-800 p-4 rounded-[8px] z-[1000] pointer-auto"
+    class="eventify-dialog p-4 rounded-[20px] z-[1000] pointer-auto"
     [ngStyle]="this.styles"
     (click)="$event.stopPropagation()"
   >

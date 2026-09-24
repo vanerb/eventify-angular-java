@@ -1,163 +1,56 @@
-<div class="w-full h-[calc(90vh_-_20px)]">
+<article class="post-modal-card">
+  <aside class="post-modal-visual">
+    <img [src]="getImage(post?.image?.url)" alt="Imagen de la publicación">
+    <div class="post-visual-shade"></div>
+    <span class="post-visual-label"><i class="bi bi-stars"></i> Comunidad Eventify</span>
+  </aside>
 
-  <div class="flex justify-between w-full h-full space-x-4">
+  <section class="post-modal-content">
+    <div class="post-author-card">
+      <img class="post-author-cover" [src]="getImage(post?.creator?.banner?.url)" alt="">
+      <img class="post-author-avatar" [src]="getImage(post?.creator?.image?.url)" [alt]="post?.creator?.username">
+      <div class="post-author-name"><b>{{ post?.creator?.username }}</b><small>Comparte un momento con la comunidad</small></div>
+      <span class="post-author-badge"><i class="bi bi-patch-check-fill"></i> Eventify</span>
+    </div>
 
-    <!-- LADO IZQUIERDO (IMAGEN) -->
-    <div class="w-[50%] h-full rounded-lg overflow-hidden">
-      <div class="w-full h-full flex justify-center items-center overflow-hidden">
-        <img
-          class="max-w-full max-h-full object-contain"
-          [src]="getImage(post?.image?.url)"
-          alt="Imagen">
+    <div class="post-copy">
+      <span class="post-modal-kicker">PUBLICACIÓN</span>
+      <p>{{ post?.description }}</p>
+      <a *ngIf="post?.url" [href]="post?.url" target="_blank" rel="noopener noreferrer"><i class="bi bi-link-45deg"></i>{{ post?.url }}</a>
+      <div *ngIf="post?.hashtags?.length" class="post-hashtags">
+        <span *ngFor="let hashtag of post.hashtags">#{{ hashtag.name }}</span>
       </div>
     </div>
 
-    <!-- LADO DERECHO -->
-    <div class="flex flex-col w-[50%] h-full overflow-hidden">
+    <nav class="post-modal-tabs" role="tablist" aria-label="Contenido de la publicación">
+      <button type="button" role="tab" [class.active]="activeTab === 'comments'" [attr.aria-selected]="activeTab === 'comments'" (click)="selectTab('comments')">Comentarios <span>{{ post?.comments?.length || 0 }}</span></button>
+      <button *ngIf="post?.event" type="button" role="tab" [class.active]="activeTab === 'event'" [attr.aria-selected]="activeTab === 'event'" (click)="selectTab('event')">Evento</button>
+      <button *ngIf="user && post?.event" type="button" role="tab" [class.active]="activeTab === 'participants'" [attr.aria-selected]="activeTab === 'participants'" (click)="selectTab('participants')">Participantes <span>{{ post.event.participants?.length || 0 }}</span></button>
+    </nav>
 
-      <!-- CONTENIDO SCROLLEABLE COMPLETO -->
-      <div class="flex-1 overflow-auto px-4 space-y-2">
+    <section *ngIf="activeTab === 'comments'" class="post-tab-content post-comments" role="tabpanel">
+      <div *ngIf="!post?.comments?.length" class="post-empty-comments"><i class="bi bi-chat-heart"></i><b>Aún no hay comentarios</b><small>Inicia la conversación con la comunidad.</small></div>
+      <article class="post-comment" *ngFor="let comment of post.comments">
+        <img [src]="getImage(comment.user?.image?.url)" [alt]="comment.user?.username">
+        <div class="post-comment-copy"><header><b>{{ comment.user?.username }}</b><time>{{ transformDate(comment.createdAt) }}</time></header><p>{{ comment.comment }}</p></div>
+        <button *ngIf="comment?.user?.id === user?.id" class="post-comment-menu" type="button" [matMenuTriggerFor]="menu" aria-label="Opciones del comentario"><i class="bi bi-three-dots"></i></button>
+        <mat-menu #menu="matMenu"><button mat-menu-item (click)="delete(comment.id)"><i class="bi bi-trash mr-2"></i>Eliminar</button></mat-menu>
+      </article>
+    </section>
 
-        <!-- CABECERA -->
-        <div class="w-full h-24 relative">
-          <div class="w-full h-24 overflow-hidden rounded-lg">
-            <img  [src]="getImage(post?.creator?.banner?.url)" class="object-cover h-24 w-full">
-          </div>
+    <section *ngIf="activeTab === 'event' && post?.event" class="post-tab-content post-event-content" role="tabpanel">
+      <app-card-events [view]="'complete'" [realOnly]="true" [user]="post.creator" [event]="post.event"></app-card-events>
+    </section>
 
-          <div class="absolute w-full h-16 -bottom-8 left-0 flex justify-center">
-            <img class="w-16 h-16 rounded-full object-cover"
-                 [src]="getImage(post?.creator?.image?.url)">
-          </div>
-        </div>
+    <section *ngIf="activeTab === 'participants' && post?.event" class="post-tab-content post-participants" role="tabpanel">
+      <div *ngIf="!post.event.participants?.length" class="post-empty-comments"><i class="bi bi-people"></i><b>Aún no hay participantes</b></div>
+      <div *ngFor="let participant of post.event.participants" class="post-participant"><img [src]="getImage(participant.image?.url)" [alt]="participant.username"><b>@{{ participant.username }}</b><i class="bi bi-check-circle-fill"></i></div>
+    </section>
 
-        <!-- DESCRIPCIÓN -->
-        <div class="pt-6 space-y-2">
-          <div class="w-full text-center">
-            <span>{{ post?.description }}</span>
-          </div>
-
-          <div *ngIf="post?.url" class="w-full flex justify-center">
-            <div class="flex items-center gap-2 leading-none">
-              <i class="bi bi-link "></i>
-              <a
-                [href]="post?.url"
-                target="_blank"
-                class="leading-none text-blue-500 hover:underline"
-              >
-                {{ post?.url }}
-              </a>
-            </div>
-          </div>
-
-          <div class="w-full ">
-            <div class="flex flex-wrap justify-center gap-2">
-              <mat-chip-row *ngFor="let hashtag of post.hashtags">
-                {{ '#' + hashtag.name }}
-              </mat-chip-row>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- TABS -->
-        <mat-tab-group class=" ">
-
-          <!-- TAB: COMENTARIOS -->
-          <mat-tab label="Comments">
-
-            <!-- NECESARIO: ALTURA TOTAL -->
-            <div class="h-full flex flex-col overflow-hidden">
-
-              <!-- SCROLL REAL -->
-              <div class="flex-1 overflow-auto py-2 space-y-2">
-
-                <div *ngIf="post.comments.length === 0" class="w-full text-center">
-                  <span>There are no comments yet</span>
-                </div>
-
-                <div class="bg-[rgb(66,66,66)] rounded-lg p-3 shadow-lg relative"
-                     *ngFor="let comment of post.comments">
-
-                  <div *ngIf="comment?.user?.id === this.user?.id" class="absolute right-2 top-2">
-                    <button class="cursor-pointer" [matMenuTriggerFor]="menu">
-                      <i class="bi bi-three-dots-vertical"></i>
-                    </button>
-                    <mat-menu #menu="matMenu">
-                      <button mat-menu-item (click)="delete(comment.id)">
-                        <i class="bi bi-trash mr-2"></i>Delete
-                      </button>
-                    </mat-menu>
-                  </div>
-
-                  <div class="flex items-center space-x-2 h-10 mb-2">
-                    <img class="w-10 h-10 rounded-full object-cover"
-                         [src]="getImage(comment.user.image.url)">
-                    <span>{{ comment.user.username }}</span>
-                  </div>
-
-                  <span>{{ comment.comment }}</span>
-                  <span class="block text-end">{{ transformDate(comment.createdAt) }}</span>
-
-                </div>
-
-              </div>
-
-              <!-- INPUT -->
-
-              <div *ngIf="this.user" class="flex space-x-2 mt-2">
-                <mat-form-field class="w-full mb-[-20px]" appearance="outline">
-                  <input matInput placeholder="Write a comment..." [(ngModel)]="comment">
-                </mat-form-field>
-                <div class="flex justify-center items-center" >
-                  <button (click)="sendComment()" mat-raised-button color="primary">
-                    <i class="bi bi-send"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-          </mat-tab>
-
-          <!-- TAB: DESCRIPCIÓN EVENTO -->
-          <mat-tab label="Description">
-            <div class="py-4">
-              <app-card-events [view]="'complete'"
-                               [realOnly]="true"
-                               [user]="post.creator"
-                               [event]="post.event">
-              </app-card-events>
-            </div>
-          </mat-tab>
-
-          <!-- TAB: PARTICIPANTES -->
-          <mat-tab *ngIf="this.user" label="Participants">
-            <div class="py-4 space-y-4 overflow-auto h-full">
-              <mat-list>
-                <div *ngFor="let participant of post.event.participants">
-                  <mat-list-item>
-                    <div class="flex items-center space-x-2">
-                      <img class="w-10 h-10 rounded-full object-cover"
-                           [src]="getImage(participant.image.url)">
-                      <span>{{ '@' + participant.username }}</span>
-                    </div>
-                  </mat-list-item>
-                  <mat-divider></mat-divider>
-                </div>
-              </mat-list>
-            </div>
-          </mat-tab>
-
-        </mat-tab-group>
-
-      </div>
-
-      <!-- BOTÓN CERRAR -->
-      <div class="w-full flex justify-end items-center py-2">
-        <button (click)="close()" mat-stroked-button color="primary">Close</button>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
+    <form *ngIf="user && activeTab === 'comments'" class="post-comment-form" (ngSubmit)="sendComment()">
+      <input name="comment" [(ngModel)]="comment" placeholder="Escribe un comentario..." aria-label="Escribe un comentario">
+      <button type="submit" [disabled]="!comment.trim()" aria-label="Enviar comentario"><i class="bi bi-send"></i></button>
+    </form>
+    <footer class="post-modal-footer"><button type="button" (click)="close()">Cerrar</button></footer>
+  </section>
+</article>

@@ -144,8 +144,8 @@ export class Posts implements OnInit, AfterViewInit{
 
   show(post: any) {
     this.modalService.open(ShowPostModal, {
-        width: '180vh',
-        height: '90vh',
+        width: 'min(960px, 94vw)',
+        height: 'min(780px, calc(100dvh - 32px))',
       },
       {
         post: post,

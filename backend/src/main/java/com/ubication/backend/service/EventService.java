@@ -31,6 +31,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Locale;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -267,11 +273,59 @@ public class EventService implements EventInterface {
     // =========================
     // FIND ALL
     // =========================
-    public Page<EventDTO> findAll(int page, int size) {
-       Pageable pageable = PageRequest.of(page, size);
+    public Page<EventDTO> findAll(int page, int size, String category, String search, String type, String location,
+                                  LocalDate fromDate, LocalDate toDate) {
+       Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "initDate"));
+       List<String> themeNames = switch (category == null ? "" : category.toLowerCase()) {
+           case "music" -> List.of("Music");
+           case "food" -> List.of("Gastronomy");
+           case "outdoor" -> List.of("Sports", "Travel & Tourism", "Sustainability", "Environment",
+                   "Recreation & Leisure", "Agriculture & AgriTech", "Environmental Care", "Renewable Energy",
+                   "Natural Disasters & Resilience", "Virtual Travel", "Animal Welfare", "Ecosystem Restoration");
+           case "creative" -> List.of("Culture & Art", "Creativity & Innovation", "Photography", "Literature",
+                   "Fashion", "Architecture", "UX/UI Design", "Content Creation", "Pop Culture", "Movies & TV");
+           default -> category == null || category.isBlank() ? List.of() : List.of(category.trim());
+       };
 
-           return repository.findAll(pageable)
-                   .map(this::toEventDTO);
+       Specification<Event> specification = (root, query, criteria) -> {
+           List<Predicate> predicates = new ArrayList<>();
+           if (search != null && !search.isBlank()) {
+               String term = "%" + search.trim().toLowerCase(Locale.ROOT) + "%";
+               predicates.add(criteria.or(
+                       criteria.like(criteria.lower(root.get("name")), term),
+                       criteria.like(criteria.lower(root.get("description")), term)));
+           }
+           if (type != null && !type.isBlank()) {
+               String normalizedType = type.trim().toLowerCase(Locale.ROOT);
+               if (normalizedType.equals("online")) {
+                   predicates.add(criteria.or(
+                           criteria.equal(criteria.lower(root.get("type")), "online"),
+                           criteria.equal(criteria.lower(root.get("type")), "true")));
+               } else if (normalizedType.equals("notonline")) {
+                   predicates.add(criteria.or(
+                           criteria.equal(criteria.lower(root.get("type")), "notonline"),
+                           criteria.equal(criteria.lower(root.get("type")), "false")));
+               } else {
+                   predicates.add(criteria.equal(criteria.lower(root.get("type")), normalizedType));
+               }
+           }
+           if (location != null && !location.isBlank()) {
+               predicates.add(criteria.like(criteria.lower(root.get("ubication")), "%" + location.trim().toLowerCase(Locale.ROOT) + "%"));
+           }
+           if (fromDate != null) predicates.add(criteria.greaterThanOrEqualTo(root.<java.time.LocalDateTime>get("initDate"), fromDate.atStartOfDay()));
+           if (toDate != null) predicates.add(criteria.lessThan(root.<java.time.LocalDateTime>get("initDate"), toDate.plusDays(1).atStartOfDay()));
+           if (!themeNames.isEmpty()) {
+               List<String> normalizedThemeNames = themeNames.stream()
+                       .map(name -> name.toLowerCase(Locale.ROOT))
+                       .toList();
+               predicates.add(criteria.lower(root.join("themes", JoinType.INNER).get("name")).in(normalizedThemeNames));
+               query.distinct(true);
+           }
+           return criteria.and(predicates.toArray(Predicate[]::new));
+       };
+
+       Page<Event> events = repository.findAll(specification, pageable);
+       return events.map(this::toEventDTO);
     }
 
     // =========================

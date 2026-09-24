@@ -15,8 +15,6 @@ import {
   getThemes,
   getThemesIcon
 } from '../../../services/utilities-service';
-import {MatChipRow} from '@angular/material/chips';
-import {MatCheckboxModule} from '@angular/material/checkbox';
 import {WarningModal} from '../../general/warning-modal/warning-modal';
 import {ModalService} from '../../../services/modal-service';
 
@@ -34,8 +32,6 @@ import {ModalService} from '../../../services/modal-service';
     MatAutocompleteModule,
     NgClass,
     AsyncPipe,
-    MatChipRow,
-    MatCheckboxModule
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './create-event-modal.html',
@@ -59,7 +55,7 @@ export class CreateEventModal implements OnInit {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      type: [false, Validators.required],
+      type: [false],
       themes: this.formBuilder.array([], Validators.required),
       initDate: ['', Validators.required],
       initHour: ['', Validators.required],
@@ -79,6 +75,11 @@ export class CreateEventModal implements OnInit {
     );
 
     this.previewCoverImage = getImage(null)
+  }
+
+  toggleOnline(event: Event) {
+    this.isOnline = (event.target as HTMLInputElement).checked;
+    this.form.get('type')?.setValue(this.isOnline);
   }
 
 

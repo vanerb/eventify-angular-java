@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 
 
 
@@ -70,8 +72,14 @@ public class EventController {
         }
 
     @GetMapping("/getAll")
-    public Page<EventDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return service.findAll(page, size);
+    public Page<EventDTO> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
+                                  @RequestParam(required = false) String category,
+                                  @RequestParam(required = false) String search,
+                                  @RequestParam(required = false) String type,
+                                  @RequestParam(required = false) String location,
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+                                  @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+        return service.findAll(page, size, category, search, type, location, fromDate, toDate);
     }
 
 

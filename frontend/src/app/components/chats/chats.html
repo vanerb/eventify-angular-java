@@ -1,95 +1,50 @@
 <app-container>
-
-  <mat-drawer-container class="h-full w-full rounded-lg">
-    <mat-drawer mode="side" opened>
-      <div class="w-[300px]">
-        <div class="w-full p-4 flex justify-between align-center">
-          <h1>Chats</h1>
-          <div class="flex space-x-2 items-center">
-           <app-paginator [limit]="limit" (update)="updatePagination($event.page, $event.limit)" type="small" [params]="eventPagination"></app-paginator>
-          </div>
-        </div>
-        <mat-accordion [multi]="false">
-          <div class="w-full cursor-pointer mb-2" *ngFor="let event of events">
-
-              <mat-expansion-panel (click)="changeEvent(event.id)">
-                <mat-expansion-panel-header>
-                  <mat-panel-title><span class="line-clamp-1">{{ event.name }}</span></mat-panel-title>
-                  <mat-panel-description>
-                    <div class="flex justify-center items-center space-x-2">
-                      <i class="bi bi-person "></i>
-                      <span>{{ event.participants.length }} participants</span>
-                    </div>
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                <app-card-events [event]="event" [user]="event.creator" [view]="'complete'"
-                                 [realOnly]="true"></app-card-events>
-
-              </mat-expansion-panel>
-
-
-          </div>
-        </mat-accordion>
-
+  <main class="chat-shell">
+    <aside class="chat-sidebar">
+      <header class="chat-sidebar-heading">
+        <div><span class="chat-kicker">MANTÉN EL PLAN EN MARCHA</span><h1>Conversaciones</h1><p>Tus quedadas y su gente, en un mismo lugar.</p></div>
+        <app-paginator [limit]="limit" (update)="updatePagination($event.page, $event.limit)" type="small" [params]="eventPagination"></app-paginator>
+      </header>
+      <div class="chat-event-list">
+        <button type="button" class="chat-event-item" *ngFor="let event of events" [class.active]="eventId === event.id" (click)="changeEvent(event.id)">
+          <span class="chat-event-icon"><i class="bi bi-calendar-heart"></i></span>
+          <span class="chat-event-copy"><b>{{ event.name }}</b><small><i class="bi bi-people"></i> {{ event.participants.length }} participantes</small></span>
+          <i class="bi bi-chevron-right chat-event-arrow"></i>
+        </button>
+        <div *ngIf="events.length === 0" class="chat-empty-list"><i class="bi bi-chat-square-heart"></i><b>Aún no tienes conversaciones</b><span>Únete a un evento para empezar a hablar.</span></div>
       </div>
-    </mat-drawer>
-    <mat-drawer-content>
-      <div *ngIf="!eventId" class="w-full h-full">
-        <div class="w-full h-full flex flex-col justify-center items-center">
-          <div class="text-xxl">
-            <i class="bi bi-info-circle"></i>
-          </div>
-          <div>
-            <span>
-              Select a chat to view the history.
-            </span>
-          </div>
+    </aside>
 
-        </div>
+    <section class="chat-conversation">
+      <div *ngIf="!eventId" class="chat-welcome">
+        <span class="chat-welcome-icon"><i class="bi bi-chat-heart"></i></span>
+        <h2>Las quedadas empiezan aquí</h2><p>Elige una conversación y sigue organizando el plan con el grupo.</p>
       </div>
-
-      <div *ngIf="eventId" class="w-full h-full ">
-        <div class="w-full h-[calc(100vh_-_198px)] overflow-auto p-4" #scrollContainer>
-          <div *ngFor="let group of groupedMessages">
-            <div class="text-center my-2 font-semibold">{{ group.date }}</div>
-
-            <div *ngFor="let msg of group.messages" class="w-full mb-2 mt-2">
-              <div *ngIf="msg.userId !== this.user.id" class="flex justify-start items-end">
-                <div class="bg-[#c2185b] w-fit py-1 px-4 rounded-lg flex flex-col">
-                  <span>
-                    <strong>{{ msg.sender }}</strong>
-                  </span>
-                  <span>{{ msg.content }}</span>
-                  <span class="text-[10px] text-end">{{ transformDateHour(msg.timestamp ?? '') }}</span>
-                </div>
-              </div>
-
-              <div *ngIf="msg.userId === this.user.id" class="flex justify-end items-end">
-                <div class="bg-[#911245] w-fit py-1 px-4 rounded-lg">
-                  {{ msg.content }}
-                  <div class="text-[10px] text-right">{{ transformDateHour(msg.timestamp ?? '') }}</div>
-                </div>
+      <ng-container *ngIf="eventId">
+        <header class="conversation-header">
+          <span class="conversation-icon"><i class="bi bi-calendar-heart"></i></span>
+          <div><span class="chat-kicker">CHAT DE LA QUEDADA</span><h2>{{ selectedEvent?.name }}</h2></div>
+          <span class="conversation-people"><i class="bi bi-people"></i>{{ selectedEvent?.participants?.length || 0 }}</span>
+        </header>
+        <div class="chat-messages" #scrollContainer>
+          <div *ngFor="let group of groupedMessages" class="message-day-group">
+            <div class="message-day"><span>{{ group.date }}</span></div>
+            <div *ngFor="let msg of group.messages" class="message-row" [class.mine]="msg.userId === user?.id">
+              <span *ngIf="msg.userId !== user?.id" class="message-avatar"><i class="bi bi-person"></i></span>
+              <div class="message-bubble" [class.message-bubble-mine]="msg.userId === user?.id">
+                <b *ngIf="msg.userId !== user?.id" class="message-sender">{{ msg.sender }}</b>
+                <span class="message-content">{{ msg.content }}</span>
+                <time>{{ transformDateHour(msg.timestamp ?? '') }}</time>
               </div>
             </div>
           </div>
           <div #bottom></div>
         </div>
-
-        <div class="flex space-x-2 p-4">
-          <mat-form-field class="w-full mb-[-20px]" appearance="outline">
-            <input matInput placeholder="Write a message..." [(ngModel)]="newMessage">
-          </mat-form-field>
-          <div class="flex justify-center items-center">
-            <button (click)="sendMessage()" mat-raised-button color="primary">
-              <i class="bi bi-send"></i>
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-    </mat-drawer-content>
-  </mat-drawer-container>
-
+        <form class="chat-composer" (ngSubmit)="sendMessage()">
+          <input class="chat-input" name="message" [(ngModel)]="newMessage" placeholder="Escribe un mensaje para el grupo…" autocomplete="off">
+          <button type="submit" class="chat-send" [disabled]="!newMessage.trim()" aria-label="Enviar mensaje"><i class="bi bi-send-fill"></i></button>
+        </form>
+      </ng-container>
+    </section>
+  </main>
 </app-container>
-

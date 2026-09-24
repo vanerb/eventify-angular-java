@@ -4,16 +4,9 @@ import {ModalService} from '../../services/modal-service';
 import {CreateEventModal} from '../events/create-event-modal/create-event-modal';
 import {EventSevice} from '../../services/event-sevice';
 import {ShowEventModal} from '../events/show-event-modal/show-event-modal';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatCardModule} from '@angular/material/card';
-import {formatDate, NgForOf, NgIf} from '@angular/common';
-import {ImagesService} from '../../services/images-service';
-import {transformDate} from '../../services/utilities-service';
-import {MatChipRow} from '@angular/material/chips';
-import {MatButton} from '@angular/material/button';
+import {NgForOf, NgIf} from '@angular/common';
 import {firstValueFrom} from 'rxjs';
 import {AuthService} from '../../services/auth-service';
-import {FormsModule} from '@angular/forms';
 import {CardEvents} from './card-events/card-events';
 import {User} from '../../models/users';
 import {MapService} from '../../services/map-service';
@@ -21,11 +14,14 @@ import {UpdateEventModal} from './update-event-modal/update-event-modal';
 import {WarningModal} from '../general/warning-modal/warning-modal';
 import {Paginator} from '../general/paginator/paginator';
 import {EventPage,Event} from '../../models/events';
-import {Page} from '../../models/pagination';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {EventFilters} from '../../services/event-sevice';
+import {getThemes} from '../../services/utilities-service';
 
 @Component({
   selector: 'app-events',
-  imports: [Container, MatButtonToggleModule, MatCardModule, NgIf, NgForOf, MatChipRow, MatButton, FormsModule, CardEvents, Paginator],
+  imports: [Container, NgIf, NgForOf, CardEvents, Paginator, FormsModule],
   templateUrl: './events.html',
   styleUrl: './events.css',
   standalone: true
@@ -37,6 +33,12 @@ export class Events implements OnInit, AfterViewInit{
   user!: User;
   selectedView: string = 'list';
   eventPagination!: EventPage
+  category = '';
+  categoryLabel = '';
+  themeOptions = getThemes();
+  filtersOpen = false;
+  filters: EventFilters & {datePreset: string} = {category: '', search: '', type: '', location: '', datePreset: ''};
+  private appliedFilters: EventFilters = {};
 
   @Input() view: 'general' | 'my' = 'general';
 
@@ -47,9 +49,10 @@ export class Events implements OnInit, AfterViewInit{
     private readonly mapService: MapService,
     private readonly modalService: ModalService,
     private readonly eventService: EventSevice,
-    private readonly imageService: ImagesService,
     private readonly authService: AuthService,
     private readonly cd: ChangeDetectorRef,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
   ) {}
 
   async ngAfterViewInit() {
@@ -62,7 +65,98 @@ export class Events implements OnInit, AfterViewInit{
 
   }
 
-  updateMap() { this.initMap(); }
+  setView(view: 'map' | 'list') {
+    this.selectedView = view;
+    if (view === 'map') {
+      setTimeout(() => {
+        if (this.map) this.map.invalidateSize();
+        else this.initMap();
+      }, 50);
+    }
+  }
+
+  clearCategory() {
+    this.filters.category = '';
+    this.applyFilters();
+  }
+
+  get activeFilterCount(): number {
+    const applied = this.appliedFilters;
+    return [applied.category, applied.search, applied.type, applied.location, applied.fromDate]
+      .filter(value => !!value).length;
+  }
+
+  applyFilters() {
+    const dates = this.getDateRange(this.filters.datePreset);
+    this.appliedFilters = {
+      category: this.filters.category || '',
+      search: this.filters.search?.trim() || '',
+      type: this.filters.type || '',
+      location: this.filters.location?.trim() || '',
+      fromDate: dates.fromDate,
+      toDate: dates.toDate,
+    };
+    this.category = this.appliedFilters.category || '';
+    this.categoryLabel = this.getCategoryLabel(this.category);
+    this.page = 0;
+    this.filtersOpen = false;
+
+    if ((this.route.snapshot.queryParamMap.get('category') || '') !== this.category) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {category: this.category || null},
+        queryParamsHandling: 'merge',
+      });
+      return;
+    }
+
+    this.updateView();
+    if (this.map) this.loadEventMarkers();
+  }
+
+  resetFilters() {
+    this.filters = {category: '', search: '', type: '', location: '', datePreset: ''};
+    this.appliedFilters = {};
+    this.category = '';
+    this.categoryLabel = '';
+    this.page = 0;
+    this.filtersOpen = false;
+    if (this.route.snapshot.queryParamMap.has('category')) {
+      this.router.navigate([], {relativeTo: this.route, queryParams: {category: null}, queryParamsHandling: 'merge'});
+      return;
+    }
+    this.updateView();
+    if (this.map) this.loadEventMarkers();
+  }
+
+  private getCategoryLabel(category: string): string {
+    const theme = this.themeOptions.find(option => option.name.toLowerCase() === category.toLowerCase());
+    return theme?.name || ({music: 'Music', food: 'Gastronomy', outdoor: 'Outdoor', creative: 'Creativity'} as Record<string, string>)[category] || '';
+  }
+
+  private getDateRange(preset: string): {fromDate?: string; toDate?: string} {
+    if (!preset) return {};
+    const from = new Date();
+    from.setHours(0, 0, 0, 0);
+    const to = new Date(from);
+
+    if (preset === 'weekend') {
+      const daysUntilSaturday = (6 - from.getDay() + 7) % 7;
+      from.setDate(from.getDate() + daysUntilSaturday);
+      to.setTime(from.getTime());
+      to.setDate(to.getDate() + 1);
+    } else if (preset === 'week') {
+      to.setDate(to.getDate() + 6);
+    }
+
+    const format = (date: Date) => {
+      const year = date.getFullYear();
+      const month = `${date.getMonth() + 1}`.padStart(2, '0');
+      const day = `${date.getDate()}`.padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    return {fromDate: format(from), toDate: preset === 'upcoming' ? undefined : format(to)};
+  }
 
   initMap(){
     this.map = this.mapService.createMap('map');
@@ -78,7 +172,15 @@ export class Events implements OnInit, AfterViewInit{
   }
 
    ngOnInit() {
-    this.updateView()
+    this.route.queryParamMap.subscribe(params => {
+      this.category = params.get('category') || '';
+      this.categoryLabel = this.getCategoryLabel(this.category);
+      this.filters.category = this.category;
+      this.appliedFilters.category = this.category;
+      this.page = 0;
+      this.updateView();
+      if (this.map) this.loadEventMarkers();
+    });
   }
 
   updatePagination(page: number, limit: number){
@@ -99,7 +201,7 @@ export class Events implements OnInit, AfterViewInit{
   }
 
   getAllEvents() {
-    this.eventService.getAll(this.page, this.limit).subscribe((events: EventPage) => {
+    this.eventService.getAll(this.page, this.limit, this.view === 'general' ? this.appliedFilters : {}).subscribe((events: EventPage) => {
       this.events = events.content
       this.eventPagination = events
       this.cd.detectChanges()
@@ -115,13 +217,12 @@ export class Events implements OnInit, AfterViewInit{
   }
 
   loadEventMarkers() {
-    this.eventService.getAll(this.page, this.limit).subscribe((events:EventPage) => {
+    this.eventService.getAll(this.page, this.limit, this.appliedFilters).subscribe((events:EventPage) => {
       this.eventPagination = events
 
       this.mapService.addEventMarkers(events.content, (event) => {
         this.modalService.open(ShowEventModal, {
-          width: '90vh',
-          height: '90vh',
+          width: 'min(760px, 92vw)',
         }, { ubication: event, user: this.user }).catch(() => this.modalService.close());
       });
     });
@@ -175,7 +276,7 @@ export class Events implements OnInit, AfterViewInit{
   }
 
   show(event: any) {
-    this.modalService.open(ShowEventModal, { width: '90vh', height: '90vh' }, { ubication: event, user: this.user })
+    this.modalService.open(ShowEventModal, { width: 'min(760px, 92vw)' }, { ubication: event, user: this.user })
       .then(() => {
         this.join(event);
       }).catch(() => this.modalService.close());
@@ -207,8 +308,4 @@ export class Events implements OnInit, AfterViewInit{
       }).catch(() => this.modalService.close());
   }
 
-
-
-  protected readonly formatDate = formatDate;
-  protected readonly transformDate = transformDate;
 }

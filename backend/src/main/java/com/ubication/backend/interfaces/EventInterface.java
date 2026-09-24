@@ -6,6 +6,7 @@ import com.ubication.backend.model.Event;
 import com.ubication.backend.dto.EventDTO;
 import com.ubication.backend.dto.UserDTO;
 import java.util.List;
+import java.time.LocalDate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ public interface EventInterface {
 
     Page<EventDTO> findByUserId(String authHeader, int page, int size);
 
-    Page<EventDTO> findAll(int page, int size);
+    Page<EventDTO> findAll(int page, int size, String category, String search, String type, String location, LocalDate fromDate, LocalDate toDate);
 
     void delete(Long id);
 

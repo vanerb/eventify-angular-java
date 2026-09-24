@@ -1,3 +1,35 @@
-<app-container>
+<main class="landing">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="pulse"></span> TU PRÓXIMO PLAN EMPIEZA AQUÍ</span>
+      <h1>Menos scroll.<br><span>Más momentos.</span></h1>
+      <p>Encuentra gente con tus mismos gustos y convierte cualquier día en una buena historia.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" routerLink="/events">Explorar eventos <i class="bi bi-arrow-up-right"></i></a>
+        <a class="button button-quiet" routerLink="/register">Crear una cuenta</a>
+      </div>
+      <div class="social-proof"><div class="avatar-stack"><span>🎸</span><span>🍜</span><span>🎨</span><span>＋</span></div><span>Planes para compartir, historias para recordar</span></div>
+    </div>
+    <div class="hero-art" aria-label="Ilustración de personas disfrutando de un evento">
+      <div class="art-glow"></div>
+      <div class="photo photo-main"><img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1100&q=85" alt="Amigos en un concierto al aire libre"><span class="photo-tag"><i class="bi bi-music-note-beamed"></i> Música en directo</span></div>
+      <div class="floating-note note-top"><span class="note-icon">📍</span><span><b>Este viernes</b><small>Madrid · 20:30</small></span></div>
+      <div class="floating-note note-bottom"><span class="note-icon">✨</span><span><b>Tu gente está aquí</b><small>Descubre nuevos planes</small></span></div>
+      <span class="sparkle sparkle-one">✳</span><span class="sparkle sparkle-two">✦</span>
+    </div>
+    <div class="hero-index">01 <span></span> 03</div>
+  </section>
 
-</app-container>
+  <section class="discover">
+    <div class="section-heading"><div><span class="eyebrow">SAL Y DESCONECTA</span><h2>¿Qué te apetece hacer?</h2></div><a routerLink="/events" class="text-link">Ver todos los eventos <i class="bi bi-arrow-right"></i></a></div>
+    <div class="category-grid">
+      <a routerLink="/events" [queryParams]="{category: 'Music'}" class="category-card category-music"><span class="category-emoji">🎶</span><span><b>Music</b><small>Conciertos y sesiones</small></span><i class="bi bi-arrow-up-right"></i></a>
+      <a routerLink="/events" [queryParams]="{category: 'Gastronomy'}" class="category-card category-food"><span class="category-emoji">🍜</span><span><b>Gastronomy</b><small>Sabores que se comparten</small></span><i class="bi bi-arrow-up-right"></i></a>
+      <a routerLink="/events" [queryParams]="{category: 'Culture & Art'}" class="category-card category-outdoor"><span class="category-emoji">🎨</span><span><b>Culture &amp; Art</b><small>Talleres, arte y cultura</small></span><i class="bi bi-arrow-up-right"></i></a>
+      <a routerLink="/events" [queryParams]="{category: 'Sports'}" class="category-card category-art"><span class="category-emoji">🏀</span><span><b>Sports</b><small>Muévete en comunidad</small></span><i class="bi bi-arrow-up-right"></i></a>
+    </div>
+  </section>
+
+  <section class="bottom-cta"><div><span class="eyebrow">UN BUEN PLAN SE DISFRUTA MÁS EN COMPAÑÍA</span><h2>La próxima quedada<br>puede empezar contigo.</h2></div><a routerLink="/events" class="button button-light">Encuentra tu plan <i class="bi bi-arrow-up-right"></i></a><span class="cta-doodle">✳</span></section>
+  <footer class="landing-footer"><a routerLink="/" class="brand"><span class="brand-mark">e</span> eventify</a><span>Hecho para encontrarnos. <i class="bi bi-heart-fill"></i></span><a routerLink="/contact">Contacto</a></footer>
+</main>

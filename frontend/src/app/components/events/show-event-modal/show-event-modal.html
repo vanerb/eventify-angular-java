@@ -1,91 +1,47 @@
-<div class="space-y-5 w-full h-full">
-  <div class="w-full h-32  relative rounded-lg">
-    <div class="w-full h-32 overflow-hidden rounded-lg">
-      <img src="{{getImage(ubication.image.url)}}" class="object-cover object-center h-32 w-full">
+<article class="event-detail-card">
+  <header class="event-detail-cover">
+    <img *ngIf="ubication?.image?.url && !imageUnavailable" [src]="getImage(ubication.image.url)" [alt]="ubication.name" (error)="imageUnavailable=true">
+    <div *ngIf="!ubication?.image?.url || imageUnavailable" class="event-detail-cover-fallback"><i class="bi bi-stars"></i></div>
+    <div class="event-detail-cover-shade"></div>
+    <span class="event-detail-type"><i [class]="ubication.type === 'online' ? 'bi bi-globe2' : 'bi bi-geo-alt'"></i>{{ ubication.type === 'online' ? 'Evento online' : 'Evento presencial' }}</span>
+    <button class="event-detail-close" type="button" aria-label="Cerrar" (click)="close()"><i class="bi bi-x-lg"></i></button>
+  </header>
+
+  <section class="event-detail-content">
+    <div class="event-detail-heading">
+      <div><span class="event-detail-kicker">EL PLAN</span><h1>{{ ubication.name }}</h1></div>
+      <span class="event-detail-count"><i class="bi bi-people"></i>{{ ubication.participants?.length || 0 }}</span>
     </div>
 
-<!--    <div class="absolute w-full h-16 -bottom-4 left-0  ">-->
-<!--      <div class=" flex items-center space-x-2  rounded-lg w-fit">-->
-<!--        <img class="w-16 h-16 rounded-full object-cover object-center " src="http://localhost:8080{{ubication.creator.image.url}}">-->
-<!--        <span class="  rounded-full ">{{'@'+ ubication.creator.username }}</span>-->
-<!--      </div>-->
+    <nav class="event-detail-tabs" role="tablist" aria-label="Información del evento">
+      <button type="button" role="tab" [class.active]="activeTab === 'description'" [attr.aria-selected]="activeTab === 'description'" (click)="selectTab('description')">Detalles</button>
+      <button *ngIf="user" type="button" role="tab" [class.active]="activeTab === 'participants'" [attr.aria-selected]="activeTab === 'participants'" (click)="selectTab('participants')">Participantes <span>{{ ubication.participants?.length || 0 }}</span></button>
+    </nav>
 
-<!--    </div>-->
-  </div>
-
-
-  <mat-tab-group>
-    <mat-tab label="Description">
-      <div class="h-[calc(90vh_-_0px)]">
-        <div class="h-[calc(100%_-_260px)] overflow-auto space-y-4 ">
-          <div class="mt-4 text-center space-y-4">
-            <h1>{{ ubication.name }}</h1>
-            <p>{{ ubication.description }}</p>
-          </div>
-
-          <div class="space-x-2 flex justify-center align-center">
-            <mat-chip-row *ngFor="let theme of ubication.themes;">
-              {{ theme.name }}
-            </mat-chip-row>
-          </div>
-
-          <div class="flex flex-wrap justify-center align-center space-x-2 space-y-2">
-            <mat-chip-row>
-              <div class="flex justify-center items-center">
-                <i class="bi bi-calendar mr-2"></i>{{ transformDate(ubication.initDate) }}
-              </div>
-
-            </mat-chip-row>
-            <mat-chip-row>
-              <div class="flex justify-center items-center">
-                <i class="bi bi-calendar mr-2"></i> {{ transformDate(ubication.endDate) }}
-              </div>
-            </mat-chip-row>
-          </div>
-
-          <div *ngIf="ubication?.ubication" class="text-center">
-            <span><i class="bi bi-geo-alt"></i> {{ ubication.ubication }}</span>
-          </div>
-        </div>
-
-        <div class="w-full flex justify-end align-center space-x-2 ">
-          <button mat-stroked-button color="primary" (click)="close()" class="">Close</button>
-          <button *ngIf="this.user" (click)="join()" mat-raised-button color="primary">
-            <div class="flex justify-center items-center space-x-2">
-              <i class="bi bi-box-arrow-right "></i>
-              <span class="h-full">
-                 Join
-              </span>
-            </div>
-
-          </button>
-        </div>
+    <div *ngIf="activeTab === 'description'" class="event-detail-scroll">
+      <p class="event-detail-description">{{ ubication.description || 'Aún no hay una descripción para este evento.' }}</p>
+      <div class="event-detail-meta">
+        <div><span class="detail-meta-icon"><i class="bi bi-calendar-event"></i></span><span><small>Empieza</small><b>{{ transformDate(ubication.initDate) }}</b></span></div>
+        <div><span class="detail-meta-icon"><i class="bi bi-calendar-check"></i></span><span><small>Termina</small><b>{{ transformDate(ubication.endDate) }}</b></span></div>
+        <div *ngIf="ubication.ubication"><span class="detail-meta-icon"><i class="bi bi-geo-alt"></i></span><span><small>Lugar</small><b>{{ ubication.ubication }}</b></span></div>
       </div>
+      <div *ngIf="ubication.themes?.length" class="event-detail-themes"><span *ngFor="let theme of ubication.themes">{{ theme.name }}</span></div>
+    </div>
 
-
-    </mat-tab>
-    <mat-tab *ngIf="this.user" label="Participants">
-
-      <div class="h-[calc(90vh_-_0px)]">
-        <div class="h-[calc(100%_-_260px)] overflow-auto space-y-4 ">
-          <mat-list>
-            <div *ngFor="let participant of ubication.participants">
-              <mat-list-item>
-                <div class=" flex items-center space-x-2  rounded-lg w-fit">
-                  <img class="w-10 h-10 rounded-full object-cover object-center " src="{{getImage(participant.image?.url)}}">
-                  <span class="  rounded-full ">{{'@'+ participant.username }}</span>
-                </div>
-              </mat-list-item>
-              <mat-divider></mat-divider>
-            </div>
-
-          </mat-list>
-        </div>
-        <div  class="w-full flex justify-end align-center space-x-2 ">
-          <button mat-stroked-button color="primary" (click)="close()" class="">Close</button>
-        </div>
+    <div *ngIf="activeTab === 'participants'" class="event-detail-scroll event-participant-list">
+      <div *ngIf="!ubication.participants?.length" class="event-participant-empty"><i class="bi bi-people"></i><span>Aún no hay participantes.</span></div>
+      <div class="event-participant" *ngFor="let participant of ubication.participants">
+        <img *ngIf="participant.image?.url" [src]="getImage(participant.image.url)" [alt]="participant.username" (error)="onImageError($event)">
+        <span *ngIf="!participant.image?.url" class="event-participant-avatar">{{ participant.username?.charAt(0)?.toUpperCase() || '?' }}</span>
+        <span><b>{{ participant.username }}</b><small>Participante</small></span>
+        <i class="bi bi-check-circle-fill"></i>
       </div>
-    </mat-tab>
+    </div>
 
-  </mat-tab-group>
-</div>
+    <footer class="event-detail-actions">
+      <button type="button" class="event-detail-secondary" (click)="close()">Cerrar</button>
+      <button *ngIf="user && !isParticipant()" type="button" class="event-detail-primary" (click)="join()"><i class="bi bi-calendar-plus"></i> Apuntarme al evento</button>
+      <span *ngIf="user && isParticipant()" class="event-detail-joined"><i class="bi bi-check-circle-fill"></i> Ya formas parte</span>
+    </footer>
+  </section>
+</article>

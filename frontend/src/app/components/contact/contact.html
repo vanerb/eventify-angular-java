@@ -1,88 +1,57 @@
 <app-container>
-  <div class="flex flex-col items-center justify-center">
-    <div class="w-[calc(60vh-60px)]">
-      <div class="w-full h-full">
-        <div class=" rounded-[5px] p-5">
+  <main class="contact-page">
+    <section class="contact-card">
+      <aside class="contact-story">
+        <span class="contact-brand"><span class="brand-mark">e</span> eventify</span>
+        <div class="contact-story-copy">
+          <span class="contact-kicker">ESTAMOS PARA AYUDARTE</span>
+          <h1>Los mejores planes empiezan con una conversación.</h1>
+          <p>Cuéntanos qué tienes en mente. Nuestro equipo te responderá lo antes posible.</p>
+        </div>
+        <div class="contact-story-art" aria-hidden="true">
+          <span class="story-orbit orbit-one"></span><span class="story-orbit orbit-two"></span>
+          <span class="story-spark spark-one">✦</span><span class="story-spark spark-two">✳</span>
+          <span class="story-chat"><i class="bi bi-chat-heart-fill"></i></span>
+          <span class="story-note note-one"><i class="bi bi-calendar-heart"></i> Planes que unen</span>
+          <span class="story-note note-two"><i class="bi bi-people-fill"></i> Comunidad cercana</span>
+        </div>
+        <small class="contact-story-foot">Hagamos que las cosas pasen <i class="bi bi-heart-fill"></i></small>
+      </aside>
 
-          <div class="text-center px-5">
-            <h1 class="text-white m-0 text-primary">Contact</h1>
+      <section class="contact-form-panel">
+        <header class="contact-form-heading">
+          <span class="contact-form-icon"><i class="bi bi-envelope-paper-heart"></i></span>
+          <div><span class="contact-kicker">HOLA, EVENTIFY</span><h2>Hablemos</h2><p>¿Tienes una idea, una duda o un plan que compartir? Escríbenos.</p></div>
+        </header>
+
+        <form [formGroup]="form" (ngSubmit)="sendEmail()" class="contact-form">
+          <div class="contact-name-row">
+            <mat-form-field floatLabel="always" color="primary">
+              <mat-label>Nombre</mat-label>
+              <input formControlName="name" matInput placeholder="Tu nombre" autocomplete="given-name">
+            </mat-form-field>
+            <mat-form-field floatLabel="always" color="primary">
+              <mat-label>Apellidos</mat-label>
+              <input formControlName="cognames" matInput placeholder="Tus apellidos" autocomplete="family-name">
+            </mat-form-field>
           </div>
 
-          <form
-            [formGroup]="form"
-            class="bg-[var(--background-four)] border-2 border-transparent rounded-[5px] "
-          >
+          <mat-form-field floatLabel="always" color="primary">
+            <mat-label>Correo electrónico</mat-label>
+            <input formControlName="email" matInput type="email" placeholder="tu@correo.com" autocomplete="email">
+          </mat-form-field>
 
-            <div class="mt-5">
-              <div class="flex justify-center items-center gap-2.5">
+          <mat-form-field floatLabel="always" color="primary" class="contact-message-field">
+            <mat-label>Tu mensaje</mat-label>
+            <textarea formControlName="message" matInput placeholder="Escribe aquí tu mensaje..." cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5" cdkAutosizeMaxRows="10"></textarea>
+          </mat-form-field>
 
-                <!-- Nombre -->
-                <mat-form-field color="primary" class="rounded-[10px] w-full">
-                  <mat-label>Name</mat-label>
-                  <span matPrefix>
-                    <i class="bi bi-person-circle text-white text-2xl mx-2.5"></i>
-                  </span>
-                  <input
-                    formControlName="name"
-                    matInput
-                    placeholder="Input your name..."
-                    class="w-full"
-                  >
-                </mat-form-field>
-
-                <!-- Apellidos -->
-                <mat-form-field color="primary" class="rounded-[10px] w-full">
-                  <mat-label>Cognames</mat-label>
-                  <input
-                    formControlName="cognames"
-                    matInput
-                    placeholder="Input your cognames..."
-                    class="w-full"
-                  >
-                </mat-form-field>
-
-              </div>
-
-              <mat-form-field color="primary" class="rounded-[10px] w-full">
-                <mat-label>Email</mat-label>
-                <input
-                  formControlName="email"
-                  matInput type="email"
-                  placeholder="Input your email..."
-                  class="w-full"
-                >
-              </mat-form-field>
-
-              <!-- Mensaje -->
-              <mat-form-field class="w-full ">
-                <mat-label>Message</mat-label>
-                <textarea
-                  formControlName="message"
-                  matInput
-                  cdkTextareaAutosize
-                  #autosize="cdkTextareaAutosize"
-                  cdkAutosizeMinRows="5"
-                  cdkAutosizeMaxRows="20"
-                  class="w-full"
-                ></textarea>
-              </mat-form-field>
-            </div>
-
-            <!-- Botón enviar -->
-            <div class="flex justify-end  w-full">
-              <button
-                (click)="sendEmail()"
-                mat-raised-button
-                color="primary"
-                class="flex items-center justify-center px-4 h-10 text-white rounded-[10px]"
-              >
-                <i class="bi bi-send mr-1"></i>Send
-              </button>
-            </div>
-
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+          <div class="contact-submit-row">
+            <small><i class="bi bi-lock-fill"></i> Tus datos solo se usarán para responderte.</small>
+            <button type="submit" [disabled]="form.invalid"><i class="bi bi-send"></i>Enviar mensaje</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
 </app-container>

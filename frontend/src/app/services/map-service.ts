@@ -13,6 +13,7 @@ export class MapService {
   private L: any;
   private map: any;
   private currentMarker: any;
+  private eventMarkerLayer: any;
 
   constructor(private http: HttpClient) { }
 
@@ -37,6 +38,7 @@ export class MapService {
 
   createMap(containerId: string, center: [number, number] = [40.4168, -3.7038], zoom: number = 6): any {
     this.map = this.L.map(containerId).setView(center, zoom);
+    this.eventMarkerLayer = null;
     this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
@@ -60,9 +62,13 @@ export class MapService {
   }
 
   addEventMarkers(events: any[], onClick?: (event: any) => void) {
+    if (this.eventMarkerLayer) this.eventMarkerLayer.clearLayers();
+    else this.eventMarkerLayer = this.L.layerGroup().addTo(this.map);
+
     events.forEach(event => {
+      if (event.latitude == null || event.longitude == null) return;
       const marker = this.L.marker([event.latitude, event.longitude])
-        .addTo(this.map)
+        .addTo(this.eventMarkerLayer)
         .bindPopup(`<b>${event.name}</b>`);
 
       if (onClick) {

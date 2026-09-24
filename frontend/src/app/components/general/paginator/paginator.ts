@@ -1,14 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {MatButton} from '@angular/material/button';
 import {NgIf} from '@angular/common';
 import {Page} from '../../../models/pagination';
 
 @Component({
   selector: 'app-paginator',
-  imports: [
-    MatButton,
-    NgIf
-  ],
+  imports: [NgIf],
   templateUrl: './paginator.html',
   styleUrl: './paginator.css',
   standalone: true
@@ -26,14 +22,14 @@ export class Paginator implements OnInit {
 
   changePage(type: 'next' | 'previous') {
     if (type === 'previous') {
-      if ( this.params.number > 0) {
-        this.params.number--;
-        this.showPage -= 1
-      }
+      if (this.params.number <= 0) return;
+      this.params.number--;
     } else if (type === 'next') {
+      if (this.params.number >= this.params.totalPages - 1) return;
       this.params.number++;
-      this.showPage += 1
     }
+
+    this.showPage = this.params.number + 1;
 
     this.update.emit({
       page:  this.params.number,

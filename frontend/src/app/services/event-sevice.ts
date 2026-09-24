@@ -3,6 +3,15 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {AuthService} from './auth-service';
 import {EventPage} from '../models/events';
 
+export interface EventFilters {
+  category?: string;
+  search?: string;
+  type?: string;
+  location?: string;
+  fromDate?: string;
+  toDate?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,10 +30,14 @@ export class EventSevice {
    }
 
 
-   getAll(page: number = 0, size: number = 20){
+   getAll(page: number = 0, size: number = 20, filters: EventFilters = {}){
      let params = new HttpParams()
        .set('page', page.toString())
        .set('size', size.toString());
+
+     Object.entries(filters).forEach(([key, value]) => {
+       if (value) params = params.set(key, value);
+     });
 
      return this.http.get<EventPage>('http://localhost:8080/api/events/getAll', { params })
    }
