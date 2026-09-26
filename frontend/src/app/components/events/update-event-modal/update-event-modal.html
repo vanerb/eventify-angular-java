@@ -1,50 +1,76 @@
 <div class="event-form-dialog h-full">
-
   <div class="event-modal-heading">
     <span class="event-modal-icon"><i class="bi bi-pencil-square"></i></span>
-    <div><span class="event-modal-kicker">ACTUALIZA TU PLAN</span><h1>Editar evento</h1><p>Modifica los detalles de la quedada.</p></div>
+    <div>
+      <span class="event-modal-kicker">ACTUALIZA TU PLAN</span>
+      <h1>Editar evento</h1>
+      <p>Modifica los detalles de la quedada.</p>
+    </div>
   </div>
-  <form class="h-full" [formGroup]="form" >
-
+  <form class="h-full" [formGroup]="form">
     <div class="event-form-scroll h-[calc(100%_-_75px)] overflow-auto">
       <!-- Header -->
       <div class="flex justify-center items-center mb-5">
         <div class="w-full flex justify-center items-end relative">
-          <div class="event-image-preview w-full h-36 bg-[#f2eff8] overflow-hidden rounded-lg mx-auto border border-transparent">
-            <img  [src]="previewCoverImage" alt="No Image"
-                 class="w-full h-full object-cover object-center">
+          <div
+            class="event-image-preview w-full h-36 bg-[#f2eff8] overflow-hidden rounded-lg mx-auto border border-transparent"
+          >
+            <img
+              [src]="previewCoverImage"
+              alt="No Image"
+              class="w-full h-full object-cover object-center"
+            />
           </div>
 
           <div class="absolute -right-0">
             <!-- Botón para cambiar imagen -->
-            <input type="file" accept="image/*" #fileInput hidden (change)="onImageChange($event)"/>
-            <button type="button" mat-raised-button color="primary" aria-label="Cambiar imagen del evento"
-                    (click)="fileInput.click()"
-                    class="w-12 h-12 rounded-full flex justify-center items-center">
+            <input
+              type="file"
+              accept="image/*"
+              #fileInput
+              hidden
+              (change)="onImageChange($event)"
+            />
+            <button
+              type="button"
+              mat-raised-button
+              color="primary"
+              aria-label="Cambiar imagen del evento"
+              (click)="fileInput.click()"
+              class="w-12 h-12 rounded-full flex justify-center items-center"
+            >
               <i class="bi bi-pencil text-xl"></i>
             </button>
           </div>
-
         </div>
       </div>
-
 
       <mat-form-field floatLabel="always" color="primary" class="flex-1 w-full rounded-lg">
         <mat-label>Nombre del evento</mat-label>
         <!--      <span matPrefix>-->
         <!--              <i class="bi bi-alphabet-uppercase text-[#7454d8] text-xl mx-2"></i>-->
         <!--            </span>-->
-        <input formControlName="name" matInput placeholder="Nombre del evento" class="w-full">
+        <input formControlName="name" matInput placeholder="Nombre del evento" class="w-full" />
       </mat-form-field>
 
       <mat-form-field floatLabel="always" class="w-full">
         <mat-label>Descripción</mat-label>
-        <textarea class="w-full" formControlName="description" placeholder="Cuéntanos en qué consiste el plan..."
-                  matInput></textarea>
+        <textarea
+          class="w-full"
+          formControlName="description"
+          placeholder="Cuéntanos en qué consiste el plan..."
+          matInput
+        ></textarea>
       </mat-form-field>
 
-
-      <label class="event-online-toggle"><input type="checkbox" [checked]="isOnline" (change)="toggleOnline($event)"><span class="event-checkmark"><i class="bi bi-check2"></i></span><span><b>Evento online</b><small>Las personas se reunirán por internet</small></span></label>
+      <label class="event-online-toggle"
+        ><input type="checkbox" [checked]="isOnline" (change)="toggleOnline($event)" /><span
+          class="event-checkmark"
+          ><i class="bi bi-check2"></i></span
+        ><span
+          ><b>Evento online</b><small>Las personas se reunirán por internet</small></span
+        ></label
+      >
 
       <mat-form-field floatLabel="always" class="w-full">
         <mat-label>Temática</mat-label>
@@ -54,8 +80,11 @@
           [formControl]="themesControl"
           placeholder="Elige una temática"
           [matAutocomplete]="autoGenres"
+        />
+        <mat-autocomplete
+          #autoGenres="matAutocomplete"
+          (optionSelected)="addTheme($event.option.value)"
         >
-        <mat-autocomplete #autoGenres="matAutocomplete" (optionSelected)="addTheme($event.option.value)">
           <mat-option *ngFor="let option of filteredThemes | async" [value]="option">
             <i [ngClass]="'bi ' + getThemesIcon(option.id)" class="text-lg mr-2.5"></i>
             {{ option.name }}
@@ -63,73 +92,96 @@
         </mat-autocomplete>
       </mat-form-field>
 
-
-      <div *ngIf="themesFormArray.controls.length > 0"
-           class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5">
-        <span class="event-theme-chip" *ngFor="let genre of themesFormArray.controls; let i = index">
+      <div
+        *ngIf="themesFormArray.controls.length > 0"
+        class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5"
+      >
+        <span
+          class="event-theme-chip"
+          *ngFor="let genre of themesFormArray.controls; let i = index"
+        >
           <span>{{ genre.value.name }}</span>
-          <button type="button" (click)="removeTheme(i)" [attr.aria-label]="'Quitar temática ' + genre.value.name"><i class="bi bi-x-lg"></i></button>
+          <button
+            type="button"
+            (click)="removeTheme(i)"
+            [attr.aria-label]="'Quitar temática ' + genre.value.name"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
         </span>
       </div>
 
       <div class="w-full flex justify-center align-center space-x-2">
         <mat-form-field floatLabel="always" class="w-[80%]">
           <mat-label>Fecha de inicio</mat-label>
-          <input matInput [matDatepicker]="pickerInicio" formControlName="initDate" placeholder="dd/mm/aaaa">
+          <input
+            matInput
+            [matDatepicker]="pickerInicio"
+            formControlName="initDate"
+            placeholder="dd/mm/aaaa"
+          />
           <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
           <mat-datepicker #pickerInicio></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field floatLabel="always" class="w-[20%]">
           <mat-label>Hora</mat-label>
-          <input matInput type="time" formControlName="initHour" placeholder="--:--">
+          <input matInput type="time" formControlName="initHour" placeholder="--:--" />
         </mat-form-field>
       </div>
-
 
       <div class="w-full flex justify-center align-center space-x-2">
         <mat-form-field floatLabel="always" class="w-[80%]">
           <mat-label>Fecha de fin</mat-label>
-          <input matInput [matDatepicker]="pickerFin" formControlName="endDate" placeholder="dd/mm/aaaa">
+          <input
+            matInput
+            [matDatepicker]="pickerFin"
+            formControlName="endDate"
+            placeholder="dd/mm/aaaa"
+          />
           <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
           <mat-datepicker #pickerFin></mat-datepicker>
         </mat-form-field>
 
         <mat-form-field floatLabel="always" class="w-[20%]">
           <mat-label>Hora</mat-label>
-          <input matInput type="time" formControlName="endHour" placeholder="--:--">
+          <input matInput type="time" formControlName="endHour" placeholder="--:--" />
         </mat-form-field>
       </div>
 
-
-      <mat-form-field *ngIf="!isOnline" floatLabel="always" color="primary" class="flex-1 w-full rounded-lg">
+      <mat-form-field
+        *ngIf="!isOnline"
+        floatLabel="always"
+        color="primary"
+        class="flex-1 w-full rounded-lg"
+      >
         <mat-label>Ubicación</mat-label>
         <span matPrefix>
-              <i class="bi bi-geo-alt text-[#7454d8] text-xl mx-2"></i>
-            </span>
-        <input formControlName="ubication" (input)="onSearch($event)" matInput placeholder="Busca el lugar del evento..."
-               class="w-full">
+          <i class="bi bi-geo-alt text-[#7454d8] text-xl mx-2"></i>
+        </span>
+        <input
+          formControlName="ubication"
+          (input)="onSearch($event)"
+          matInput
+          placeholder="Busca el lugar del evento..."
+          class="w-full"
+        />
       </mat-form-field>
 
       <ul *ngIf="searchResults.length > 0" class="event-place-results p-2 rounded-lg mb-4">
-        <li *ngFor="let item of searchResults"
-            (click)="onSelectPlace(item)"
-            class="p-2 hover:bg-gray-200 cursor-pointer">
+        <li
+          *ngFor="let item of searchResults"
+          (click)="onSelectPlace(item)"
+          class="p-2 hover:bg-gray-200 cursor-pointer"
+        >
           {{ item.display_name }}
         </li>
       </ul>
     </div>
-
-
-
 
     <div class="event-form-actions flex justify-end aling-end space-x-2 mt-2">
       <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
       <button (click)="updateEvent()" mat-raised-button color="primary">Guardar cambios</button>
     </div>
   </form>
-
-
 </div>
-
-
