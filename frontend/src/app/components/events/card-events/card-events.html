@@ -1,9 +1,20 @@
 <article class="event-tile">
   <div class="event-cover" (click)="show()" role="button" tabindex="0" (keydown.enter)="show()">
-    <img *ngIf="event?.image?.url" [src]="getImage(event.image.url)" [alt]="event.name">
+    <img *ngIf="event?.image?.url" [src]="getImage(event.image.url)" [alt]="event.name" />
     <div *ngIf="!event?.image?.url" class="event-cover-empty"><i class="bi bi-stars"></i></div>
-    <span class="event-type-pill"><i [class]="event.type === 'online' ? 'bi bi-globe2' : 'bi bi-geo-alt'"></i>{{ event.type === 'online' ? 'Online' : 'Presencial' }}</span>
-    <button *ngIf="event?.creator?.id === this.user?.id && view === 'complete' && realOnly === false" class="event-menu-trigger" aria-label="Opciones del evento" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"><i class="bi bi-three-dots"></i></button>
+    <span class="event-type-pill"
+      ><i [class]="event.type === 'online' ? 'bi bi-globe2' : 'bi bi-geo-alt'"></i
+      >{{ event.type === 'online' ? 'Online' : 'Presencial' }}</span
+    >
+    <button
+      *ngIf="event?.creator?.id === this.user?.id && view === 'complete' && realOnly === false"
+      class="event-menu-trigger"
+      aria-label="Opciones del evento"
+      [matMenuTriggerFor]="menu"
+      (click)="$event.stopPropagation()"
+    >
+      <i class="bi bi-three-dots"></i>
+    </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="edit()"><i class="bi bi-pencil mr-2"></i>Editar</button>
       <button mat-menu-item (click)="delete()"><i class="bi bi-trash mr-2"></i>Eliminar</button>
@@ -11,21 +22,49 @@
   </div>
 
   <div class="event-tile-body">
-    <div class="event-date"><i class="bi bi-calendar3"></i><span>{{ transformDate(event.initDate) }}</span></div>
+    <div class="event-date">
+      <i class="bi bi-calendar3"></i><span>{{ transformDate(event.initDate) }}</span>
+    </div>
     <h2 (click)="show()">{{ event.name }}</h2>
-    <p *ngIf="view === 'complete'" class="event-description" [class.line-clamp-3]="!showDescriptionFull">{{ event.description }}</p>
-    <button *ngIf="view === 'complete' && (event.description?.length || 0) > 115" class="event-more" (click)="viewMore()">{{ showDescriptionFull ? 'Ver menos' : 'Leer más' }}</button>
-    <div *ngIf="view === 'small' && event.ubication" class="event-location"><i class="bi bi-geo-alt"></i>{{ event.ubication }}</div>
-    <div class="event-themes" *ngIf="event.themes?.length"><span *ngFor="let theme of event.themes | slice:0:3">{{ theme.name }}</span></div>
-    <div *ngIf="view === 'complete' && event.ubication" class="event-location"><i class="bi bi-geo-alt"></i><span>{{ event.ubication }}</span></div>
+    <p
+      *ngIf="view === 'complete'"
+      class="event-description"
+      [class.line-clamp-3]="!showDescriptionFull"
+    >
+      {{ event.description }}
+    </p>
+    <button
+      *ngIf="view === 'complete' && (event.description?.length || 0) > 115"
+      class="event-more"
+      (click)="viewMore()"
+    >
+      {{ showDescriptionFull ? 'Ver menos' : 'Leer más' }}
+    </button>
+    <div *ngIf="view === 'small' && event.ubication" class="event-location">
+      <i class="bi bi-geo-alt"></i>{{ event.ubication }}
+    </div>
+    <div class="event-themes" *ngIf="event.themes?.length">
+      <span *ngFor="let theme of event.themes | slice: 0 : 3">{{ theme.name }}</span>
+    </div>
+    <div *ngIf="view === 'complete' && event.ubication" class="event-location">
+      <i class="bi bi-geo-alt"></i><span>{{ event.ubication }}</span>
+    </div>
   </div>
 
   <footer *ngIf="view === 'complete' && realOnly === false" class="event-tile-footer">
-    <span class="event-participants"><i class="bi bi-people"></i>{{ event.participants.length }}</span>
+    <span class="event-participants"
+      ><i class="bi bi-people"></i>{{ event.participants.length }}</span
+    >
     <div class="event-tile-actions">
-      <button *ngIf="this.user && !isParticipant()" class="event-join" (click)="join()">Apuntarme <i class="bi bi-arrow-up-right"></i></button>
-      <span *ngIf="this.user && isParticipant()" class="event-joined"><i class="bi bi-check2"></i> Ya estás dentro</span>
-      <button class="event-open" (click)="show()" aria-label="Ver evento"><i class="bi bi-arrow-right"></i></button>
+      <button *ngIf="this.user && !isParticipant()" class="event-join" (click)="join()">
+        Apuntarme <i class="bi bi-arrow-up-right"></i>
+      </button>
+      <span *ngIf="this.user && isParticipant()" class="event-joined"
+        ><i class="bi bi-check2"></i> Ya estás dentro</span
+      >
+      <button class="event-open" (click)="show()" aria-label="Ver evento">
+        <i class="bi bi-arrow-right"></i>
+      </button>
     </div>
   </footer>
 </article>

@@ -31,7 +31,7 @@ export class CardEvents {
   showDescriptionFull: boolean = false
 
   isParticipant(): boolean {
-    return !!this.user?.id && (this.event?.creator?.id === this.user.id || this.event?.participants?.some(participant => participant.id === this.user.id) === true);
+    return !!this.user?.id && ( this.event?.participants?.some(participant => participant.id === this.user.id) === true);
   }
 
 

@@ -105,6 +105,7 @@ export class UpdateEventModal implements OnInit{
   toggleOnline(event: globalThis.Event) {
     this.isOnline = (event.target as HTMLInputElement).checked;
     this.form.get('type')?.setValue(this.isOnline);
+    this.cd.detectChanges()
   }
 
 
