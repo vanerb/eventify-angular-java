@@ -44,9 +44,7 @@ export class Posts implements OnInit {
 
   async ngOnInit(): Promise<void> {
     if (this.authService.getToken()) {
-      const user = await firstValueFrom(
-        this.authService.getUserByToken()
-      );
+      const user = await firstValueFrom(this.authService.getUserByToken());
 
       this.user.set(user);
     }
@@ -91,21 +89,17 @@ export class Posts implements OnInit {
   }
 
   getMyPosts(): void {
-    this.postService
-      .getMyPosts(this.page(), this.limit())
-      .subscribe((posts: PostPage) => {
-        this.myPosts.set(posts.content);
-        this.postPagination.set(posts);
-      });
+    this.postService.getMyPosts(this.page(), this.limit()).subscribe((posts: PostPage) => {
+      this.myPosts.set(posts.content);
+      this.postPagination.set(posts);
+    });
   }
 
   getAllPosts(): void {
-    this.postService
-      .getAll(this.page(), this.limit())
-      .subscribe((posts: PostPage) => {
-        this.posts.set(posts.content);
-        this.postPagination.set(posts);
-      });
+    this.postService.getAll(this.page(), this.limit()).subscribe((posts: PostPage) => {
+      this.posts.set(posts.content);
+      this.postPagination.set(posts);
+    });
   }
 
   postActions(data: any): void {

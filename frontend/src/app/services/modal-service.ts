@@ -5,10 +5,17 @@ import {Modal} from '../components/general/modal/modal';
   providedIn: 'root'
 })
 export class ModalService {
+
   private modalRef?: Modal;
 
-  register(modal: Modal) {
+  private onOpenCallback?: () => void;
+
+  register(modal: Modal): void {
     this.modalRef = modal;
+  }
+
+  registerOnOpen(callback: () => void): void {
+    this.onOpenCallback = callback;
   }
 
   open<T>(
@@ -16,10 +23,13 @@ export class ModalService {
     styles: { [key: string]: string } = {},
     data: Partial<T> = {}
   ): Promise<any> {
+
+    this.onOpenCallback?.();
+
     return this.modalRef!.open(component, styles, data);
   }
 
-  close() {
+  close(): void {
     this.modalRef?.close();
   }
 }

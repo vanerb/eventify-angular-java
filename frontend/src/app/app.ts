@@ -1,8 +1,9 @@
 import {Component, signal, ViewChild} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {Index} from './components/index';
+import {RouterOutlet} from '@angular/router';
+
 import {Header} from './components/header/header';
 import {Modal} from './components/general/modal/modal';
+
 import {ModalService} from './services/modal-service';
 
 @Component({
@@ -13,12 +14,14 @@ import {ModalService} from './services/modal-service';
   styleUrl: './app.css'
 })
 export class App {
+
   protected readonly title = signal('frontend');
+
   @ViewChild('modal') modal!: Modal;
 
-  constructor(private modalService: ModalService) { }
+  constructor(private modalService: ModalService) {}
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.modalService.register(this.modal);
   }
 }

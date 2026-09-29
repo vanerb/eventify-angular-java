@@ -1,10 +1,10 @@
 <div
-  *ngIf="this.show"
-  class="modal-backdrop fixed inset-0 bg-[#241b37]/45 flex justify-center items-center z-999 pointer-auto"
+  *ngIf="show"
+  class="modal-backdrop"
 >
   <div
-    class="eventify-dialog p-4 rounded-[20px] z-1000 pointer-auto"
-    [ngStyle]="this.styles"
+    class="eventify-dialog"
+    [ngStyle]="styles"
     (click)="$event.stopPropagation()"
   >
     <ng-template #modalContent></ng-template>

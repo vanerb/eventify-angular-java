@@ -1,0 +1,28 @@
+:host {
+  position: relative;
+  z-index: 10000;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000 !important;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgb(36 27 55 / 45%);
+
+  pointer-events: auto;
+}
+
+.eventify-dialog {
+  position: relative;
+  z-index: 10001 !important;
+
+  padding: 1rem;
+  border-radius: 20px;
+
+  pointer-events: auto;
+}

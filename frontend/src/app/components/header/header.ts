@@ -11,6 +11,7 @@ import {firstValueFrom} from 'rxjs';
 import {getImage} from '../../services/utilities-service';
 import {ImagesService} from '../../services/images-service';
 import {User} from '../../models/users';
+import {ModalService} from '../../services/modal-service';
 
 @Component({
   selector: 'app-header',
@@ -41,9 +42,14 @@ export class Header implements OnInit {
     private readonly router: Router,
     private readonly breakpointObserver: BreakpointObserver,
     private readonly imagesService: ImagesService,
+    private readonly modalService: ModalService,
   ) {}
 
   async ngOnInit(): Promise<void> {
+
+    this.modalService.registerOnOpen(() => {
+      this.isOpen.set(false);
+    });
 
     this.isLogged.set(
       this.authService.isLoggedIn()
