@@ -1,13 +1,13 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { CardEvents } from '../../events/card-events/card-events';
-import { NgForOf, NgIf } from '@angular/common';
-import { getImage, transformDate } from '../../../services/utilities-service';
-import { FormsModule } from '@angular/forms';
-import { CommentService } from '../../../services/comment-service';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { PostsService } from '../../../services/posts-service';
-import { Post } from '../../../models/posts';
-import { User } from '../../../models/users';
+import {Component, OnInit, signal} from '@angular/core';
+import {CardEvents} from '../../events/card-events/card-events';
+import {NgForOf, NgIf} from '@angular/common';
+import {getImage, transformDate} from '../../../services/utilities-service';
+import {FormsModule} from '@angular/forms';
+import {CommentService} from '../../../services/comment-service';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {PostsService} from '../../../services/posts-service';
+import {Post} from '../../../models/posts';
+import {User} from '../../../models/users';
 
 @Component({
   selector: 'app-show-post-modal',
@@ -26,8 +26,11 @@ import { User } from '../../../models/users';
 })
 export class ShowPostModal implements OnInit {
 
-  post!: Post;
-  user!: User;
+  private readonly postSignal = signal<Post | undefined>(undefined);
+  private readonly userSignal = signal<User | undefined>(undefined);
+
+  post?: Post;
+  user?: User;
 
   comment = signal<string>('');
 
@@ -41,8 +44,17 @@ export class ShowPostModal implements OnInit {
     private readonly postService: PostsService
   ) {}
 
+  get currentPost(): Post | undefined {
+    return this.postSignal();
+  }
+
+  get currentUser(): User | undefined {
+    return this.userSignal();
+  }
+
   ngOnInit(): void {
-    console.log(this.post, this.user);
+    this.postSignal.set(this.post);
+    this.userSignal.set(this.user);
   }
 
   selectTab(tab: 'comments' | 'event' | 'participants'): void {
@@ -50,8 +62,8 @@ export class ShowPostModal implements OnInit {
   }
 
   sendComment(): void {
-    const currentPost = this.post;
-    const currentUser = this.user;
+    const currentPost = this.currentPost;
+    const currentUser = this.currentUser;
     const currentComment = this.comment();
 
     if (!currentPost || !currentUser || !currentComment.trim()) {
@@ -70,7 +82,7 @@ export class ShowPostModal implements OnInit {
       'comment',
       new Blob(
         [JSON.stringify(comment)],
-        { type: 'application/json' }
+        {type: 'application/json'}
       )
     );
 
@@ -85,13 +97,13 @@ export class ShowPostModal implements OnInit {
   getPostById(id: number): void {
     this.postService.getById(id).subscribe({
       next: (post) => {
-        this.post = post;
+        this.postSignal.set(post);
       },
     });
   }
 
   delete(id: number): void {
-    const currentPost = this.post;
+    const currentPost = this.currentPost;
 
     if (!currentPost) {
       return;

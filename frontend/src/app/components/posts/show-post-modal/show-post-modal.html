@@ -1,11 +1,6 @@
 <article class="post-modal-card">
-
   <aside class="post-modal-visual">
-
-    <img
-      [src]="getImage(post?.image?.url)"
-      alt="Imagen de la publicación"
-    >
+    <img [src]="getImage(currentPost?.image?.url)" alt="Imagen de la publicación" />
 
     <div class="post-visual-shade"></div>
 
@@ -13,74 +8,53 @@
       <i class="bi bi-stars"></i>
       Comunidad Eventify
     </span>
-
   </aside>
 
   <section class="post-modal-content">
-
     <div class="post-author-card">
-
-      <img
-        class="post-author-cover"
-        [src]="getImage(post?.creator?.banner?.url)"
-        alt=""
-      >
+      <img class="post-author-cover" [src]="getImage(currentPost?.creator?.banner?.url)" alt="" />
 
       <img
         class="post-author-avatar"
-        [src]="getImage(post?.creator?.image?.url)"
-        [alt]="post?.creator?.username"
-      >
+        [src]="getImage(currentPost?.creator?.image?.url)"
+        [alt]="currentPost?.creator?.username"
+      />
 
       <div class="post-author-name">
-        <b>{{ post?.creator?.username }}</b>
-        <small>Comparte un momento con la comunidad</small>
+        <b>{{ currentPost?.creator?.username }}</b>
+
+        <small> Comparte un momento con la comunidad </small>
       </div>
 
       <span class="post-author-badge">
         <i class="bi bi-patch-check-fill"></i>
         Eventify
       </span>
-
     </div>
 
     <div class="post-copy">
-
-      <span class="post-modal-kicker">
-        PUBLICACIÓN
-      </span>
+      <span class="post-modal-kicker"> PUBLICACIÓN </span>
 
       <p>
-        {{ post?.description }}
+        {{ currentPost?.description }}
       </p>
 
       <a
-        *ngIf="post?.url"
-        [href]="post?.url"
+        *ngIf="currentPost?.url"
+        [href]="currentPost?.url"
         target="_blank"
         rel="noopener noreferrer"
       >
         <i class="bi bi-link-45deg"></i>
-        {{ post?.url }}
+        {{ currentPost?.url }}
       </a>
 
-      <div
-        *ngIf="post?.hashtags?.length"
-        class="post-hashtags"
-      >
-        <span *ngFor="let hashtag of post!.hashtags">
-          #{{ hashtag.name }}
-        </span>
+      <div *ngIf="currentPost?.hashtags?.length" class="post-hashtags">
+        <span *ngFor="let hashtag of currentPost!.hashtags"> #{{ hashtag.name }} </span>
       </div>
-
     </div>
 
-    <nav
-      class="post-modal-tabs"
-      role="tablist"
-      aria-label="Contenido de la publicación"
-    >
-
+    <nav class="post-modal-tabs" role="tablist" aria-label="Contenido de la publicación">
       <button
         type="button"
         role="tab"
@@ -89,13 +63,14 @@
         (click)="selectTab('comments')"
       >
         Comentarios
+
         <span>
-          {{ post?.comments?.length || 0 }}
+          {{ currentPost?.comments?.length || 0 }}
         </span>
       </button>
 
       <button
-        *ngIf="post?.event"
+        *ngIf="currentPost?.event"
         type="button"
         role="tab"
         [class.active]="activeTab() === 'event'"
@@ -106,7 +81,7 @@
       </button>
 
       <button
-        *ngIf="user && post?.event"
+        *ngIf="currentUser && currentPost?.event"
         type="button"
         role="tab"
         [class.active]="activeTab() === 'participants'"
@@ -114,11 +89,11 @@
         (click)="selectTab('participants')"
       >
         Participantes
+
         <span>
-          {{ post?.event?.participants?.length || 0 }}
+          {{ currentPost?.event?.participants?.length || 0 }}
         </span>
       </button>
-
     </nav>
 
     <section
@@ -126,34 +101,18 @@
       class="post-tab-content post-comments"
       role="tabpanel"
     >
-
-      <div
-        *ngIf="!post?.comments?.length"
-        class="post-empty-comments"
-      >
+      <div *ngIf="!currentPost?.comments?.length" class="post-empty-comments">
         <i class="bi bi-chat-heart"></i>
 
-        <b>
-          Aún no hay comentarios
-        </b>
+        <b> Aún no hay comentarios </b>
 
-        <small>
-          Inicia la conversación con la comunidad.
-        </small>
+        <small> Inicia la conversación con la comunidad. </small>
       </div>
 
-      <article
-        class="post-comment"
-        *ngFor="let comment of post?.comments"
-      >
-
-        <img
-          [src]="getImage(comment.user?.image?.url)"
-          [alt]="comment.user?.username"
-        >
+      <article class="post-comment" *ngFor="let comment of currentPost?.comments">
+        <img [src]="getImage(comment.user?.image?.url)" [alt]="comment.user?.username" />
 
         <div class="post-comment-copy">
-
           <header>
             <b>
               {{ comment.user?.username }}
@@ -167,11 +126,10 @@
           <p>
             {{ comment.comment }}
           </p>
-
         </div>
 
         <button
-          *ngIf="comment?.user?.id === user?.id"
+          *ngIf="comment?.user?.id === currentUser?.id"
           class="post-comment-menu"
           type="button"
           [matMenuTriggerFor]="menu"
@@ -181,108 +139,68 @@
         </button>
 
         <mat-menu #menu="matMenu">
-
-          <button
-            mat-menu-item
-            (click)="delete(comment.id)"
-          >
+          <button mat-menu-item (click)="delete(comment.id)">
             <i class="bi bi-trash mr-2"></i>
+
             Eliminar
           </button>
-
         </mat-menu>
-
       </article>
-
     </section>
 
     <section
-      *ngIf="activeTab() === 'event' && post?.event"
+      *ngIf="activeTab() === 'event' && currentPost?.event"
       class="post-tab-content post-event-content"
       role="tabpanel"
     >
-
       <app-card-events
         [view]="'complete'"
         [realOnly]="true"
-        [user]="post!.creator"
-        [event]="post!.event"
+        [user]="currentPost!.creator"
+        [event]="currentPost!.event"
       ></app-card-events>
-
     </section>
 
     <section
-      *ngIf="activeTab() === 'participants' && post?.event"
+      *ngIf="activeTab() === 'participants' && currentPost?.event"
       class="post-tab-content post-participants"
       role="tabpanel"
     >
-
-      <div
-        *ngIf="!post?.event?.participants?.length"
-        class="post-empty-comments"
-      >
+      <div *ngIf="!currentPost?.event?.participants?.length" class="post-empty-comments">
         <i class="bi bi-people"></i>
 
-        <b>
-          Aún no hay participantes
-        </b>
+        <b> Aún no hay participantes </b>
       </div>
 
-      <div
-        *ngFor="let participant of post!.event!.participants"
-        class="post-participant"
-      >
+      <div *ngFor="let participant of currentPost!.event!.participants" class="post-participant">
+        <img [src]="getImage(participant.image?.url)" [alt]="participant.username" />
 
-        <img
-          [src]="getImage(participant.image?.url)"
-          [alt]="participant.username"
-        >
-
-        <b>
-          @{{ participant.username }}
-        </b>
+        <b> @{{ participant.username }} </b>
 
         <i class="bi bi-check-circle-fill"></i>
-
       </div>
-
     </section>
 
     <form
-      *ngIf="user && activeTab() === 'comments'"
+      *ngIf="currentUser && activeTab() === 'comments'"
       class="post-comment-form"
       (ngSubmit)="sendComment()"
     >
-
       <input
         name="comment"
         [ngModel]="comment()"
         (ngModelChange)="comment.set($event)"
         placeholder="Escribe un comentario..."
         aria-label="Escribe un comentario"
-      >
+      />
 
-      <button
-        type="submit"
-        [disabled]="!comment().trim()"
-        aria-label="Enviar comentario"
-      >
+      <button type="submit" [disabled]="!comment().trim()" aria-label="Enviar comentario">
         <i class="bi bi-send"></i>
       </button>
-
     </form>
 
     <footer class="post-modal-footer">
-
-      <button
-        type="button"
-        (click)="close()"
-      >
-        Cerrar
-      </button>
-
+      <button type="button" (click)="close()">Cerrar</button>
     </footer>
-
   </section>
-
 </article>
