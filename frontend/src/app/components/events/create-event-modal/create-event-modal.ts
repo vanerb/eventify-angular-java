@@ -1,9 +1,16 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AsyncPipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {MatFormField, MatInput, MatInputModule} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -39,19 +46,34 @@ import {ModalService} from '../../../services/modal-service';
   standalone: true
 })
 export class CreateEventModal implements OnInit {
+
   searchResults: any[] = [];
   searchTimeout: any;
+
   form!: FormGroup;
+
   themesControl = new FormControl('');
-  filteredThemes!: Observable<{id: number, name: string, icon: string}[]>;
-  previewCoverImage!: string;
+
+  filteredThemes!: Observable<{
+    id: number,
+    name: string,
+    icon: string
+  }[]>;
+
+  previewCoverImage = signal<string>('');
+
   selectedImagesCover: File[] = [];
-  isOnline: boolean = false;
+
+  isOnline = signal<boolean>(false);
 
   confirm!: (result?: any) => void;
   close!: () => void;
 
-  constructor(private readonly http: HttpClient, private formBuilder: FormBuilder, private cd: ChangeDetectorRef, private readonly modalService:ModalService) {
+  constructor(
+    private readonly http: HttpClient,
+    private formBuilder: FormBuilder,
+    private readonly modalService: ModalService
+  ) {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
@@ -65,49 +87,64 @@ export class CreateEventModal implements OnInit {
       ubication: [''],
       latitude: [''],
       longitude: ['']
-    })
+    });
   }
 
   ngOnInit() {
+
     this.filteredThemes = this.themesControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filter(value || '', getThemes()))
     );
 
-    this.previewCoverImage = getImage(null)
+    this.previewCoverImage.set(getImage(null));
   }
 
   toggleOnline(event: Event) {
-    this.isOnline = (event.target as HTMLInputElement).checked;
-    this.form.get('type')?.setValue(this.isOnline);
-  }
 
+    this.isOnline.set(
+      (event.target as HTMLInputElement).checked
+    );
+
+    this.form.get('type')?.setValue(this.isOnline());
+  }
 
   async onImageChange(event: Event) {
+
     const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.selectedImagesCover = [input.files[0]];
+
+    if (!input.files?.length) {
+      return;
     }
 
+    this.selectedImagesCover = [input.files[0]];
 
     const reader = new FileReader();
+
     reader.onload = () => {
-      this.previewCoverImage = reader.result as string;
+      this.previewCoverImage.set(
+        reader.result as string
+      );
     };
+
     reader.readAsDataURL(this.selectedImagesCover[0]);
-    this.cd.detectChanges()
   }
 
-
   private _filter(value: string, array: any[]): any[] {
+
     const filterValue = value.toLowerCase();
-    return array.filter(option => option.name.toLowerCase().includes(filterValue));
+
+    return array.filter(option =>
+      option.name.toLowerCase().includes(filterValue)
+    );
   }
 
   onSearch(event: any) {
+
     const query = event.target.value;
 
     clearTimeout(this.searchTimeout);
+
     this.searchTimeout = setTimeout(() => {
 
       if (query.length < 3) {
@@ -115,7 +152,8 @@ export class CreateEventModal implements OnInit {
         return;
       }
 
-      const url = `http://localhost:8080/api/location/search?query=${query}`;
+      const url =
+        `http://localhost:8080/api/location/search?query=${query}`;
 
       this.http.get<any[]>(url).subscribe(results => {
         this.searchResults = results;
@@ -125,7 +163,7 @@ export class CreateEventModal implements OnInit {
   }
 
   onSelectPlace(place: any) {
-    // Ocultar resultados
+
     this.searchResults = [];
 
     this.form.get('placeId')?.setValue(place.place_id);
@@ -134,17 +172,33 @@ export class CreateEventModal implements OnInit {
     this.form.get('latitude')?.setValue(place.lat);
   }
 
+  createEvent() {
 
-  createEvent(){
+    if (this.form.valid) {
 
-    if(this.form.valid){
       const event = {
         name: this.form.get('name')?.value ?? '',
         description: this.form.get('description')?.value,
-        type:  this.form.get('type')?.value ? 'online' : 'notOnline',
+        type: this.form.get('type')?.value
+          ? 'online'
+          : 'notOnline',
+
         themes: this.themesFormArray.value,
-        initDate: formatToSqlTimestamp(combineDateAndTime(this.form.get('initDate')?.value,  this.form.get('initHour')?.value))  ,
-        endDate: formatToSqlTimestamp(combineDateAndTime(this.form.get('endDate')?.value,  this.form.get('endHour')?.value)) ,
+
+        initDate: formatToSqlTimestamp(
+          combineDateAndTime(
+            this.form.get('initDate')?.value,
+            this.form.get('initHour')?.value
+          )
+        ),
+
+        endDate: formatToSqlTimestamp(
+          combineDateAndTime(
+            this.form.get('endDate')?.value,
+            this.form.get('endHour')?.value
+          )
+        ),
+
         placeId: this.form.get('placeId')?.value,
         ubication: this.form.get('ubication')?.value,
         latitude: this.form.get('latitude')?.value,
@@ -152,16 +206,29 @@ export class CreateEventModal implements OnInit {
       };
 
       const formData = new FormData();
-      formData.append('file', this.selectedImagesCover[0]); // archivo
-      formData.append('event', new Blob([JSON.stringify(event)], { type: 'application/json' }));
 
-      console.log(formData)
+      formData.append(
+        'file',
+        this.selectedImagesCover[0]
+      );
+
+      formData.append(
+        'event',
+        new Blob(
+          [JSON.stringify(event)],
+          {type: 'application/json'}
+        )
+      );
+
+      console.log(formData);
 
       this.confirm(formData);
-    }
 
-    else{
-      this.modalService.open(WarningModal, {
+    } else {
+
+      this.modalService.open(
+        WarningModal,
+        {
           width: '60vh',
         },
         {
@@ -170,39 +237,41 @@ export class CreateEventModal implements OnInit {
             message: 'El formulario no es correcto. ',
             type: 'info'
           }
+        }
+      )
+        .then(async (item: FormData) => {
 
-        }).then(async (item: FormData) => {
-
-      })
+        })
         .catch(() => {
-          this.modalService.close()
+          this.modalService.close();
         });
     }
-
-
   }
 
   addTheme(genre: { id: number; name: string }) {
+
     const exists = this.themesFormArray.controls.some(
       control => control.value.id === genre.id
     );
 
     if (!exists) {
-      this.themesFormArray.push(this.formBuilder.control(genre));
+      this.themesFormArray.push(
+        this.formBuilder.control(genre)
+      );
     }
 
     this.themesControl.setValue('');
-
   }
 
   removeTheme(index: number) {
+
     this.themesFormArray.removeAt(index);
   }
 
   get themesFormArray(): FormArray {
+
     return this.form.get('themes') as FormArray;
   }
-
 
   protected readonly getThemesIcon = getThemesIcon;
 }

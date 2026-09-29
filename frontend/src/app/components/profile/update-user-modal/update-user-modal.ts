@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {MatFormField} from '@angular/material/form-field';
 import {MatInput, MatLabel} from '@angular/material/input';
@@ -24,15 +24,17 @@ import {User} from '../../../models/users';
   styleUrl: './update-user-modal.css',
   standalone: true
 })
-export class UpdateUserModal implements OnInit{
-  user!: User
+export class UpdateUserModal implements OnInit {
+
+  user!: User;
+
   selectedImageProfileCover: File[] = [];
-  previewProfileCoverImage!: string;
+  previewProfileCoverImage = signal<string>('');
 
   selectedImageBannerCover: File[] = [];
-  previewBannerCoverImage!: string;
+  previewBannerCoverImage = signal<string>('');
 
-  form!: FormGroup
+  form!: FormGroup;
 
   confirm!: (result?: any) => void;
   close!: () => void;
@@ -44,36 +46,44 @@ export class UpdateUserModal implements OnInit{
       bio: ['', Validators.required],
       profileImage: [null],
       bannerImage: [null],
-      password: ['', [Validators.required]],
-      repeatPassword: ['', [Validators.required]],
-    })
+      password: [''],
+      repeatPassword: [''],
+    });
   }
 
-  ngOnInit() {
-    this.previewProfileCoverImage = getImage(this.user.image?.url)
+  ngOnInit(): void {
+    this.previewProfileCoverImage.set(
+      getImage(this.user.image?.url)
+    );
 
-    this.previewBannerCoverImage = getImage(this.user?.banner?.url)
+    this.previewBannerCoverImage.set(
+      getImage(this.user?.banner?.url)
+    );
 
-    this.form.get('name')?.setValue(this.user.name)
-    this.form.get('bio')?.setValue(this.user.bio)
-    this.form.get('username')?.setValue(this.user.username)
-
+    this.form.get('name')?.setValue(this.user.name);
+    this.form.get('bio')?.setValue(this.user.bio);
+    this.form.get('username')?.setValue(this.user.username);
   }
 
-  update(){
+  update(): void {
     let user = null;
 
-    if (this.form.get('password')?.value !== '' && this.form.get('repeatPassword')?.value !== '') {
-      if (this.form.get('password')?.value === this.form.get('repeatPassword')?.value) {
+    const password = this.form.get('password')?.value;
+    const repeatPassword = this.form.get('repeatPassword')?.value;
+
+    if (password !== '' && repeatPassword !== '') {
+
+      if (password === repeatPassword) {
         user = {
           name: this.form.get('name')?.value,
           bio: this.form.get('bio')?.value,
           username: this.form.get('username')?.value,
-          password: this.form.get('password')?.value,
+          password: password,
         };
       }
-    }
-    else{
+
+    } else {
+
       user = {
         name: this.form.get('name')?.value,
         bio: this.form.get('bio')?.value,
@@ -81,45 +91,72 @@ export class UpdateUserModal implements OnInit{
       };
     }
 
-
     const formData = new FormData();
-    formData.append('profilePic', this.selectedImageProfileCover[0]);
-    formData.append('banner', this.selectedImageBannerCover[0]);
-    formData.append('user', new Blob([JSON.stringify(user)], { type: 'application/json' }));
 
-    console.log(formData)
-
-    this.confirm(formData);
-
-
-  }
-
-  async onImageProfileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.selectedImageProfileCover = [input.files[0]];
-
+    if (this.selectedImageProfileCover.length > 0) {
+      formData.append(
+        'profilePic',
+        this.selectedImageProfileCover[0]
+      );
     }
 
+    if (this.selectedImageBannerCover.length > 0) {
+      formData.append(
+        'banner',
+        this.selectedImageBannerCover[0]
+      );
+    }
+
+    formData.append(
+      'user',
+      new Blob(
+        [JSON.stringify(user)],
+        {type: 'application/json'}
+      )
+    );
+
+    console.log(formData);
+
+    this.confirm(formData);
+  }
+
+  onImageProfileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files?.length) {
+      return;
+    }
+
+    this.selectedImageProfileCover = [input.files[0]];
 
     const reader = new FileReader();
+
     reader.onload = () => {
-      this.previewProfileCoverImage = reader.result as string;
+      this.previewProfileCoverImage.set(
+        reader.result as string
+      );
     };
+
     reader.readAsDataURL(this.selectedImageProfileCover[0]);
   }
 
-  async onImageBannerChange(event: Event) {
+  onImageBannerChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.selectedImageBannerCover = [input.files[0]];
+
+    if (!input.files?.length) {
+      return;
     }
 
+    this.selectedImageBannerCover = [input.files[0]];
 
     const reader = new FileReader();
+
     reader.onload = () => {
-      this.previewBannerCoverImage = reader.result as string;
+      this.previewBannerCoverImage.set(
+        reader.result as string
+      );
     };
+
     reader.readAsDataURL(this.selectedImageBannerCover[0]);
   }
 }

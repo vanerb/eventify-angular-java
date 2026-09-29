@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {NgIf} from "@angular/common";
-import {getImage} from "../../../services/utilities-service";
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {NgIf} from '@angular/common';
+import {getImage} from '../../../services/utilities-service';
 import {Post} from '../../../models/posts';
 import {User} from '../../../models/users';
 
@@ -18,25 +18,28 @@ import {User} from '../../../models/users';
   standalone: true
 })
 export class CardPosts {
-  @Input() post!: Post
-  @Input() user!:User
-  @Output() actions = new EventEmitter()
 
+  @Input() post!: Post;
+  @Input() user!: User;
 
+  @Output() actions = new EventEmitter<{
+    action: 'show' | 'delete';
+    post: Post;
+  }>();
 
-  view(){
+  view(): void {
     this.actions.emit({
       action: 'show',
-      post: this.post,
-    })
+      post: this.post
+    });
   }
 
-  delete(){
+  delete(): void {
     this.actions.emit({
       action: 'delete',
-      post: this.post,
-    })
+      post: this.post
+    });
   }
 
-    protected readonly getImage = getImage;
+  protected readonly getImage = getImage;
 }

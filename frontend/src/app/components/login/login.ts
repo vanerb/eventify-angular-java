@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth-service';
 import {Router, RouterLink} from '@angular/router';
@@ -9,27 +9,41 @@ import {MatFormField, MatInput, MatInputModule} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {MatCard} from '@angular/material/card';
 
-
 @Component({
   selector: 'app-login',
-  imports: [Container, ReactiveFormsModule, RouterLink, MatFormField, MatInput, MatInputModule, MatButton, MatCard],
+  imports: [
+    Container,
+    ReactiveFormsModule,
+    RouterLink,
+    MatFormField,
+    MatInput,
+    MatInputModule,
+    MatButton,
+    MatCard
+  ],
   templateUrl: './login.html',
   styleUrl: './login.css',
   standalone: true
 })
 export class Login {
-  form: FormGroup
-  isError: boolean = false;
-  constructor(private readonly authService: AuthService, private fb: FormBuilder, private readonly router: Router, private readonly modalService: ModalService) {
+
+  form: FormGroup;
+
+  isError = signal<boolean>(false);
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
+    private readonly modalService: ModalService
+  ) {
     this.form = this.fb.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required]],
     });
   }
 
-
-  login() {
-
+  login(): void {
 
     const body = {
       email: this.form.get('email')?.value,
@@ -37,18 +51,27 @@ export class Login {
     };
 
     this.authService.login(body).subscribe({
-      next: async (token: any) => {
-        console.log(token)
 
+      next: async (token: any) => {
+
+        console.log(token);
 
         this.authService.setToken(token.token);
-        //this.authService.setType(token.type)
+
         await this.router.navigate(['/']);
-        window.location.reload()
-        this.isError = false
+
+        this.isError.set(false);
+
+        window.location.reload();
       },
-      error: (err) => {
-        this.modalService.open(WarningModal, {
+
+      error: () => {
+
+        this.isError.set(true);
+
+        this.modalService.open(
+          WarningModal,
+          {
             width: '60vh',
           },
           {
@@ -57,13 +80,14 @@ export class Login {
               message: 'The username or password is incorrect',
               type: 'info'
             }
-          }).then(async (item: FormData) => {
-        })
-          .catch(() => {
-            this.modalService.close()
-          });
-      },
-    });
+          }
+        )
+        .catch(() => {
+          this.modalService.close();
+        });
 
+      }
+
+    });
   }
 }

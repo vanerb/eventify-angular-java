@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth-service';
 import {Router, RouterLink} from '@angular/router';
@@ -26,14 +26,20 @@ import {WarningModal} from '../general/warning-modal/warning-modal';
   styleUrl: './register.css',
   standalone: true
 })
-export class Register implements OnInit{
+export class Register implements OnInit {
 
-  form!: FormGroup
+  form!: FormGroup;
 
   selectedImagesCover: File[] = [];
-  previewCoverImage!: string;
 
-  constructor(private readonly authService: AuthService, private router: Router, private fb: FormBuilder, private cd: ChangeDetectorRef, private readonly modalService: ModalService) {
+  previewCoverImage = signal<string>('');
+
+  constructor(
+    private readonly authService: AuthService,
+    private router: Router,
+    private fb: FormBuilder,
+    private readonly modalService: ModalService
+  ) {
     this.form = this.fb.group({
       name: ['', [Validators.required]],
       username: ['', [Validators.required]],
@@ -44,30 +50,40 @@ export class Register implements OnInit{
     });
   }
 
-  ngOnInit() {
-    this.previewCoverImage = getImage(null)
+  ngOnInit(): void {
+    this.previewCoverImage.set(getImage(null));
   }
 
-  async onImageChange(event: Event) {
+  onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.selectedImagesCover = [input.files[0]]; // reemplaza la anterior
+
+    if (!input.files?.length) {
+      return;
     }
 
-    // Generar vista previa
+    this.selectedImagesCover = [input.files[0]];
+
     const reader = new FileReader();
+
     reader.onload = () => {
-      this.previewCoverImage = reader.result as string; // base64
+      this.previewCoverImage.set(reader.result as string);
     };
+
     reader.readAsDataURL(this.selectedImagesCover[0]);
-    this.cd.detectChanges()
   }
 
-
-  register() {
+  register(): void {
     if (this.form.valid) {
-      if (this.form.get('password')?.value !== '' && this.form.get('repeatPassword')?.value !== '') {
-        if (this.form.get('password')?.value === this.form.get('repeatPassword')?.value) {
+
+      if (
+        this.form.get('password')?.value !== '' &&
+        this.form.get('repeatPassword')?.value !== ''
+      ) {
+
+        if (
+          this.form.get('password')?.value ===
+          this.form.get('repeatPassword')?.value
+        ) {
 
           const formData = new FormData();
 
@@ -80,32 +96,40 @@ export class Register implements OnInit{
           formData.append('name', this.form.get('name')?.value);
           formData.append('password', this.form.get('password')?.value);
 
-
           this.authService.register(formData).subscribe({
             next: async () => {
               await this.authService.logout();
             },
+
             error: (err) => {
-              this.modalService.open(WarningModal, {
+              this.modalService.open(
+                WarningModal,
+                {
                   width: '60vh',
                 },
                 {
                   props: {
                     title: 'Error',
-                    message: 'An unexpected error occurred while creating the account. The error is ' + err.error.error,
+                    message:
+                      'An unexpected error occurred while creating the account. The error is ' +
+                      err.error.error,
                     type: 'info'
                   }
-                }).then(async (item: FormData) => {
-              })
+                }
+              )
+                .then(async (item: FormData) => {
+                })
                 .catch(() => {
-                  this.modalService.close()
+                  this.modalService.close();
                 });
             }
           });
 
-
         } else {
-          this.modalService.open(WarningModal, {
+
+          this.modalService.open(
+            WarningModal,
+            {
               width: '60vh',
             },
             {
@@ -114,14 +138,20 @@ export class Register implements OnInit{
                 message: 'The passwords do not match, please check.',
                 type: 'info'
               }
-            }).then(async (item: FormData) => {
-          })
+            }
+          )
+            .then(async (item: FormData) => {
+            })
             .catch(() => {
-              this.modalService.close()
+              this.modalService.close();
             });
         }
+
       } else {
-        this.modalService.open(WarningModal, {
+
+        this.modalService.open(
+          WarningModal,
+          {
             width: '60vh',
           },
           {
@@ -130,14 +160,20 @@ export class Register implements OnInit{
               message: 'Password fields cannot be left empty.',
               type: 'info'
             }
-          }).then(async (item: FormData) => {
-        })
+          }
+        )
+          .then(async (item: FormData) => {
+          })
           .catch(() => {
-            this.modalService.close()
+            this.modalService.close();
           });
       }
+
     } else {
-      this.modalService.open(WarningModal, {
+
+      this.modalService.open(
+        WarningModal,
+        {
           width: '60vh',
         },
         {
@@ -146,13 +182,14 @@ export class Register implements OnInit{
             message: 'You need to complete all the fields.',
             type: 'info'
           }
-        }).then(async (item: FormData) => {
-      })
+        }
+      )
+        .then(async (item: FormData) => {
+        })
         .catch(() => {
-          this.modalService.close()
+          this.modalService.close();
         });
     }
-
   }
-
 }
+

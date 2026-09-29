@@ -1,50 +1,232 @@
 <app-container>
+
   <main class="chat-shell">
+
     <aside class="chat-sidebar">
+
       <header class="chat-sidebar-heading">
-        <div><span class="chat-kicker">MANTÉN EL PLAN EN MARCHA</span><h1>Conversaciones</h1><p>Tus quedadas y su gente, en un mismo lugar.</p></div>
-        <app-paginator [limit]="limit" (update)="updatePagination($event.page, $event.limit)" type="small" [params]="eventPagination"></app-paginator>
+
+        <div>
+
+          <span class="chat-kicker">
+            MANTÉN EL PLAN EN MARCHA
+          </span>
+
+          <h1>
+            Conversaciones
+          </h1>
+
+          <p>
+            Tus quedadas y su gente, en un mismo lugar.
+          </p>
+
+        </div>
+
+        <app-paginator
+          [limit]="limit()"
+          (update)="updatePagination($event.page, $event.limit)"
+          type="small"
+          [params]="eventPagination()!"
+        ></app-paginator>
+
       </header>
+
       <div class="chat-event-list">
-        <button type="button" class="chat-event-item" *ngFor="let event of events" [class.active]="eventId === event.id" (click)="changeEvent(event.id)">
-          <span class="chat-event-icon"><i class="bi bi-calendar-heart"></i></span>
-          <span class="chat-event-copy"><b>{{ event.name }}</b><small><i class="bi bi-people"></i> {{ event.participants.length }} participantes</small></span>
+
+        <button
+          type="button"
+          class="chat-event-item"
+          *ngFor="let event of events()"
+          [class.active]="eventId() === event.id"
+          (click)="changeEvent(event.id)"
+        >
+
+          <span class="chat-event-icon">
+            <i class="bi bi-calendar-heart"></i>
+          </span>
+
+          <span class="chat-event-copy">
+
+            <b>
+              {{ event.name }}
+            </b>
+
+            <small>
+              <i class="bi bi-people"></i>
+              {{ event.participants.length }}
+              participantes
+            </small>
+
+          </span>
+
           <i class="bi bi-chevron-right chat-event-arrow"></i>
+
         </button>
-        <div *ngIf="events.length === 0" class="chat-empty-list"><i class="bi bi-chat-square-heart"></i><b>Aún no tienes conversaciones</b><span>Únete a un evento para empezar a hablar.</span></div>
+
+        <div
+          *ngIf="events().length === 0"
+          class="chat-empty-list"
+        >
+
+          <i class="bi bi-chat-square-heart"></i>
+
+          <b>
+            Aún no tienes conversaciones
+          </b>
+
+          <span>
+            Únete a un evento para empezar a hablar.
+          </span>
+
+        </div>
+
       </div>
+
     </aside>
 
     <section class="chat-conversation">
-      <div *ngIf="!eventId" class="chat-welcome">
-        <span class="chat-welcome-icon"><i class="bi bi-chat-heart"></i></span>
-        <h2>Las quedadas empiezan aquí</h2><p>Elige una conversación y sigue organizando el plan con el grupo.</p>
+
+      <div
+        *ngIf="!eventId()"
+        class="chat-welcome"
+      >
+
+        <span class="chat-welcome-icon">
+          <i class="bi bi-chat-heart"></i>
+        </span>
+
+        <h2>
+          Las quedadas empiezan aquí
+        </h2>
+
+        <p>
+          Elige una conversación y sigue organizando el plan con el grupo.
+        </p>
+
       </div>
-      <ng-container *ngIf="eventId">
+
+      <ng-container *ngIf="eventId()">
+
         <header class="conversation-header">
-          <span class="conversation-icon"><i class="bi bi-calendar-heart"></i></span>
-          <div><span class="chat-kicker">CHAT DE LA QUEDADA</span><h2>{{ selectedEvent?.name }}</h2></div>
-          <span class="conversation-people"><i class="bi bi-people"></i>{{ selectedEvent?.participants?.length || 0 }}</span>
-        </header>
-        <div class="chat-messages" #scrollContainer>
-          <div *ngFor="let group of groupedMessages" class="message-day-group">
-            <div class="message-day"><span>{{ group.date }}</span></div>
-            <div *ngFor="let msg of group.messages" class="message-row" [class.mine]="msg.userId === user?.id">
-              <span *ngIf="msg.userId !== user?.id" class="message-avatar"><i class="bi bi-person"></i></span>
-              <div class="message-bubble" [class.message-bubble-mine]="msg.userId === user?.id">
-                <b *ngIf="msg.userId !== user?.id" class="message-sender">{{ msg.sender }}</b>
-                <span class="message-content">{{ msg.content }}</span>
-                <time>{{ transformDateHour(msg.timestamp ?? '') }}</time>
-              </div>
-            </div>
+
+          <span class="conversation-icon">
+            <i class="bi bi-calendar-heart"></i>
+          </span>
+
+          <div>
+
+            <span class="chat-kicker">
+              CHAT DE LA QUEDADA
+            </span>
+
+            <h2>
+              {{ selectedEvent?.name }}
+            </h2>
+
           </div>
+
+          <span class="conversation-people">
+
+            <i class="bi bi-people"></i>
+
+            {{ selectedEvent?.participants?.length || 0 }}
+
+          </span>
+
+        </header>
+
+        <div
+          class="chat-messages"
+          #scrollContainer
+        >
+
+          <div
+            *ngFor="let group of groupedMessages()"
+            class="message-day-group"
+          >
+
+            <div class="message-day">
+
+              <span>
+                {{ group.date }}
+              </span>
+
+            </div>
+
+            <div
+              *ngFor="let msg of group.messages"
+              class="message-row"
+              [class.mine]="msg.userId === user()?.id"
+            >
+
+              <span
+                *ngIf="msg.userId !== user()?.id"
+                class="message-avatar"
+              >
+                <i class="bi bi-person"></i>
+              </span>
+
+              <div
+                class="message-bubble"
+                [class.message-bubble-mine]="
+                  msg.userId === user()?.id
+                "
+              >
+
+                <b
+                  *ngIf="msg.userId !== user()?.id"
+                  class="message-sender"
+                >
+                  {{ msg.sender }}
+                </b>
+
+                <span class="message-content">
+                  {{ msg.content }}
+                </span>
+
+                <time>
+                  {{ transformDateHour(msg.timestamp ?? '') }}
+                </time>
+
+              </div>
+
+            </div>
+
+          </div>
+
           <div #bottom></div>
+
         </div>
-        <form class="chat-composer" (ngSubmit)="sendMessage()">
-          <input class="chat-input" name="message" [(ngModel)]="newMessage" placeholder="Escribe un mensaje para el grupo…" autocomplete="off">
-          <button type="submit" class="chat-send" [disabled]="!newMessage.trim()" aria-label="Enviar mensaje"><i class="bi bi-send-fill"></i></button>
+
+        <form
+          class="chat-composer"
+          (ngSubmit)="sendMessage()"
+        >
+
+          <input
+            class="chat-input"
+            name="message"
+            [ngModel]="newMessage()"
+            (ngModelChange)="newMessage.set($event)"
+            placeholder="Escribe un mensaje para el grupo…"
+            autocomplete="off"
+          >
+
+          <button
+            type="submit"
+            class="chat-send"
+            [disabled]="!newMessage().trim()"
+            aria-label="Enviar mensaje"
+          >
+            <i class="bi bi-send-fill"></i>
+          </button>
+
         </form>
+
       </ng-container>
+
     </section>
+
   </main>
+
 </app-container>

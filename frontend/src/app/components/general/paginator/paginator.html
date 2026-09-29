@@ -1,10 +1,33 @@
-<nav *ngIf="params && params.totalPages > 1" class="pagination-control" aria-label="Paginación">
-  <button type="button" class="pagination-arrow" [disabled]="params.number <= 0" (click)="changePage('previous')" aria-label="Página anterior">
+<nav
+  *ngIf="params && params.totalPages > 1"
+  class="pagination-control"
+  aria-label="Paginación"
+>
+  <button
+    type="button"
+    class="pagination-arrow"
+    [disabled]="params.number <= 0"
+    (click)="changePage('previous')"
+    aria-label="Página anterior"
+  >
     <i class="bi bi-chevron-left"></i>
   </button>
-  <span class="pagination-current">{{ params.number + 1 }}</span>
-  <span class="pagination-total">de {{ params.totalPages }}</span>
-  <button type="button" class="pagination-arrow" [disabled]="params.number >= params.totalPages - 1" (click)="changePage('next')" aria-label="Página siguiente">
+
+  <span class="pagination-current">
+    {{ params.number + 1 }}
+  </span>
+
+  <span class="pagination-total">
+    de {{ params.totalPages }}
+  </span>
+
+  <button
+    type="button"
+    class="pagination-arrow"
+    [disabled]="params.number >= params.totalPages - 1"
+    (click)="changePage('next')"
+    aria-label="Página siguiente"
+  >
     <i class="bi bi-chevron-right"></i>
   </button>
 </nav>

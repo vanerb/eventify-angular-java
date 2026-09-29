@@ -1,21 +1,44 @@
-import { Component } from '@angular/core';
-import {MatFormField, MatInput, MatInputModule} from '@angular/material/input';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Component} from '@angular/core';
+
+import {
+  MatFormField,
+  MatInput,
+  MatInputModule
+} from '@angular/material/input';
+
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+
 import {Container} from '../general/container/container';
+
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-contact',
-  imports: [Container, MatFormField, ReactiveFormsModule, CdkTextareaAutosize, MatInput, MatInputModule],
+  imports: [
+    Container,
+    MatFormField,
+    ReactiveFormsModule,
+    CdkTextareaAutosize,
+    MatInput,
+    MatInputModule
+  ],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
   standalone: true
 })
 export class Contact {
-  form!: FormGroup
 
+  form!: FormGroup;
 
-  constructor( private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder
+  ) {
+
     this.form = this.fb.group({
       name: ['', [Validators.required]],
       cognames: ['', [Validators.required]],
@@ -24,8 +47,8 @@ export class Contact {
     });
   }
 
+  sendEmail() {
 
-  sendEmail(){
-    console.log("MAIL ENVIADO")
+    console.log('MAIL ENVIADO');
   }
 }

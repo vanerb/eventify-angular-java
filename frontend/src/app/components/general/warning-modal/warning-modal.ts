@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 
@@ -13,12 +13,14 @@ import {MatButton} from '@angular/material/button';
   standalone: true
 })
 export class WarningModal {
+
   props: any = {
     title: '',
     message: '',
     type: 'info'
-  }
+  };
 
   confirm!: (result?: any) => void;
+
   close!: () => void;
 }

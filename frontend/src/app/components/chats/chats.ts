@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  signal
+} from '@angular/core';
+
 import {ChatService} from '../../services/chat-service';
 import {FormsModule} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
@@ -27,24 +36,34 @@ import {EventPage, Event} from '../../models/events';
   standalone: true
 })
 export class Chats implements OnInit, OnDestroy, AfterViewInit {
-  messages: ChatMessage[] = [];
-  newMessage = '';
-  eventId: number | null = null;
-  events: Event[] = [];
-  eventPagination!: EventPage
-  user!: User;
 
-  page: number = 0;
-  limit: number = 20;
+  messages = signal<ChatMessage[]>([]);
+
+  newMessage = signal<string>('');
+
+  eventId = signal<number | null>(null);
+
+  events = signal<Event[]>([]);
+
+  eventPagination = signal<EventPage | undefined>(undefined);
+
+  user = signal<User | undefined>(undefined);
+
+  page = signal<number>(0);
+
+  limit = signal<number>(20);
+
+  groupedMessages = signal<{
+    date: string;
+    messages: any[];
+  }[]>([]);
 
   private messagesSub?: Subscription;
+
   private messageDdbbSub?: Subscription;
 
-  groupedMessages: { date: string, messages: any[] }[] = [];
-  get selectedEvent(): Event | undefined {
-    return this.events.find(event => event.id === this.eventId);
-  }
-  @ViewChild('bottom') bottom!: ElementRef;
+  @ViewChild('bottom')
+  bottom!: ElementRef;
 
   constructor(
     private chatService: ChatService,
@@ -54,132 +73,221 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   async ngOnInit() {
-    this.user = await firstValueFrom(this.authService.getUserByToken());
 
+    const user = await firstValueFrom(
+      this.authService.getUserByToken()
+    );
+
+    this.user.set(user);
   }
 
-  updatePagination(page: number, limit: number){
-    this.page = page
-    this.limit = limit
-    this.updateParticipations()
+  updatePagination(page: number, limit: number) {
+
+    this.page.set(page);
+
+    this.limit.set(limit);
+
+    this.updateParticipations();
   }
 
   ngAfterViewInit() {
-   this.updateParticipations()
+
+    this.updateParticipations();
   }
 
+  updateParticipations() {
 
-  updateParticipations(){
-    this.eventService.getMyEventParticipations(this.page, this.limit).subscribe((events: EventPage) => {
-      this.events = events.content;
-      this.eventPagination = events
-    });
+    this.eventService
+      .getMyEventParticipations(
+        this.page(),
+        this.limit()
+      )
+      .subscribe((events: EventPage) => {
+
+        this.events.set(events.content);
+
+        this.eventPagination.set(events);
+      });
   }
 
+  get selectedEvent(): Event | undefined {
 
+    const currentEventId = this.eventId();
 
+    return this.events().find(
+      event => event.id === currentEventId
+    );
+  }
 
   /** AGRUPAR */
   groupMessagesByDate() {
-    const groups: { [key: string]: any[] } = {};
 
-    this.messages.forEach(msg => {
-      const dateStr = new Date(msg.timestamp ?? '').toLocaleDateString();
+    const groups: {
+      [key: string]: any[]
+    } = {};
+
+    this.messages().forEach(msg => {
+
+      const dateStr = new Date(
+        msg.timestamp ?? ''
+      ).toLocaleDateString();
+
       (groups[dateStr] ??= []).push(msg);
     });
 
-    this.groupedMessages = Object.entries(groups).map(([date, messages]) => ({
-      date,
-      messages
-    }));
+    this.groupedMessages.set(
+      Object.entries(groups).map(
+        ([date, messages]) => ({
+          date,
+          messages
+        })
+      )
+    );
   }
 
   /** CONEXIÓN WEBSOCKET */
   initConnection() {
-    if (!this.eventId) return;
 
-    this.messages = [];
+    const currentEventId = this.eventId();
 
-    this.chatService.connect(this.eventId);
+    if (!currentEventId) {
+      return;
+    }
 
-    if (this.messagesSub) this.messagesSub.unsubscribe();
+    this.messages.set([]);
 
-    this.messagesSub = this.chatService.messages$.subscribe(msg => {
-      const exists = this.messages.some(m =>
-        m.userId === msg.userId &&
-        m.timestamp === msg.timestamp
-      );
+    this.chatService.connect(currentEventId);
 
-      if (!exists) {
-        this.messages.push(msg);
-        this.groupMessagesByDate();
-      }
-    });
+    if (this.messagesSub) {
+      this.messagesSub.unsubscribe();
+    }
+
+    this.messagesSub =
+      this.chatService.messages$.subscribe(msg => {
+
+        const exists = this.messages().some(m =>
+          m.userId === msg.userId &&
+          m.timestamp === msg.timestamp
+        );
+
+        if (!exists) {
+
+          this.messages.update(
+            messages => [...messages, msg]
+          );
+
+          this.groupMessagesByDate();
+        }
+      });
 
     this.refreshMessages();
   }
 
   /** CARGA INICIAL DE MENSAJES */
   refreshMessages() {
-    if (!this.eventId) return;
 
-    if (this.messageDdbbSub) this.messageDdbbSub.unsubscribe();
+    const currentEventId = this.eventId();
+
+    if (!currentEventId) {
+      return;
+    }
+
+    if (this.messageDdbbSub) {
+      this.messageDdbbSub.unsubscribe();
+    }
 
     this.messageDdbbSub = this.http
-      .get<ChatMessage[]>(`http://localhost:8080/api/chat/${this.eventId}`)
+      .get<ChatMessage[]>(
+        `http://localhost:8080/api/chat/${currentEventId}`
+      )
       .subscribe(msgs => {
-        this.messages = msgs;
+
+        this.messages.set(msgs);
+
         this.groupMessagesByDate();
 
         setTimeout(() => {
-          this.bottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+
+          this.bottom.nativeElement.scrollIntoView({
+            behavior: 'auto'
+          });
+
         }, 0);
-
       });
-
-
   }
 
   /** ENVIAR MENSAJE */
   sendMessage() {
-    if (!this.newMessage.trim() || !this.eventId) return;
+
+    const currentMessage = this.newMessage().trim();
+
+    const currentEventId = this.eventId();
+
+    const currentUser = this.user();
+
+    if (
+      !currentMessage ||
+      !currentEventId ||
+      !currentUser
+    ) {
+      return;
+    }
 
     const message: ChatMessage = {
-      sender: this.user.username,
-      content: this.newMessage,
+      sender: currentUser.username,
+      content: currentMessage,
       timestamp: new Date().toISOString(),
-      eventId: this.eventId,
-      userId: this.user.id
+      eventId: currentEventId,
+      userId: currentUser.id
     };
 
     this.chatService.sendMessage(message);
-    this.newMessage = '';
 
-    setTimeout(() => this.refreshMessages(), 200);
+    this.newMessage.set('');
+
+    setTimeout(
+      () => this.refreshMessages(),
+      200
+    );
+
     setTimeout(() => {
-      this.bottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+
+      this.bottom.nativeElement.scrollIntoView({
+        behavior: 'auto'
+      });
+
     }, 0);
   }
 
   /** CAMBIAR EVENTO */
   changeEvent(id: number | null) {
-    if (id === this.eventId) return;
 
-    this.eventId = id;
-    this.messages = [];
+    if (id === this.eventId()) {
+      return;
+    }
 
+    this.eventId.set(id);
 
+    this.messages.set([]);
 
-    if (this.messagesSub) this.messagesSub.unsubscribe();
+    this.groupedMessages.set([]);
+
+    if (this.messagesSub) {
+      this.messagesSub.unsubscribe();
+    }
 
     this.initConnection();
-
-
   }
 
   ngOnDestroy() {
-    if (this.messagesSub) this.messagesSub.unsubscribe();
-    if (this.messageDdbbSub) this.messageDdbbSub.unsubscribe();
+
+    if (this.messagesSub) {
+      this.messagesSub.unsubscribe();
+    }
+
+    if (this.messageDdbbSub) {
+      this.messageDdbbSub.unsubscribe();
+    }
 
     this.chatService.disconnect();
   }

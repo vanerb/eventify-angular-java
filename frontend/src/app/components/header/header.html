@@ -1,32 +1,107 @@
-<mat-drawer-container class="eventify-shell" [hasBackdrop]="drawerMode === 'over'">
-  <mat-drawer [mode]="drawerMode" [opened]="isOpen" (closedStart)="onDrawerClosed()" #drawer position="start" class="eventify-drawer">
-    <div class="drawer-brand" (click)="gotTo('/')"><span class="brand-mark">e</span><span>eventify</span></div>
-    <span class="drawer-label">DESCUBRE</span>
+<mat-drawer-container class="eventify-shell" [hasBackdrop]="drawerMode() === 'over'">
+  <mat-drawer
+    [mode]="drawerMode()"
+    [opened]="isOpen()"
+    (closedStart)="onDrawerClosed()"
+    #drawer
+    position="start"
+    class="eventify-drawer"
+  >
+    <div class="drawer-brand" (click)="gotTo('/')">
+      <span class="brand-mark">e</span>
+      <span>eventify</span>
+    </div>
+
+    <span class="drawer-label"> DESCUBRE </span>
+
     <nav class="drawer-nav">
-      <button class="menu-item" (click)="gotTo('/')"><i class="bi bi-house-door"></i><span>Inicio</span></button>
-      <button class="menu-item" (click)="gotTo('/events')"><i class="bi bi-calendar-heart"></i><span>Eventos</span></button>
-      <button *ngIf="this.user" class="menu-item" (click)="gotTo('/chats')"><i class="bi bi-chat-dots"></i><span>Mensajes</span></button>
-      <button class="menu-item" (click)="gotTo('/posts')"><i class="bi bi-compass"></i><span>Comunidad</span></button>
-      <button class="menu-item" (click)="gotTo('/contact')"><i class="bi bi-chat-square-text"></i><span>Contacto</span></button>
+      <button class="menu-item" (click)="gotTo('/')">
+        <i class="bi bi-house-door"></i>
+        <span>Inicio</span>
+      </button>
+
+      <button class="menu-item" (click)="gotTo('/events')">
+        <i class="bi bi-calendar-heart"></i>
+        <span>Eventos</span>
+      </button>
+
+      <button *ngIf="user()" class="menu-item" (click)="gotTo('/chats')">
+        <i class="bi bi-chat-dots"></i>
+        <span>Mensajes</span>
+      </button>
+
+      <button class="menu-item" (click)="gotTo('/posts')">
+        <i class="bi bi-compass"></i>
+        <span>Comunidad</span>
+      </button>
+
+      <button class="menu-item" (click)="gotTo('/contact')">
+        <i class="bi bi-chat-square-text"></i>
+        <span>Contacto</span>
+      </button>
     </nav>
+
     <div class="drawer-spacer"></div>
-    <button *ngIf="isLogged" class="account-item" (click)="gotTo('/profile')">
-      <span class="account-avatar"><img [src]="getImage(user?.image?.url)" alt=""><i *ngIf="!user?.image?.url" class="bi bi-person"></i></span>
-      <span class="account-copy"><b>Mi perfil</b><small>Tu cuenta Eventify</small></span><i class="bi bi-chevron-right"></i>
+
+    <button *ngIf="isLogged()" class="account-item" (click)="gotTo('/profile')">
+      <span class="account-avatar">
+        <img [src]="getImage(user()?.image?.url)" alt="" />
+
+        <i *ngIf="!user()?.image?.url" class="bi bi-person"></i>
+      </span>
+
+      <span class="account-copy">
+        <b>Mi perfil</b>
+        <small>Tu cuenta Eventify</small>
+      </span>
+
+      <i class="bi bi-chevron-right"></i>
     </button>
-    <button *ngIf="isLogged" class="menu-item logout-item" (click)="closeSession()"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesión</span></button>
-    <button *ngIf="!isLogged" class="menu-item" (click)="gotTo('/login')"><i class="bi bi-person"></i><span>Iniciar sesión</span></button>
-    <button *ngIf="!isLogged" class="menu-item" (click)="gotTo('/register')"><i class="bi bi-person-plus"></i><span>Crear cuenta</span></button>
-    <div class="drawer-foot">Los buenos planes se comparten <i class="bi bi-heart-fill"></i></div>
+
+    <button *ngIf="isLogged()" class="menu-item logout-item" (click)="closeSession()">
+      <i class="bi bi-box-arrow-right"></i>
+      <span>Cerrar sesión</span>
+    </button>
+
+    <button *ngIf="!isLogged()" class="menu-item" (click)="gotTo('/login')">
+      <i class="bi bi-person"></i>
+      <span>Iniciar sesión</span>
+    </button>
+
+    <button *ngIf="!isLogged()" class="menu-item" (click)="gotTo('/register')">
+      <i class="bi bi-person-plus"></i>
+      <span>Crear cuenta</span>
+    </button>
+
+    <div class="drawer-foot">
+      Los buenos planes se comparten
+      <i class="bi bi-heart-fill"></i>
+    </div>
   </mat-drawer>
+
   <mat-drawer-content>
     <mat-toolbar class="eventify-toolbar">
-      <button mat-button class="menu-toggle" (click)="open()" aria-label="Abrir menú"><i class="bi bi-list"></i></button>
-      <button class="toolbar-brand" (click)="gotTo('/')"><span class="brand-mark">e</span><span>eventify</span></button>
+      <button mat-button class="menu-toggle" (click)="open()" aria-label="Abrir menú">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <button class="toolbar-brand" (click)="gotTo('/')">
+        <span class="brand-mark">e</span>
+        <span>eventify</span>
+      </button>
+
       <span class="toolbar-spacer"></span>
-      <button *ngIf="!isLogged" class="toolbar-login" (click)="gotTo('/login')">Entrar</button>
-      <button class="toolbar-discover" (click)="gotTo('/events')"><i class="bi bi-calendar-heart"></i><span>Descubrir planes</span></button>
+
+      <button *ngIf="!isLogged()" class="toolbar-login" (click)="gotTo('/login')">Entrar</button>
+
+      <button class="toolbar-discover" (click)="gotTo('/events')">
+        <i class="bi bi-calendar-heart"></i>
+        <span>Descubrir planes</span>
+      </button>
     </mat-toolbar>
-    <div class="main-content"><ng-content></ng-content></div>
+
+    <div class="main-content">
+      <ng-content></ng-content>
+    </div>
   </mat-drawer-content>
 </mat-drawer-container>

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
 import {NgClass, NgIf} from '@angular/common';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
@@ -28,58 +28,78 @@ import {User} from '../../models/users';
 })
 export class Header implements OnInit {
 
-  isOpen: boolean = false
-  isLogged: boolean = false;
-  drawerMode: 'side' | 'over' = 'side';
-  user!: User
+  isOpen = signal<boolean>(false);
 
+  isLogged = signal<boolean>(false);
+
+  drawerMode = signal<'side' | 'over'>('side');
+
+  user = signal<User | undefined>(undefined);
 
   constructor(
     private readonly authService: AuthService,
-    private router: Router,
-    private breakpointObserver: BreakpointObserver,
-    private imagesService: ImagesService,
-  ) {
+    private readonly router: Router,
+    private readonly breakpointObserver: BreakpointObserver,
+    private readonly imagesService: ImagesService,
+  ) {}
 
-  }
+  async ngOnInit(): Promise<void> {
 
-  async ngOnInit() {
-    this.isLogged = this.authService.isLoggedIn()
-    this.breakpointObserver.observe([Breakpoints.Handset])
+    this.isLogged.set(
+      this.authService.isLoggedIn()
+    );
+
+    this.breakpointObserver
+      .observe([Breakpoints.Handset])
       .subscribe(result => {
+
         if (result.matches) {
-          this.drawerMode = 'over';
-          this.isOpen = false; // se cierra al cambiar a móvil
+
+          this.drawerMode.set('over');
+          this.isOpen.set(false);
+
         } else {
-          this.drawerMode = 'side';
+
+          this.drawerMode.set('side');
+
         }
+
       });
 
-
     if (this.authService.getToken()) {
-      this.user = await firstValueFrom(this.authService.getUserByToken()) || null
-    } else {
+
+      const user = await firstValueFrom(
+        this.authService.getUserByToken()
+      );
+
+      this.user.set(user || undefined);
 
     }
   }
 
-  gotTo(url: string) {
-
-    this.router.navigate([url])
+  gotTo(url: string): void {
+    this.router.navigate([url]);
   }
 
-  open() {
-    this.isOpen = !this.isOpen
+  open(): void {
+    this.isOpen.update(
+      isOpen => !isOpen
+    );
   }
 
-  onDrawerClosed() {
-    this.isOpen = false;
+  onDrawerClosed(): void {
+    this.isOpen.set(false);
   }
 
-  async closeSession() {
-    await this.authService.logout()
+  async closeSession(): Promise<void> {
+
+    await this.authService.logout();
+
+    this.isLogged.set(false);
+    this.user.set(undefined);
+    this.isOpen.set(false);
+
     window.location.reload();
-    this.isOpen = false
   }
 
   protected readonly getImage = getImage;

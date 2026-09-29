@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CardEvents } from '../../events/card-events/card-events';
 import { NgForOf, NgIf } from '@angular/common';
 import { getImage, transformDate } from '../../../services/utilities-service';
@@ -11,70 +11,95 @@ import { User } from '../../../models/users';
 
 @Component({
   selector: 'app-show-post-modal',
-  imports: [CardEvents, NgForOf, NgIf, FormsModule, MatMenu, MatMenuItem, MatMenuTrigger],
+  imports: [
+    CardEvents,
+    NgForOf,
+    NgIf,
+    FormsModule,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger
+  ],
   templateUrl: './show-post-modal.html',
   styleUrl: './show-post-modal.css',
   standalone: true,
 })
 export class ShowPostModal implements OnInit {
+
   post!: Post;
   user!: User;
-  comment: string = '';
-  activeTab: 'comments' | 'event' | 'participants' = 'comments';
+
+  comment = signal<string>('');
+
+  activeTab = signal<'comments' | 'event' | 'participants'>('comments');
 
   confirm!: (result?: any) => void;
   close!: () => void;
 
   constructor(
     private readonly commentService: CommentService,
-    private readonly postService: PostsService,
-    private readonly cd: ChangeDetectorRef,
+    private readonly postService: PostsService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     console.log(this.post, this.user);
   }
 
-  selectTab(tab: 'comments' | 'event' | 'participants') {
-    this.activeTab = tab;
-    this.cd.detectChanges();
+  selectTab(tab: 'comments' | 'event' | 'participants'): void {
+    this.activeTab.set(tab);
   }
 
-  sendComment() {
-    let comment: any = {
-      comment: this.comment,
-      user: this.user,
-      post: this.post,
+  sendComment(): void {
+    const currentPost = this.post;
+    const currentUser = this.user;
+    const currentComment = this.comment();
+
+    if (!currentPost || !currentUser || !currentComment.trim()) {
+      return;
+    }
+
+    const comment = {
+      comment: currentComment,
+      user: currentUser,
+      post: currentPost,
     };
 
-    let formData = new FormData();
-    formData.append('comment', new Blob([JSON.stringify(comment)], { type: 'application/json' }));
+    const formData = new FormData();
+
+    formData.append(
+      'comment',
+      new Blob(
+        [JSON.stringify(comment)],
+        { type: 'application/json' }
+      )
+    );
 
     this.commentService.create(formData).subscribe({
-      next: async () => {
-        this.comment = '';
-
-        this.getPostById(this.post.id);
-        this.cd.detectChanges();
+      next: () => {
+        this.comment.set('');
+        this.getPostById(currentPost.id);
       },
     });
-
-    this.cd.detectChanges();
   }
 
-  getPostById(id: number) {
+  getPostById(id: number): void {
     this.postService.getById(id).subscribe({
-      next: async (post) => {
+      next: (post) => {
         this.post = post;
-         this.cd.detectChanges();
       },
     });
   }
 
-  delete(id: number) {
+  delete(id: number): void {
+    const currentPost = this.post;
+
+    if (!currentPost) {
+      return;
+    }
+
     this.commentService.delete(id).subscribe({
-      next: async () => {
-        this.getPostById(this.post.id);
+      next: () => {
+        this.getPostById(currentPost.id);
       },
     });
   }

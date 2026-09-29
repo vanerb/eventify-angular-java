@@ -1,39 +1,89 @@
 <div class="post-form-dialog w-full h-full">
-  <form [formGroup]="form" (ngSubmit)="createPost()" class="h-full w-full">
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="createPost()"
+    class="h-full w-full"
+  >
+
     <div class="post-form-content w-full h-[calc(100%_-_30px)]">
 
       <div class="post-form-layout w-full h-full flex justify-center space-x-5">
+
         <div class="post-form-image flex justify-center items-center mb-5 w-[50%]">
+
           <div class="h-full w-full flex justify-center items-end relative">
+
             <div class="w-full h-full bg-[#f2eff8] overflow-hidden rounded-lg mx-auto border border-transparent">
-              <img  [src]="previewCoverImage" alt="No Image"
-                   class="w-full h-full object-cover object-center">
+
+              <img
+                [src]="previewCoverImage()"
+                alt="No Image"
+                class="w-full h-full object-cover object-center"
+              >
+
             </div>
 
             <div class="absolute -right-0">
-              <!-- Botón para cambiar imagen -->
-              <input type="file" accept="image/*" #fileInput hidden (change)="onImageChange($event)"/>
-              <button type="button" mat-raised-button color="primary"
-                      (click)="fileInput.click()"
-                      class="w-12 h-12 rounded-full flex justify-center items-center">
+
+              <input
+                type="file"
+                accept="image/*"
+                #fileInput
+                hidden
+                (change)="onImageChange($event)"
+              />
+
+              <button
+                type="button"
+                mat-raised-button
+                color="primary"
+                (click)="fileInput.click()"
+                class="w-12 h-12 rounded-full flex justify-center items-center"
+              >
                 <i class="bi bi-pencil text-xl"></i>
               </button>
+
             </div>
 
           </div>
+
         </div>
 
-
         <div class="post-form-fields h-[calc(100%_-_10px)] overflow-auto w-[50%]">
-          <h1 class="mb-4 text-center">Crear publicación</h1>
-          <mat-form-field floatLabel="always" class="w-full">
-            <mat-label>Descripción</mat-label>
-            <textarea class="w-full" rows="8" formControlName="description" placeholder="Comparte lo que quieras contar..."
-                      matInput></textarea>
+
+          <h1 class="mb-4 text-center">
+            Crear publicación
+          </h1>
+
+          <mat-form-field
+            floatLabel="always"
+            class="w-full"
+          >
+
+            <mat-label>
+              Descripción
+            </mat-label>
+
+            <textarea
+              class="w-full"
+              rows="8"
+              formControlName="description"
+              placeholder="Comparte lo que quieras contar..."
+              matInput
+            ></textarea>
+
           </mat-form-field>
 
-          <mat-form-field floatLabel="always" class="w-full">
-            <mat-label>Evento relacionado</mat-label>
+          <mat-form-field
+            floatLabel="always"
+            class="w-full"
+          >
+
+            <mat-label>
+              Evento relacionado
+            </mat-label>
+
             <input
               type="text"
               placeholder="Busca una quedada para etiquetar..."
@@ -41,100 +91,176 @@
               [formControl]="eventsControl"
               [matAutocomplete]="autoEvents"
             >
-            <mat-autocomplete class="w-full" #autoEvents="matAutocomplete" (optionSelected)="addEvent($event.option.value)">
-              <mat-option *ngFor="let option of filteredEvents | async" [value]="option">
+
+            <mat-autocomplete
+              class="w-full"
+              #autoEvents="matAutocomplete"
+              (optionSelected)="addEvent($event.option.value)"
+            >
+
+              <mat-option
+                *ngFor="let option of filteredEvents | async"
+                [value]="option"
+              >
                 {{ option.name }}
               </mat-option>
-              <!-- Paginación -->
+
               <mat-option
-                *ngIf="events.totalPages > 1"
+                *ngIf="events() && events()!.totalPages > 1"
                 class="pagination-option"
                 [value]="null"
-                (onSelectionChange)="$event.source.deselect()">
+                (onSelectionChange)="$event.source.deselect()"
+              >
 
                 <div
                   class="flex justify-between items-center w-full space-x-2"
-                  (click)="$event.stopPropagation()">
+                  (click)="$event.stopPropagation()"
+                >
 
-                  <button mat-button (click)="prevPage(); $event.stopPropagation()">
+                  <button
+                    mat-button
+                    (click)="prevPage(); $event.stopPropagation()"
+                  >
                     &lt;
                   </button>
 
-                  <span>Página {{ page + 1 }} de {{ events.totalPages }}</span>
+                  <span>
+                    Página {{ page() + 1 }} de {{ events()!.totalPages }}
+                  </span>
 
-                  <button mat-button (click)="nextPage(); $event.stopPropagation()">
+                  <button
+                    mat-button
+                    (click)="nextPage(); $event.stopPropagation()"
+                  >
                     &gt;
                   </button>
 
                 </div>
+
               </mat-option>
+
             </mat-autocomplete>
 
-
-
           </mat-form-field>
 
-          <div *ngIf="eventFormArray.controls.length > 0"
-               class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5">
-            <mat-chip-row class="h-full flex justify-center items-center"
-                          *ngFor="let event of eventFormArray.controls; let i = index">
+          <div
+            *ngIf="eventFormArray.controls.length > 0"
+            class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5"
+          >
+
+            <mat-chip-row
+              class="h-full flex justify-center items-center"
+              *ngFor="let event of eventFormArray.controls; let i = index"
+            >
+
               <div class="flex justify-center items-center space-x-2">
-          <span class="h-full">
-                 {{ event.value.name }}
-              </span>
-                <i (click)="removeEvent(i)" class="bi bi-x-circle"></i>
+
+                <span class="h-full">
+                  {{ event.value.name }}
+                </span>
+
+                <i
+                  (click)="removeEvent(i)"
+                  class="bi bi-x-circle"
+                ></i>
+
               </div>
+
             </mat-chip-row>
 
           </div>
 
-          <mat-form-field floatLabel="always" class="w-full">
-            <mat-label>Etiquetas</mat-label>
-            <input class="w-full"  (keydown.enter)="addHashtagEnter($event)" placeholder="Escribe una etiqueta y pulsa intro..."
-                      matInput>
+          <mat-form-field
+            floatLabel="always"
+            class="w-full"
+          >
+
+            <mat-label>
+              Etiquetas
+            </mat-label>
+
+            <input
+              class="w-full"
+              (keydown.enter)="addHashtagEnter($event)"
+              placeholder="Escribe una etiqueta y pulsa intro..."
+              matInput
+            >
+
           </mat-form-field>
 
-          <div *ngIf="hashtagsFormArray.controls.length > 0"
-               class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5">
-            <mat-chip-row class="h-full flex justify-center items-center"
-                          *ngFor="let hashtag of hashtagsFormArray.controls; let i = index">
+          <div
+            *ngIf="hashtagsFormArray.controls.length > 0"
+            class="w-full flex justify-start items-center flex-wrap gap-2.5 mb-5"
+          >
+
+            <mat-chip-row
+              class="h-full flex justify-center items-center"
+              *ngFor="let hashtag of hashtagsFormArray.controls; let i = index"
+            >
+
               <div class="flex justify-center items-center space-x-2">
-          <span class="h-full">
-                 {{ hashtag.value.name }}
-              </span>
-                <i (click)="removeHashtag(i)" class="bi bi-x-circle"></i>
+
+                <span class="h-full">
+                  {{ hashtag.value.name }}
+                </span>
+
+                <i
+                  (click)="removeHashtag(i)"
+                  class="bi bi-x-circle"
+                ></i>
+
               </div>
+
             </mat-chip-row>
 
           </div>
 
+          <mat-form-field
+            floatLabel="always"
+            color="primary"
+            class="flex-1 w-full rounded-lg"
+          >
 
+            <mat-label>
+              Enlace
+            </mat-label>
 
-          <mat-form-field floatLabel="always" color="primary" class="flex-1 w-full rounded-lg">
-            <mat-label>Enlace</mat-label>
-            <!--      <span matPrefix>-->
-            <!--              <i class="bi bi-alphabet-uppercase text-[#7454d8] text-xl mx-2"></i>-->
-            <!--            </span>-->
-            <input formControlName="url" matInput placeholder="Añade un enlace (opcional)" class="w-full">
+            <input
+              formControlName="url"
+              matInput
+              placeholder="Añade un enlace (opcional)"
+              class="w-full"
+            >
+
           </mat-form-field>
 
         </div>
+
       </div>
 
-
-
     </div>
-
-
 
     <div class="post-form-actions flex justify-end align-end space-x-2">
-      <button (click)="close()" mat-stroked-button color="primary">Cancelar</button>
 
-      <button type="submit" mat-raised-button color="primary">Publicar</button>
+      <button
+        type="button"
+        (click)="close()"
+        mat-stroked-button
+        color="primary"
+      >
+        Cancelar
+      </button>
 
+      <button
+        type="submit"
+        mat-raised-button
+        color="primary"
+      >
+        Publicar
+      </button>
 
     </div>
-  </form>
 
+  </form>
 
 </div>
