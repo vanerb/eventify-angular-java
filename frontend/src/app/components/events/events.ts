@@ -1,30 +1,37 @@
-import {AfterViewInit, Component, Input, OnInit, signal} from '@angular/core';
-import {Container} from '../general/container/container';
-import {ModalService} from '../../services/modal-service';
-import {CreateEventModal} from '../events/create-event-modal/create-event-modal';
-import {EventSevice} from '../../services/event-sevice';
-import {ShowEventModal} from '../events/show-event-modal/show-event-modal';
-import {NgForOf, NgIf} from '@angular/common';
-import {firstValueFrom} from 'rxjs';
-import {AuthService} from '../../services/auth-service';
-import {CardEvents} from './card-events/card-events';
-import {User} from '../../models/users';
-import {MapService} from '../../services/map-service';
-import {UpdateEventModal} from './update-event-modal/update-event-modal';
-import {WarningModal} from '../general/warning-modal/warning-modal';
-import {Paginator} from '../general/paginator/paginator';
-import {EventPage, Event} from '../../models/events';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {EventFilters} from '../../services/event-sevice';
-import {getThemes} from '../../services/utilities-service';
+import { AfterViewInit, Component, Input, OnInit, signal } from '@angular/core';
+import { Container } from '../general/container/container';
+import { ModalService } from '../../services/modal-service';
+import { CreateEventModal } from '../events/create-event-modal/create-event-modal';
+import { EventSevice } from '../../services/event-sevice';
+import { ShowEventModal } from '../events/show-event-modal/show-event-modal';
+import { NgForOf, NgIf } from '@angular/common';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../services/auth-service';
+import { CardEvents } from './card-events/card-events';
+import { User } from '../../models/users';
+import { MapService } from '../../services/map-service';
+import { UpdateEventModal } from './update-event-modal/update-event-modal';
+import { WarningModal } from '../general/warning-modal/warning-modal';
+import { Paginator } from '../general/paginator/paginator';
+import { EventPage, Event } from '../../models/events';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { EventFilters } from '../../services/event-sevice';
+import { getThemes } from '../../services/utilities-service';
 
 @Component({
   selector: 'app-events',
-  imports: [Container, NgIf, NgForOf, CardEvents, Paginator, FormsModule],
+  imports: [
+    Container,
+    NgIf,
+    NgForOf,
+    CardEvents,
+    Paginator,
+    FormsModule
+  ],
   templateUrl: './events.html',
   styleUrl: './events.css',
-  standalone: true
+  standalone: true,
 })
 export class Events implements OnInit, AfterViewInit {
 
@@ -45,12 +52,12 @@ export class Events implements OnInit, AfterViewInit {
 
   filtersOpen = signal<boolean>(false);
 
-  filters: EventFilters & {datePreset: string} = {
+  filters: EventFilters & { datePreset: string } = {
     category: '',
     search: '',
     type: '',
     location: '',
-    datePreset: ''
+    datePreset: '',
   };
 
   private appliedFilters = signal<EventFilters>({});
@@ -70,7 +77,6 @@ export class Events implements OnInit, AfterViewInit {
   ) {}
 
   async ngAfterViewInit() {
-
     if (this.authService.getToken()) {
       const currentUser = await firstValueFrom(
         this.authService.getUserByToken()
@@ -83,19 +89,19 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
-    this.route.queryParamMap.subscribe(params => {
-
+    this.route.queryParamMap.subscribe((params) => {
       const currentCategory = params.get('category') || '';
 
       this.category.set(currentCategory);
-      this.categoryLabel.set(this.getCategoryLabel(currentCategory));
+      this.categoryLabel.set(
+        this.getCategoryLabel(currentCategory)
+      );
 
       this.filters.category = currentCategory;
 
-      this.appliedFilters.update(filters => ({
+      this.appliedFilters.update((filters) => ({
         ...filters,
-        category: currentCategory
+        category: currentCategory,
       }));
 
       this.page.set(0);
@@ -109,32 +115,38 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   setView(view: 'map' | 'list') {
-
     this.selectedView.set(view);
 
-    if (view === 'map') {
-
-      setTimeout(() => {
-
-        if (this.map) {
-          this.map.invalidateSize();
-        } else {
-          this.initMap();
-        }
-
-      }, 50);
+    if (view === 'list') {
+      this.destroyMap();
+      return;
     }
+
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      } else {
+        this.initMap();
+      }
+    }, 50);
+  }
+
+  private destroyMap(): void {
+    if (!this.map) {
+      return;
+    }
+
+    this.map.remove();
+    this.map = null;
   }
 
   clearCategory() {
-
     this.filters.category = '';
 
     this.applyFilters();
   }
 
   get activeFilterCount(): number {
-
     const applied = this.appliedFilters();
 
     return [
@@ -142,12 +154,11 @@ export class Events implements OnInit, AfterViewInit {
       applied.search,
       applied.type,
       applied.location,
-      applied.fromDate
-    ].filter(value => !!value).length;
+      applied.fromDate,
+    ].filter((value) => !!value).length;
   }
 
   applyFilters() {
-
     const dates = this.getDateRange(this.filters.datePreset);
 
     const newFilters: EventFilters = {
@@ -176,7 +187,7 @@ export class Events implements OnInit, AfterViewInit {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
-          category: this.category() || null
+          category: this.category() || null,
         },
         queryParamsHandling: 'merge',
       });
@@ -192,13 +203,12 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   resetFilters() {
-
     this.filters = {
       category: '',
       search: '',
       type: '',
       location: '',
-      datePreset: ''
+      datePreset: '',
     };
 
     this.appliedFilters.set({});
@@ -210,13 +220,12 @@ export class Events implements OnInit, AfterViewInit {
     this.filtersOpen.set(false);
 
     if (this.route.snapshot.queryParamMap.has('category')) {
-
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
-          category: null
+          category: null,
         },
-        queryParamsHandling: 'merge'
+        queryParamsHandling: 'merge',
       });
 
       return;
@@ -230,25 +239,28 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   private getCategoryLabel(category: string): string {
-
     const theme = this.themeOptions.find(
-      option =>
+      (option) =>
         option.name.toLowerCase() === category.toLowerCase()
     );
 
-    return theme?.name ||
-      ({
-        music: 'Music',
-        food: 'Gastronomy',
-        outdoor: 'Outdoor',
-        creative: 'Creativity'
-      } as Record<string, string>)[category] ||
-      '';
+    return (
+      theme?.name ||
+      (
+        {
+          music: 'Music',
+          food: 'Gastronomy',
+          outdoor: 'Outdoor',
+          creative: 'Creativity',
+        } as Record<string, string>
+      )[category] ||
+      ''
+    );
   }
 
   private getDateRange(
     preset: string
-  ): {fromDate?: string; toDate?: string} {
+  ): { fromDate?: string; toDate?: string } {
 
     if (!preset) {
       return {};
@@ -261,7 +273,6 @@ export class Events implements OnInit, AfterViewInit {
     const to = new Date(from);
 
     if (preset === 'weekend') {
-
       const daysUntilSaturday =
         (6 - from.getDay() + 7) % 7;
 
@@ -271,26 +282,18 @@ export class Events implements OnInit, AfterViewInit {
 
       to.setTime(from.getTime());
 
-      to.setDate(
-        to.getDate() + 1
-      );
+      to.setDate(to.getDate() + 1);
 
     } else if (preset === 'week') {
-
-      to.setDate(
-        to.getDate() + 6
-      );
+      to.setDate(to.getDate() + 6);
     }
 
     const format = (date: Date) => {
-
       const year = date.getFullYear();
 
-      const month =
-        `${date.getMonth() + 1}`.padStart(2, '0');
+      const month = `${date.getMonth() + 1}`.padStart(2, '0');
 
-      const day =
-        `${date.getDate()}`.padStart(2, '0');
+      const day = `${date.getDate()}`.padStart(2, '0');
 
       return `${year}-${month}-${day}`;
     };
@@ -300,18 +303,19 @@ export class Events implements OnInit, AfterViewInit {
       toDate:
         preset === 'upcoming'
           ? undefined
-          : format(to)
+          : format(to),
     };
   }
 
   initMap() {
+    if (this.map) {
+      return;
+    }
 
     this.map = this.mapService.createMap('map');
 
     this.mapService.onMapClick(async (lat, lng) => {
-
-      this.mapService.getLocation(lat, lng).subscribe(data => {
-
+      this.mapService.getLocation(lat, lng).subscribe((data) => {
         const displayName =
           data.display_name || 'Sin información';
 
@@ -327,7 +331,6 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   updatePagination(page: number, limit: number) {
-
     this.page.set(page);
     this.limit.set(limit);
 
@@ -335,7 +338,6 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   updateView() {
-
     if (this.view === 'general') {
       this.getAllEvents();
     } else {
@@ -344,7 +346,6 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   getAllEvents() {
-
     this.eventService
       .getAll(
         this.page(),
@@ -354,7 +355,6 @@ export class Events implements OnInit, AfterViewInit {
           : {}
       )
       .subscribe((events: EventPage) => {
-
         this.events.set(events.content);
 
         this.eventPagination.set(events);
@@ -362,7 +362,6 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   getAllMyEvents() {
-
     this.eventService
       .getMyEvents(
         this.page(),
@@ -377,6 +376,9 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   loadEventMarkers() {
+    if (!this.map) {
+      return;
+    }
 
     this.eventService
       .getAll(
@@ -386,63 +388,59 @@ export class Events implements OnInit, AfterViewInit {
       )
       .subscribe((events: EventPage) => {
 
+        if (!this.map) {
+          return;
+        }
+
         this.eventPagination.set(events);
 
         this.mapService.addEventMarkers(
           events.content,
           (event) => {
-
-            this.modalService.open(
-              ShowEventModal,
-              {
-                width: 'min(760px, 92vw)',
-              },
-              {
-                ubication: event,
-                user: this.user()
-              }
-            ).catch(() =>
-              this.modalService.close()
-            );
+            this.modalService
+              .open(
+                ShowEventModal,
+                {
+                  width: 'min(760px, 92vw)',
+                },
+                {
+                  ubication: event,
+                  user: this.user(),
+                },
+              )
+              .catch(() => this.modalService.close());
           }
         );
       });
   }
 
   createEvent() {
-
     this.modalService
       .open(
         CreateEventModal,
         {
           width: '90vh',
-          height: '90vh'
+          height: '90vh',
         }
       )
       .then(async (item: FormData) => {
 
         this.eventService.create(item).subscribe({
-
           next: () => {
             this.updateView();
           },
 
-          error: err => {
+          error: (err) => {
             console.log(err);
-          }
-
+          },
         });
 
       })
-      .catch(() =>
-        this.modalService.close()
-      );
+      .catch(() => this.modalService.close());
   }
 
   eventActions(data: any) {
-
     if (data) {
-
       switch (data.action) {
 
         case 'delete':
@@ -465,7 +463,6 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   join(event: any) {
-
     const currentUser = this.user();
 
     if (!currentUser) {
@@ -476,115 +473,96 @@ export class Events implements OnInit, AfterViewInit {
       .open(
         WarningModal,
         {
-          width: '60vh'
+          width: '60vh',
         },
         {
           props: {
             title: 'Confirmación',
-            message:
-              `¿Está seguro de que quiere unirse al evento ${event.name}?`,
-            type: 'delete'
-          }
-        }
+            message: `¿Está seguro de que quiere unirse al evento ${event.name}?`,
+            type: 'delete',
+          },
+        },
       )
       .then(() => {
 
         this.eventService
-          .joinEvent(
-            event.id,
-            currentUser.id
-          )
-          .subscribe(result => {
+          .joinEvent(event.id, currentUser.id)
+          .subscribe((result) => {
 
             console.log(result);
 
             this.updateView();
+
           });
 
       })
-      .catch(() =>
-        this.modalService.close()
-      );
+      .catch(() => this.modalService.close());
   }
 
   show(event: any) {
-
     this.modalService
       .open(
         ShowEventModal,
         {
-          width: 'min(760px, 92vw)'
+          width: 'min(760px, 92vw)',
         },
         {
           ubication: event,
-          user: this.user()
-        }
+          user: this.user(),
+        },
       )
       .then(() => {
         this.join(event);
       })
-      .catch(() =>
-        this.modalService.close()
-      );
+      .catch(() => this.modalService.close());
   }
 
   delete(event: any) {
-
     this.modalService
       .open(
         WarningModal,
         {
-          width: '60vh'
+          width: '60vh',
         },
         {
           props: {
             title: 'Eliminar',
-            message:
-              `¿Está seguro de que quiere eliminar ${event.name}?`,
-            type: 'delete'
-          }
-        }
+            message: `¿Está seguro de que quiere eliminar ${event.name}?`,
+            type: 'delete',
+          },
+        },
       )
       .then(() => {
 
         this.eventService
           .delete(event.id)
-          .subscribe(() =>
-            this.updateView()
-          );
+          .subscribe(() => this.updateView());
 
       })
-      .catch(() =>
-        this.modalService.close()
-      );
+      .catch(() => this.modalService.close());
   }
 
   edit(event: any) {
-
     this.modalService
       .open(
         UpdateEventModal,
         {
           width: '90vh',
-          height: '90vh'
+          height: '90vh',
         },
         {
-          event: event
-        }
+          event: event,
+        },
       )
       .then((item: FormData) => {
 
         this.eventService
           .update(event.id, item)
           .subscribe(() => {
-
             this.updateView();
-
           });
 
       })
-      .catch(() =>
-        this.modalService.close()
-      );
+      .catch(() => this.modalService.close());
   }
 }
