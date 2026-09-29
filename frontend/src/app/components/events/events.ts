@@ -21,20 +21,12 @@ import { getThemes } from '../../services/utilities-service';
 
 @Component({
   selector: 'app-events',
-  imports: [
-    Container,
-    NgIf,
-    NgForOf,
-    CardEvents,
-    Paginator,
-    FormsModule
-  ],
+  imports: [Container, NgIf, NgForOf, CardEvents, Paginator, FormsModule],
   templateUrl: './events.html',
   styleUrl: './events.css',
   standalone: true,
 })
 export class Events implements OnInit, AfterViewInit {
-
   map: any;
 
   events = signal<Event[]>([]);
@@ -78,9 +70,7 @@ export class Events implements OnInit, AfterViewInit {
 
   async ngAfterViewInit() {
     if (this.authService.getToken()) {
-      const currentUser = await firstValueFrom(
-        this.authService.getUserByToken()
-      );
+      const currentUser = await firstValueFrom(this.authService.getUserByToken());
 
       this.user.set(currentUser);
     }
@@ -93,9 +83,7 @@ export class Events implements OnInit, AfterViewInit {
       const currentCategory = params.get('category') || '';
 
       this.category.set(currentCategory);
-      this.categoryLabel.set(
-        this.getCategoryLabel(currentCategory)
-      );
+      this.categoryLabel.set(this.getCategoryLabel(currentCategory));
 
       this.filters.category = currentCategory;
 
@@ -173,17 +161,12 @@ export class Events implements OnInit, AfterViewInit {
     this.appliedFilters.set(newFilters);
 
     this.category.set(newFilters.category || '');
-    this.categoryLabel.set(
-      this.getCategoryLabel(newFilters.category || '')
-    );
+    this.categoryLabel.set(this.getCategoryLabel(newFilters.category || ''));
 
     this.page.set(0);
     this.filtersOpen.set(false);
 
-    if (
-      (this.route.snapshot.queryParamMap.get('category') || '') !==
-      this.category()
-    ) {
+    if ((this.route.snapshot.queryParamMap.get('category') || '') !== this.category()) {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
@@ -240,8 +223,7 @@ export class Events implements OnInit, AfterViewInit {
 
   private getCategoryLabel(category: string): string {
     const theme = this.themeOptions.find(
-      (option) =>
-        option.name.toLowerCase() === category.toLowerCase()
+      (option) => option.name.toLowerCase() === category.toLowerCase(),
     );
 
     return (
@@ -258,10 +240,7 @@ export class Events implements OnInit, AfterViewInit {
     );
   }
 
-  private getDateRange(
-    preset: string
-  ): { fromDate?: string; toDate?: string } {
-
+  private getDateRange(preset: string): { fromDate?: string; toDate?: string } {
     if (!preset) {
       return {};
     }
@@ -273,17 +252,13 @@ export class Events implements OnInit, AfterViewInit {
     const to = new Date(from);
 
     if (preset === 'weekend') {
-      const daysUntilSaturday =
-        (6 - from.getDay() + 7) % 7;
+      const daysUntilSaturday = (6 - from.getDay() + 7) % 7;
 
-      from.setDate(
-        from.getDate() + daysUntilSaturday
-      );
+      from.setDate(from.getDate() + daysUntilSaturday);
 
       to.setTime(from.getTime());
 
       to.setDate(to.getDate() + 1);
-
     } else if (preset === 'week') {
       to.setDate(to.getDate() + 6);
     }
@@ -300,10 +275,7 @@ export class Events implements OnInit, AfterViewInit {
 
     return {
       fromDate: format(from),
-      toDate:
-        preset === 'upcoming'
-          ? undefined
-          : format(to),
+      toDate: preset === 'upcoming' ? undefined : format(to),
     };
   }
 
@@ -316,14 +288,9 @@ export class Events implements OnInit, AfterViewInit {
 
     this.mapService.onMapClick(async (lat, lng) => {
       this.mapService.getLocation(lat, lng).subscribe((data) => {
-        const displayName =
-          data.display_name || 'Sin información';
+        const displayName = data.display_name || 'Sin información';
 
-        this.mapService.addMarker(
-          lat,
-          lng,
-          displayName
-        );
+        this.mapService.addMarker(lat, lng, displayName);
       });
     });
 
@@ -347,13 +314,7 @@ export class Events implements OnInit, AfterViewInit {
 
   getAllEvents() {
     this.eventService
-      .getAll(
-        this.page(),
-        this.limit(),
-        this.view === 'general'
-          ? this.appliedFilters()
-          : {}
-      )
+      .getAll(this.page(), this.limit(), this.view === 'general' ? this.appliedFilters() : {})
       .subscribe((events: EventPage) => {
         this.events.set(events.content);
 
@@ -362,17 +323,11 @@ export class Events implements OnInit, AfterViewInit {
   }
 
   getAllMyEvents() {
-    this.eventService
-      .getMyEvents(
-        this.page(),
-        this.limit()
-      )
-      .subscribe((events: EventPage) => {
+    this.eventService.getMyEvents(this.page(), this.limit()).subscribe((events: EventPage) => {
+      this.myEvents.set(events.content);
 
-        this.myEvents.set(events.content);
-
-        this.eventPagination.set(events);
-      });
+      this.eventPagination.set(events);
+    });
   }
 
   loadEventMarkers() {
@@ -381,50 +336,38 @@ export class Events implements OnInit, AfterViewInit {
     }
 
     this.eventService
-      .getAll(
-        this.page(),
-        this.limit(),
-        this.appliedFilters()
-      )
+      .getAll(this.page(), this.limit(), this.appliedFilters())
       .subscribe((events: EventPage) => {
-
         if (!this.map) {
           return;
         }
 
         this.eventPagination.set(events);
 
-        this.mapService.addEventMarkers(
-          events.content,
-          (event) => {
-            this.modalService
-              .open(
-                ShowEventModal,
-                {
-                  width: 'min(760px, 92vw)',
-                },
-                {
-                  ubication: event,
-                  user: this.user(),
-                },
-              )
-              .catch(() => this.modalService.close());
-          }
-        );
+        this.mapService.addEventMarkers(events.content, (event) => {
+          this.modalService
+            .open(
+              ShowEventModal,
+              {
+                width: 'min(760px, 92vw)',
+              },
+              {
+                ubication: event,
+                user: this.user(),
+              },
+            )
+            .catch(() => this.modalService.close());
+        });
       });
   }
 
   createEvent() {
     this.modalService
-      .open(
-        CreateEventModal,
-        {
-          width: '90vh',
-          height: '90vh',
-        }
-      )
+      .open(CreateEventModal, {
+        width: '90vh',
+        height: '90vh',
+      })
       .then(async (item: FormData) => {
-
         this.eventService.create(item).subscribe({
           next: () => {
             this.updateView();
@@ -434,7 +377,6 @@ export class Events implements OnInit, AfterViewInit {
             console.log(err);
           },
         });
-
       })
       .catch(() => this.modalService.close());
   }
@@ -442,7 +384,6 @@ export class Events implements OnInit, AfterViewInit {
   eventActions(data: any) {
     if (data) {
       switch (data.action) {
-
         case 'delete':
           this.delete(data.event);
           break;
@@ -484,17 +425,11 @@ export class Events implements OnInit, AfterViewInit {
         },
       )
       .then(() => {
+        this.eventService.joinEvent(event.id, currentUser.id).subscribe((result) => {
+          console.log(result);
 
-        this.eventService
-          .joinEvent(event.id, currentUser.id)
-          .subscribe((result) => {
-
-            console.log(result);
-
-            this.updateView();
-
-          });
-
+          this.updateView();
+        });
       })
       .catch(() => this.modalService.close());
   }
@@ -533,11 +468,7 @@ export class Events implements OnInit, AfterViewInit {
         },
       )
       .then(() => {
-
-        this.eventService
-          .delete(event.id)
-          .subscribe(() => this.updateView());
-
+        this.eventService.delete(event.id).subscribe(() => this.updateView());
       })
       .catch(() => this.modalService.close());
   }
@@ -555,13 +486,9 @@ export class Events implements OnInit, AfterViewInit {
         },
       )
       .then((item: FormData) => {
-
-        this.eventService
-          .update(event.id, item)
-          .subscribe(() => {
-            this.updateView();
-          });
-
+        this.eventService.update(event.id, item).subscribe(() => {
+          this.updateView();
+        });
       })
       .catch(() => this.modalService.close());
   }
