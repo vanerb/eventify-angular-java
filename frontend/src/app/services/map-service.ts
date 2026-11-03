@@ -19,8 +19,9 @@ export class MapService {
 
   async initLeaflet(): Promise<any> {
     if (!this.L) {
-      const leaflet = await import('leaflet');
-      this.L = leaflet;
+      const leaflet: any = await import('leaflet');
+      // En el build optimizado el módulo CommonJS llega envuelto en `default`
+      this.L = leaflet.default ?? leaflet;
 
       const DefaultIcon = this.L.icon({
         iconUrl: 'assets/leaflet/marker-icon.png',

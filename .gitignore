@@ -46,7 +46,7 @@ frontend/.angular/cache/
 
 # Herramientas
 frontend/.npm/
-frontend/package-lock.json
+# package-lock.json se versiona: el workflow de GitHub Pages usa npm ci
 frontend/yarn.lock
 frontend/pnpm-lock.yaml
 

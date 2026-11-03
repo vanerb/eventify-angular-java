@@ -3,12 +3,14 @@ import {RouterOutlet} from '@angular/router';
 
 import {Header} from './components/header/header';
 import {Modal} from './components/general/modal/modal';
+import {DemoBanner} from './demo/demo-banner';
+import {environment} from '../environments/environment';
 
 import {ModalService} from './services/modal-service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Modal],
+  imports: [RouterOutlet, Header, Modal, DemoBanner],
   templateUrl: './app.html',
   standalone: true,
   styleUrl: './app.css'
@@ -16,6 +18,8 @@ import {ModalService} from './services/modal-service';
 export class App {
 
   protected readonly title = signal('frontend');
+
+  protected readonly demo = environment.demo;
 
   @ViewChild('modal') modal!: Modal;
 

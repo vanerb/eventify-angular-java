@@ -6,6 +6,30 @@ La aplicación permite a los usuarios crear eventos, participar en ellos, intera
 
 ---
 
+## 🌐 Demo
+
+Prueba la aplicación sin instalar nada: **https://vanerb.github.io/Eventify-angular-java/**
+
+La demo es el frontend Angular compilado en modo `demo`: un interceptor HTTP simula toda la API de Spring Boot en el navegador, con datos de ejemplo. Los cambios se guardan solo en tu navegador (`localStorage`) y puedes volver a los datos iniciales con el botón **Restablecer datos** del aviso de demo.
+
+| Cuenta | Email | Contraseña |
+| --- | --- | --- |
+| Lucía Romero | `lucia@eventify.demo` | `Demo1234` |
+| Marc Puig | `marc@eventify.demo` | `Demo1234` |
+| Sara Benítez | `sara@eventify.demo` | `Demo1234` |
+| Diego Alonso | `diego@eventify.demo` | `Demo1234` |
+
+También puedes registrar una cuenta nueva. Limitaciones: el chat no usa WebSocket (los mensajes se guardan en el navegador y otro participante responde automáticamente), las imágenes se guardan reducidas y el buscador de ubicaciones consulta OpenStreetMap directamente desde el navegador.
+
+Para compilarla en local:
+
+```bash
+cd frontend
+npx ng build --configuration demo --base-href "/Eventify-angular-java/"
+```
+
+---
+
 ## 🚀 Tecnologías utilizadas
 
 ### Frontend

@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {Client, Message} from '@stomp/stompjs';
 import {Subject} from 'rxjs';
 import {ChatMessage} from '../models/chats';
+import {environment} from '../../environments/environment';
+import {demoApi} from '../demo/demo-backend.interceptor';
 
 
 @Injectable({
@@ -16,7 +18,10 @@ export class ChatService {
   public messages$ = this.messageSubject.asObservable();
 
   constructor() {
-    this.initClient();
+    // En la demo estática no hay servidor WebSocket: los mensajes se guardan con la API simulada.
+    if (!environment.demo) {
+      this.initClient();
+    }
   }
 
   /** INICIALIZAR CLIENTE */
@@ -54,6 +59,10 @@ export class ChatService {
   connect(eventId: number) {
     this.currentEventId = eventId;
 
+    if (environment.demo) {
+      return;
+    }
+
     if (!this.connected) {
       console.log("Reactivando WebSocket…");
       this.client.activate();
@@ -75,6 +84,11 @@ export class ChatService {
 
   /** ENVIAR */
   sendMessage(message: ChatMessage) {
+    if (environment.demo) {
+      this.sendDemoMessage(message);
+      return;
+    }
+
     if (!this.connected) {
       console.warn('Cliente no conectado');
       return;
@@ -87,6 +101,20 @@ export class ChatService {
       destination: '/app/chat.sendMessage',
       body: JSON.stringify(payload),
     });
+  }
+
+  /** ENVIAR EN LA DEMO: guarda el mensaje y simula la respuesta de otro participante */
+  private sendDemoMessage(message: ChatMessage) {
+    const saved = demoApi().sendChatMessage(message) as ChatMessage;
+    this.messageSubject.next(saved);
+
+    const eventId = saved.eventId!;
+    setTimeout(() => {
+      const reply = demoApi().autoReply(eventId, saved.userId!) as ChatMessage | null;
+      if (reply && this.currentEventId === eventId) {
+        this.messageSubject.next(reply);
+      }
+    }, 1500);
   }
 
   /** DESCONECTAR */

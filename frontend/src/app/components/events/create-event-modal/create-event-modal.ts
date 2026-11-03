@@ -47,7 +47,7 @@ import {ModalService} from '../../../services/modal-service';
 })
 export class CreateEventModal implements OnInit {
 
-  searchResults: any[] = [];
+  searchResults = signal<any[]>([]);
   searchTimeout: any;
 
   form!: FormGroup;
@@ -148,7 +148,7 @@ export class CreateEventModal implements OnInit {
     this.searchTimeout = setTimeout(() => {
 
       if (query.length < 3) {
-        this.searchResults = [];
+        this.searchResults.set([]);
         return;
       }
 
@@ -156,7 +156,7 @@ export class CreateEventModal implements OnInit {
         `http://localhost:8080/api/location/search?query=${query}`;
 
       this.http.get<any[]>(url).subscribe(results => {
-        this.searchResults = results;
+        this.searchResults.set(results);
       });
 
     }, 300);
@@ -164,7 +164,7 @@ export class CreateEventModal implements OnInit {
 
   onSelectPlace(place: any) {
 
-    this.searchResults = [];
+    this.searchResults.set([]);
 
     this.form.get('placeId')?.setValue(place.place_id);
     this.form.get('ubication')?.setValue(place.display_name);
