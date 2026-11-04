@@ -8,7 +8,7 @@ La aplicación permite a los usuarios crear eventos, participar en ellos, intera
 
 ## 🌐 Demo
 
-Prueba la aplicación sin instalar nada: **https://vanerb.github.io/Eventify-angular-java/**
+Prueba la aplicación sin instalar nada: **https://vanerb.github.io/eventify-angular-java/**
 
 La demo es el frontend Angular compilado en modo `demo`: un interceptor HTTP simula toda la API de Spring Boot en el navegador, con datos de ejemplo. Los cambios se guardan solo en tu navegador (`localStorage`) y puedes volver a los datos iniciales con el botón **Restablecer datos** del aviso de demo.
 
@@ -183,7 +183,7 @@ Antes de ejecutar el proyecto es necesario tener instalado:
 ## 📥 Clonar el repositorio
 
 ```bash
-git clone https://github.com/vanerb/Eventify-angular-java.git
+git clone https://github.com/vanerb/eventify-angular-java.git
 cd Eventify-angular-java
 ```
 
