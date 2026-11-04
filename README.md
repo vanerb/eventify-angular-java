@@ -25,7 +25,7 @@ Para compilarla en local:
 
 ```bash
 cd frontend
-npx ng build --configuration demo --base-href "/Eventify-angular-java/"
+npx ng build --configuration demo --base-href "/eventify-angular-java/"
 ```
 
 ---
@@ -145,7 +145,7 @@ La comunicación entre frontend y backend se realiza mediante una **API REST**.
 ## 📂 Estructura del proyecto
 
 ```text
-Eventify-angular-java/
+eventify-angular-java/
 │
 ├── frontend/
 │   ├── src/
@@ -173,7 +173,7 @@ Antes de ejecutar el proyecto es necesario tener instalado:
 * **Node.js**
 * **npm**
 * **Angular CLI**
-* **Java 21**
+* **Java 17**
 * **Maven**
 * **MySQL**
 * **Git**
@@ -184,7 +184,7 @@ Antes de ejecutar el proyecto es necesario tener instalado:
 
 ```bash
 git clone https://github.com/vanerb/eventify-angular-java.git
-cd Eventify-angular-java
+cd eventify-angular-java
 ```
 
 ---
@@ -208,10 +208,26 @@ src/main/resources/application.properties
 Configura los datos correspondientes a tu entorno, por ejemplo:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/TU_BASE_DE_DATOS
+spring.datasource.url=jdbc:mysql://localhost:3306/meetfriends_db
 spring.datasource.username=TU_USUARIO
 spring.datasource.password=TU_CONTRASEÑA
 ```
+
+### 🧪 Datos de prueba (opcional)
+
+[`database/eventify_prueba.sql`](database/eventify_prueba.sql) crea la base de datos, sus tablas y datos inventados. No borra nada: si las tablas ya existen, la importación se detiene con un error. Desde la raíz del repositorio:
+
+```bash
+mysql -u root -p --default-character-set=utf8mb4 -e "source database/eventify_prueba.sql"
+```
+
+Cuentas: `laura@eventify.test`, `hugo@eventify.test`, `sara@eventify.test` e `ivan@eventify.test`.
+
+La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local. El SQL usa la base `meetfriends_db`, la que trae configurada el proyecto.
+
+### 🔑 Clave de las sesiones
+
+La API firma las sesiones con la variable de entorno `JWT_SECRET`. Sin ella usa una clave de desarrollo, válida solo en local: si despliegas el proyecto, define una propia y larga.
 
 A continuación, compila el proyecto:
 
