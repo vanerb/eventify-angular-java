@@ -3,6 +3,7 @@ package com.ubication.backend.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,12 +12,13 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Clave secreta como String (mínimo 32 caracteres para HS256)
-    private static final String SECRET = "change-this-development-secret-at-least-32-bytes";
+    // Clave secreta (mínimo 32 caracteres para HS256). En producción se define con JWT_SECRET.
+    @Value("${JWT_SECRET:change-this-development-secret-at-least-32-bytes}")
+    private String secret;
 
     // Método que convierte el String en SecretKey
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String generateToken(String email) {
