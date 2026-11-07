@@ -1,387 +1,113 @@
-# 🎉 Eventify — Angular + Java
+# Eventify
 
-**Eventify** es una aplicación web para la creación y gestión de eventos, desarrollada con **Angular** en el frontend y **Java Spring Boot** en el backend.
+Planes para hacer con más gente: crea eventos online o presenciales, apúntate a los de otras personas, habla con el resto de asistentes en el chat del evento y comparte publicaciones.
 
-La aplicación permite a los usuarios crear eventos, participar en ellos, interactuar con otros asistentes y compartir contenido relacionado con cada evento.
+**[Ver la demo](https://vanerb.github.io/eventify-angular-java/)**: funciona en el navegador, sin instalar nada.
 
----
+**Stack:** Angular 20 · Tailwind CSS · Angular Material · Leaflet · Spring Boot 4 · Java 17 · Spring Data JPA · WebSocket (STOMP y SockJS) · MySQL
 
-## 🌐 Demo
+## Qué puedes hacer
 
-Prueba la aplicación sin instalar nada: **https://vanerb.github.io/eventify-angular-java/**
+- **Eventos:** crear, editar y borrar eventos online o presenciales, con fechas, descripción, categorías, imagen y ubicación.
+- **Buscar planes:** por texto, categoría, fecha, modalidad y ubicación, en vista de lista o sobre un mapa.
+- **Participar:** apuntarse a un evento y ver quién más va.
+- **Chat del evento:** cada evento tiene su propio chat en tiempo real para quienes participan.
+- **Comunidad:** publicaciones con texto, imagen y etiquetas, con comentarios.
+- **Perfil:** biografía, foto, portada y la lista de tus eventos.
 
-La demo es el frontend Angular compilado en modo `demo`: un interceptor HTTP simula toda la API de Spring Boot en el navegador, con datos de ejemplo. Los cambios se guardan solo en tu navegador (`localStorage`) y puedes volver a los datos iniciales con el botón **Restablecer datos** del aviso de demo.
+## Demo
 
-| Cuenta | Email | Contraseña |
-| --- | --- | --- |
-| Lucía Romero | `lucia@eventify.demo` | `Demo1234` |
-| Marc Puig | `marc@eventify.demo` | `Demo1234` |
-| Sara Benítez | `sara@eventify.demo` | `Demo1234` |
-| Diego Alonso | `diego@eventify.demo` | `Demo1234` |
+La demo es el frontend compilado en modo `demo`: un interceptor HTTP simula toda la API dentro del navegador, con datos de ejemplo. Tus cambios se guardan en el `localStorage` de tu navegador y el botón **Restablecer datos** del aviso inferior vuelve al estado inicial.
 
-También puedes registrar una cuenta nueva. Limitaciones: el chat no usa WebSocket (los mensajes se guardan en el navegador y otro participante responde automáticamente), las imágenes se guardan reducidas y el buscador de ubicaciones consulta OpenStreetMap directamente desde el navegador.
+| Correo | Nombre |
+| --- | --- |
+| `lucia@eventify.demo` | Lucía Romero |
+| `marc@eventify.demo` | Marc Puig |
+| `sara@eventify.demo` | Sara Benítez |
+| `diego@eventify.demo` | Diego Alonso |
 
-Para compilarla en local:
+La contraseña de todas es `Demo1234`. También puedes registrar una cuenta nueva. En la demo el chat no usa WebSocket: los mensajes se guardan en tu navegador y otro participante contesta automáticamente.
 
-```bash
-cd frontend
-npx ng build --configuration demo --base-href "/eventify-angular-java/"
+## Cómo está construido
+
+```mermaid
+flowchart LR
+    A[Angular 20] -->|REST y JWT| B[API Spring Boot]
+    A <-->|WebSocket / STOMP| B
+    B --> C[(MySQL)]
+    B --> D[/Imágenes en uploads/]
+    B -->|Búsqueda de direcciones| E[OpenStreetMap Nominatim]
+    A -.->|Build de demo| F[Interceptor con la API simulada]
+    F -.-> G[(localStorage)]
 ```
-
----
-
-## 🚀 Tecnologías utilizadas
-
-### Frontend
-
-* **Angular**
-* **TypeScript**
-* **HTML5**
-* **CSS**
-* **Tailwind CSS**
-* **Angular Material**
-* **RxJS**
-
-### Backend
-
-* **Java**
-* **Spring Boot**
-* **Spring Data JPA**
-* **Hibernate**
-* **REST API**
-* **Maven**
-* **MySQL**
-
-### Herramientas
-
-* **Git**
-* **GitHub**
-* **Postman**
-* **npm**
-* **Composer**
-
----
-
-## ✨ Funcionalidades
-
-### 📅 Gestión de eventos
-
-Los usuarios pueden crear y gestionar sus propios eventos.
-
-Cada evento puede incluir información como:
-
-* Nombre
-* Descripción
-* Fecha
-* Hora
-* Ubicación
-* Imagen
-* Tipo de evento
-
-Los eventos pueden ser:
-
-* 🌐 **Online**
-* 📍 **Presenciales**
-
----
-
-### 👥 Participación en eventos
-
-Los usuarios pueden consultar los eventos disponibles y unirse a aquellos en los que estén interesados.
-
-La aplicación permite gestionar la participación de los usuarios en cada evento.
-
----
-
-### 💬 Chats de eventos
-
-Cada evento dispone de un sistema de chat para que los participantes puedan comunicarse entre ellos.
-
-El sistema utiliza comunicación en tiempo real mediante:
-
-* **WebSocket**
-* **STOMP**
-* **SockJS**
-
-Esto permite enviar y recibir mensajes sin necesidad de recargar la página.
-
----
-
-### 📝 Publicaciones
-
-Los usuarios pueden compartir publicaciones relacionadas con los eventos.
-
-Las publicaciones pueden incluir:
-
-* Texto
-* Imágenes
-* Comentarios
-
-De esta forma, los participantes pueden compartir contenido y experiencias relacionadas con los eventos.
-
----
-
-### 🖼️ Gestión de imágenes
-
-La aplicación permite utilizar imágenes para diferentes elementos:
-
-* Eventos
-* Publicaciones
-* Usuarios
-* Portadas de usuario
-
-Las imágenes se almacenan y gestionan desde el backend.
-
----
-
-### 🔐 Autenticación
-
-El proyecto incorpora un sistema de autenticación para gestionar los usuarios y proteger los recursos de la aplicación.
-
-La comunicación entre frontend y backend se realiza mediante una **API REST**.
-
----
-
-## 📂 Estructura del proyecto
 
 ```text
-eventify-angular-java/
-│
-├── frontend/
-│   ├── src/
-│   ├── angular.json
-│   ├── package.json
-│   └── ...
-│
-├── backend/
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/
-│   │       └── resources/
-│   ├── pom.xml
-│   └── ...
-│
-└── README.md
+backend/     API de Spring Boot: controladores, servicios, modelos y seguridad
+frontend/    Web de Angular y build de demo
+database/    Base de datos de prueba para MySQL
 ```
 
----
+## Decisiones técnicas
 
-## 🛠️ Requisitos previos
+- **Un canal de chat por evento.** Los mensajes viajan por WebSocket con STOMP y SockJS, y cada evento tiene su propio canal.
+- **Mapas sin claves de pago.** El mapa usa Leaflet con OpenStreetMap, y la búsqueda de direcciones pasa por la API, que consulta Nominatim.
+- **Errores claros.** Credenciales incorrectas devuelven 401 y un correo ya registrado 409, siempre con un mensaje legible, en vez de un error interno.
+- **Configuración en un solo sitio.** La URL de la API está en `frontend/src/environments/environment.ts`, y la clave de las sesiones sale de la variable `JWT_SECRET`.
 
-Antes de ejecutar el proyecto es necesario tener instalado:
+## Puesta en marcha
 
-* **Node.js**
-* **npm**
-* **Angular CLI**
-* **Java 17**
-* **Maven**
-* **MySQL**
-* **Git**
+Necesitas Node.js 20.19 o superior, Java 17 o superior (el proyecto trae Maven Wrapper, así que no hace falta instalar Maven) y MySQL 8.
 
----
-
-## 📥 Clonar el repositorio
-
-```bash
-git clone https://github.com/vanerb/eventify-angular-java.git
-cd eventify-angular-java
-```
-
----
-
-# 🖥️ Instalación y ejecución
-
-## 1️⃣ Backend — Spring Boot
-
-Accede al directorio del backend:
+**API**, en `http://localhost:8080`:
 
 ```bash
 cd backend
+./mvnw spring-boot:run
 ```
 
-Configura la conexión con la base de datos en:
+En Windows, usa `.\mvnw.cmd spring-boot:run`. Hibernate crea las tablas al arrancar, pero la base `eventify_db` tiene que existir (o importar los datos de prueba, que la crean).
 
-```text
-src/main/resources/application.properties
+**Web**, en `http://localhost:4200`, desde otra terminal:
+
+```bash
+cd frontend
+npm install
+npm start
 ```
 
-Configura los datos correspondientes a tu entorno, por ejemplo:
+Para abrir la demo en local, sin backend: `npx ng serve --configuration demo`.
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/eventify_db
-spring.datasource.username=TU_USUARIO
-spring.datasource.password=TU_CONTRASEÑA
-```
+### Configuración
 
-### 🧪 Datos de prueba (opcional)
+| Variable | Por defecto | Uso |
+| --- | --- | --- |
+| `SPRING_DATASOURCE_URL` | `jdbc:mysql://localhost:3306/eventify_db` | Conexión con MySQL. |
+| `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` | `root`, vacío | Credenciales de MySQL. |
+| `JWT_SECRET` | Clave de desarrollo | Firma de las sesiones. Si despliegas el proyecto, define una propia y larga. |
+| `SERVER_PORT` | `8080` | Puerto de la API. |
 
-[`database/eventify_prueba.sql`](database/eventify_prueba.sql) crea la base de datos, sus tablas y datos inventados. No borra nada: si las tablas ya existen, la importación se detiene con un error. Desde la raíz del repositorio:
+Si cambias el puerto o la dirección de la API, cambia también `apiUrl` en [`frontend/src/environments/environment.ts`](frontend/src/environments/environment.ts).
+
+### Datos de prueba
+
+[`database/eventify_prueba.sql`](database/eventify_prueba.sql) crea la base `eventify_db` con usuarios, eventos, publicaciones, comentarios y mensajes inventados. No borra nada: si las tablas ya existen, la importación se detiene con un error.
 
 ```bash
 mysql -u root -p --default-character-set=utf8mb4 -e "source database/eventify_prueba.sql"
 ```
 
-Cuentas: `laura@eventify.test`, `hugo@eventify.test`, `sara@eventify.test` e `ivan@eventify.test`.
+Cuentas: `laura@eventify.test`, `hugo@eventify.test`, `sara@eventify.test` e `ivan@eventify.test`. La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local.
 
-La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local. El SQL usa la base `eventify_db`, la que trae configurada el proyecto.
+## Tests
 
-### 🔑 Clave de las sesiones
+Todavía no tiene tests propios: solo las pruebas de creación que Angular genera para cada componente.
 
-La API firma las sesiones con la variable de entorno `JWT_SECRET`. Sin ella usa una clave de desarrollo, válida solo en local: si despliegas el proyecto, define una propia y larga.
+## Limitaciones conocidas
 
-A continuación, compila el proyecto:
+- La API no tiene tests automáticos.
+- La búsqueda de direcciones depende del servicio público de Nominatim y de sus límites de uso.
+- Las imágenes se guardan en el disco del servidor, así que un despliegue real necesitaría almacenamiento persistente.
 
-```bash
-mvn clean install
-```
+## Autoría
 
-Y ejecuta Spring Boot:
-
-```bash
-mvn spring-boot:run
-```
-
-El backend estará disponible por defecto en:
-
-```text
-http://localhost:8080
-```
-
----
-
-## 2️⃣ Frontend — Angular
-
-Abre otra terminal y accede al frontend:
-
-```bash
-cd frontend
-```
-
-Instala las dependencias:
-
-```bash
-npm install
-```
-
-Ejecuta la aplicación:
-
-```bash
-ng serve
-```
-
-El frontend estará disponible normalmente en:
-
-```text
-http://localhost:4200
-```
-
-Si el backend no está en `http://localhost:8080`, cambia `apiUrl` en [`frontend/src/environments/environment.ts`](frontend/src/environments/environment.ts).
-
----
-
-## 🔄 Arquitectura
-
-Eventify utiliza una arquitectura dividida en frontend y backend:
-
-```text
-                  ┌─────────────────────┐
-                  │       Usuario       │
-                  └──────────┬──────────┘
-                             │
-                             ▼
-                  ┌─────────────────────┐
-                  │      Angular       │
-                  │     Frontend       │
-                  └──────────┬──────────┘
-                             │
-                      HTTP / REST API
-                             │
-                             ▼
-                  ┌─────────────────────┐
-                  │    Spring Boot     │
-                  │      Backend       │
-                  └──────────┬──────────┘
-                             │
-                    ┌────────┴────────┐
-                    ▼                 ▼
-             ┌─────────────┐   ┌─────────────┐
-             │    MySQL    │   │ WebSocket   │
-             │  Database   │   │    Chat     │
-             └─────────────┘   └─────────────┘
-```
-
----
-
-## 📡 Comunicación en tiempo real
-
-Para el sistema de chat se utiliza WebSocket junto con STOMP y SockJS.
-
-Los mensajes se envían a través de canales asociados a cada evento, permitiendo que los participantes reciban los mensajes en tiempo real.
-
----
-
-## 🗄️ Base de datos
-
-La aplicación utiliza **MySQL** como sistema de gestión de base de datos.
-
-Entre las entidades principales del proyecto se encuentran:
-
-* Usuarios
-* Eventos
-* Participantes
-* Publicaciones
-* Comentarios
-* Mensajes
-* Imágenes
-
-La relación entre estas entidades permite gestionar los diferentes elementos de la aplicación y las interacciones entre los usuarios.
-
----
-
-## 🔌 API REST
-
-El backend proporciona diferentes endpoints REST para que el frontend pueda realizar operaciones sobre los datos.
-
-Entre las operaciones principales se encuentran:
-
-* Gestión de usuarios
-* Gestión de eventos
-* Gestión de participantes
-* Gestión de publicaciones
-* Gestión de comentarios
-* Gestión de imágenes
-* Gestión de mensajes
-
----
-
-## 🎯 Objetivo del proyecto
-
-El objetivo de Eventify es desarrollar una plataforma web que permita a los usuarios **crear, descubrir y participar en eventos**, proporcionando además herramientas de comunicación e interacción entre sus participantes.
-
-El proyecto permite poner en práctica diferentes conceptos de desarrollo web full stack:
-
-* Desarrollo de aplicaciones SPA con Angular.
-* Creación de APIs REST con Spring Boot.
-* Persistencia de datos mediante JPA/Hibernate.
-* Gestión de bases de datos MySQL.
-* Autenticación y autorización.
-* Comunicación en tiempo real mediante WebSocket.
-* Gestión de imágenes.
-* Arquitectura cliente-servidor.
-* Desarrollo de interfaces con Angular Material y Tailwind CSS.
-
----
-
-## 📌 Estado del proyecto
-
-**En desarrollo.**
-
-El proyecto puede seguir ampliándose con nuevas funcionalidades, mejoras de interfaz y nuevas herramientas de interacción entre los usuarios.
-
----
-
-## 👩‍💻 Autora
-
-**Vanesa Ribera Bautista**
-
-Proyecto desarrollado utilizando **Angular + Java Spring Boot + MySQL**.
+Proyecto de portfolio de **Vanesa Ribera Bautista** ([vanerb](https://github.com/vanerb)).
