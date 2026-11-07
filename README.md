@@ -208,7 +208,7 @@ src/main/resources/application.properties
 Configura los datos correspondientes a tu entorno, por ejemplo:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/meetfriends_db
+spring.datasource.url=jdbc:mysql://localhost:3306/eventify_db
 spring.datasource.username=TU_USUARIO
 spring.datasource.password=TU_CONTRASEÑA
 ```
@@ -223,7 +223,7 @@ mysql -u root -p --default-character-set=utf8mb4 -e "source database/eventify_pr
 
 Cuentas: `laura@eventify.test`, `hugo@eventify.test`, `sara@eventify.test` e `ivan@eventify.test`.
 
-La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local. El SQL usa la base `meetfriends_db`, la que trae configurada el proyecto.
+La contraseña de todas es `Usuario123*`. Es pública, así que no uses estas cuentas fuera de un entorno local. El SQL usa la base `eventify_db`, la que trae configurada el proyecto.
 
 ### 🔑 Clave de las sesiones
 
@@ -274,6 +274,8 @@ El frontend estará disponible normalmente en:
 ```text
 http://localhost:4200
 ```
+
+Si el backend no está en `http://localhost:8080`, cambia `apiUrl` en [`frontend/src/environments/environment.ts`](frontend/src/environments/environment.ts).
 
 ---
 

@@ -3,12 +3,13 @@ import {AuthService} from './auth-service';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Post, PostPage} from '../models/posts';
 
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class PostsService {
 
-  url = 'http://localhost:8080/api/posts';
+  url = environment.apiUrl + '/api/posts';
 
   constructor(private readonly authService: AuthService, private http: HttpClient) {
   }

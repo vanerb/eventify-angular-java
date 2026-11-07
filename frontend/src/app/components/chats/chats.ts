@@ -22,6 +22,7 @@ import {Paginator} from '../general/paginator/paginator';
 import {User} from '../../models/users';
 import {EventPage, Event} from '../../models/events';
 
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-chats',
   imports: [
@@ -198,7 +199,7 @@ export class Chats implements OnInit, OnDestroy, AfterViewInit {
 
     this.messageDdbbSub = this.http
       .get<ChatMessage[]>(
-        `http://localhost:8080/api/chat/${currentEventId}`
+        `${environment.apiUrl}/api/chat/${currentEventId}`
       )
       .subscribe(msgs => {
 

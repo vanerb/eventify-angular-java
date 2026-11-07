@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {AuthService} from './auth-service';
 import {EventPage} from '../models/events';
 
+import { environment } from '../../environments/environment';
 export interface EventFilters {
   category?: string;
   search?: string;
@@ -16,7 +17,7 @@ export interface EventFilters {
   providedIn: 'root',
 })
 export class EventSevice {
-   url = 'http://localhost:8080/api/events';
+   url = environment.apiUrl + '/api/events';
 
    constructor(private readonly authService: AuthService, private http: HttpClient) {
    }
@@ -39,7 +40,7 @@ export class EventSevice {
        if (value) params = params.set(key, value);
      });
 
-     return this.http.get<EventPage>('http://localhost:8080/api/events/getAll', { params })
+     return this.http.get<EventPage>(environment.apiUrl + '/api/events/getAll', { params })
    }
 
   getMyEventParticipations(page: number = 0, size: number = 20, search: string = ""){
@@ -55,7 +56,7 @@ export class EventSevice {
       params = params.set('search', search);
     }
 
-    return this.http.get<EventPage>('http://localhost:8080/api/events/findMyEventParticipations',{params, headers: headers})
+    return this.http.get<EventPage>(environment.apiUrl + '/api/events/findMyEventParticipations',{params, headers: headers})
   }
 
   getMyEvents(page: number = 0, size: number = 20){
@@ -67,21 +68,21 @@ export class EventSevice {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<EventPage>('http://localhost:8080/api/events/findByUserId',{params, headers: headers})
+    return this.http.get<EventPage>(environment.apiUrl + '/api/events/findByUserId',{params, headers: headers})
   }
 
   joinEvent(eventId: string, userId: number){
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
-    return this.http.post<Event>('http://localhost:8080/api/events/'+eventId+'/join/'+userId,{headers})
+    return this.http.post<Event>(environment.apiUrl + '/api/events/'+eventId+'/join/'+userId,{headers})
   }
 
   delete(eventId: string){
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
-    return this.http.delete<Event>('http://localhost:8080/api/events/delete/'+eventId,{headers})
+    return this.http.delete<Event>(environment.apiUrl + '/api/events/delete/'+eventId,{headers})
   }
 
   update(id: string, data: FormData){

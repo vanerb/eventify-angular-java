@@ -28,7 +28,7 @@ export class ChatService {
   private initClient() {
     import('sockjs-client').then((SockJS) => {
       this.client = new Client({
-        webSocketFactory: () => new SockJS.default('http://localhost:8080/ws'),
+        webSocketFactory: () => new SockJS.default(environment.apiUrl + '/ws'),
         reconnectDelay: 5000,
         debug: (str) => console.log(str),
       });

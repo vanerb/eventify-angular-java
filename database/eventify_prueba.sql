@@ -3,8 +3,8 @@
 -- Contraseña de todas: Usuario123*
 -- Importar en MySQL o MariaDB. No borra nada: si las tablas ya existen, la importación se detiene con un error.
 
-CREATE DATABASE IF NOT EXISTS `meetfriends_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `meetfriends_db`;
+CREATE DATABASE IF NOT EXISTS `eventify_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `eventify_db`;
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 

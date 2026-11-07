@@ -14,7 +14,9 @@ import com.ubication.backend.security.JwtUtil;
 import com.ubication.backend.interfaces.AuthInterface;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,10 @@ public class AuthService implements AuthInterface {
     // =========================
     @Override
     public UserDTO register(String email, String password, String name, String username, MultipartFile file) {
+
+        if (repository.findByEmail(email).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una cuenta con ese correo");
+        }
 
         User user = new User();
         user.setEmail(email);
@@ -114,10 +120,10 @@ public class AuthService implements AuthInterface {
     public String login(String email, String password) {
 
         User user = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Incorrect password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos");
         }
 
         String token = jwtUtil.generateToken(email);
@@ -137,10 +143,10 @@ public class AuthService implements AuthInterface {
         String email = jwtUtil.extractEmail(token);
 
         User user = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesión no válida"));
 
         if (!token.equals(user.getToken())) {
-            throw new RuntimeException("Invalid token");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sesión no válida");
         }
 
        return toUserDto(user);

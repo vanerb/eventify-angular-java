@@ -2,6 +2,7 @@ import themesIcons from '../json/themes.json';
 
 
 
+import { environment } from '../../environments/environment';
 export function sleep(millis: number) {
   return new Promise(resolve => setTimeout(resolve, millis));
 }
@@ -43,7 +44,7 @@ export function getImage(img: string|null|undefined){
     return img
   }
   else{
-    return 'http://localhost:8080'+img
+    return environment.apiUrl+img
   }
 }
 

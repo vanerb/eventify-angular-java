@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import {AuthService} from './auth-service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class CommentService {
-  url = 'http://localhost:8080/api/comments';
+  url = environment.apiUrl + '/api/comments';
 
   constructor(private readonly authService: AuthService, private http: HttpClient) {
   }

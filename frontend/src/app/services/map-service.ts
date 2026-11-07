@@ -3,12 +3,13 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {AuthService} from './auth-service';
 import {Observable} from 'rxjs';
 
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class MapService {
 
-  url = 'http://localhost:8080/api/location/';
+  url = environment.apiUrl + '/api/location/';
 
   private L: any;
   private map: any;

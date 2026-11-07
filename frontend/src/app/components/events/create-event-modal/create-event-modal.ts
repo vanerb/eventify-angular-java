@@ -25,6 +25,7 @@ import {
 import {WarningModal} from '../../general/warning-modal/warning-modal';
 import {ModalService} from '../../../services/modal-service';
 
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-create-event-modal',
   imports: [
@@ -153,7 +154,7 @@ export class CreateEventModal implements OnInit {
       }
 
       const url =
-        `http://localhost:8080/api/location/search?query=${query}`;
+        `${environment.apiUrl}/api/location/search?query=${query}`;
 
       this.http.get<any[]>(url).subscribe(results => {
         this.searchResults.set(results);
