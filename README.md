@@ -15,6 +15,20 @@ Planes para hacer con más gente: crea eventos online o presenciales, apúntate 
 - **Comunidad:** publicaciones con texto, imagen y etiquetas, con comentarios.
 - **Perfil:** biografía, foto, portada y la lista de tus eventos.
 
+### Capturas
+
+| Inicio | Eventos |
+| --- | --- |
+| ![Portada de Eventify con categorías de planes](docs/screenshots/inicio.webp) | ![Listado de eventos online y presenciales con filtros](docs/screenshots/eventos.webp) |
+
+**Comunidad**
+
+![Publicaciones de la comunidad con imagen y etiquetas](docs/screenshots/comunidad.webp)
+
+<p align="center">
+  <img src="docs/screenshots/movil.webp" alt="Portada de Eventify en un móvil" width="280">
+</p>
+
 ## Demo
 
 La demo es el frontend compilado en modo `demo`: un interceptor HTTP simula toda la API dentro del navegador, con datos de ejemplo. Tus cambios se guardan en el `localStorage` de tu navegador y el botón **Restablecer datos** del aviso inferior vuelve al estado inicial.
